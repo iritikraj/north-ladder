@@ -1090,6 +1090,544 @@
         </div>
       </div>
     </section>
+
+    <!-- SECTION 3: THE BUYER PORTAL (INTERACTIVE UI DEMO) -->
+    <section id="portal-interface-section" class="relative w-full bg-brand-bg overflow-hidden">
+
+      <!-- Pinned Scroll Wrapper -->
+      <!-- Changed to h-[100dvh] for perfect mobile browser height fitting -->
+      <div id="portal-pin-wrapper" class="relative w-full h-[100dvh] flex items-center pt-[80px] lg:pt-0">
+
+        <div
+          class="w-full max-w-[1400px] mx-auto px-6 lg:px-12 flex flex-col lg:flex-row items-center gap-6 lg:gap-20 max-h-full py-4 lg:py-10">
+
+          <!-- LEFT COLUMN: Narrative & Features -->
+          <div class="w-full lg:w-1/2 flex flex-col z-20 shrink-0">
+            <p
+              class="hidden lg:block font-mono text-[10px] md:text-xs font-bold tracking-[0.2em] text-brand-primary uppercase mb-2 lg:mb-4">
+              What you see in the portal
+            </p>
+            <h2
+              class="font-display font-medium text-2xl md:text-4xl lg:text-5xl text-brand-obsidian tracking-tight leading-[1.1] mb-4 lg:mb-10">
+              The buyer bidding interface.
+            </h2>
+
+            <!-- Interactive Feature List -->
+            <!-- Reduced gaps on mobile to ensure it fits on small screens -->
+            <div class="relative flex flex-col gap-3 lg:gap-8 border-l-2 border-gray-200 pl-4 lg:pl-8">
+
+              <!-- Indicator that slides down the border -->
+              <div id="feature-indicator"
+                class="absolute top-0 left-[-2px] w-[2px] h-8 lg:h-12 bg-brand-primary rounded-full"></div>
+
+              <div class="portal-feature opacity-30 transition-opacity duration-300">
+                <h4 class="font-display font-bold text-sm lg:text-lg text-brand-obsidian flex items-center gap-2">
+                  <svg class="w-4 h-4 lg:w-5 lg:h-5 text-brand-light" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                    </path>
+                  </svg>
+                  AR grading video
+                </h4>
+                <p class="font-sans text-[11px] lg:text-sm text-gray-500 mt-0.5 lg:mt-1 hidden sm:block">Per-device 20s
+                  scan with timestamp.</p>
+              </div>
+
+              <div class="portal-feature opacity-30 transition-opacity duration-300">
+                <h4 class="font-display font-bold text-sm lg:text-lg text-brand-obsidian flex items-center gap-2">
+                  <svg class="w-4 h-4 lg:w-5 lg:h-5 text-brand-light" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                  </svg>
+                  Grading certificate
+                </h4>
+                <p class="font-sans text-[11px] lg:text-sm text-gray-500 mt-0.5 lg:mt-1 hidden sm:block">Grade,
+                  condition notes, IMEI list.</p>
+              </div>
+
+              <div class="portal-feature opacity-30 transition-opacity duration-300">
+                <h4 class="font-display font-bold text-sm lg:text-lg text-brand-obsidian flex items-center gap-2">
+                  <svg class="w-4 h-4 lg:w-5 lg:h-5 text-brand-light" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+                  </svg>
+                  Bid history
+                </h4>
+                <p class="font-sans text-[11px] lg:text-sm text-gray-500 mt-0.5 lg:mt-1 hidden sm:block">Real-time. All
+                  bidders see all bids.</p>
+              </div>
+
+              <div class="portal-feature opacity-30 transition-opacity duration-300">
+                <h4 class="font-display font-bold text-sm lg:text-lg text-brand-obsidian flex items-center gap-2">
+                  <svg class="w-4 h-4 lg:w-5 lg:h-5 text-brand-light" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z">
+                    </path>
+                  </svg>
+                  Lot specification
+                </h4>
+                <p class="font-sans text-[11px] lg:text-sm text-gray-500 mt-0.5 lg:mt-1 hidden sm:block">Model, storage,
+                  colour, lock status, origin.</p>
+              </div>
+
+              <div class="portal-feature opacity-30 transition-opacity duration-300">
+                <h4 class="font-display font-bold text-sm lg:text-lg text-brand-obsidian flex items-center gap-2">
+                  <svg class="w-4 h-4 lg:w-5 lg:h-5 text-brand-light" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                    </path>
+                  </svg>
+                  Source market
+                </h4>
+                <p class="font-sans text-[11px] lg:text-sm text-gray-500 mt-0.5 lg:mt-1 hidden sm:block">Country of
+                  origin and partner type.</p>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN: Premium UI Card Mockup -->
+          <div class="w-full lg:w-1/2 relative perspective-container z-10 flex justify-center lg:justify-end shrink-0">
+
+            <div
+              class="absolute inset-0 bg-brand-primary/10 blur-[60px] rounded-full pointer-events-none transform translate-y-10">
+            </div>
+
+            <!-- Highly responsive UI card padding and font sizing -->
+            <div id="ui-card-mockup"
+              class="w-full max-w-[600px] bg-[#0A0A0B] border border-gray-800 rounded-2xl lg:rounded-3xl shadow-[0_30px_80px_-20px_rgba(78,0,142,0.3)] overflow-hidden transform-3d relative">
+
+              <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
+
+              <!-- Top Bar -->
+              <div class="p-4 lg:p-8 border-b border-gray-800/80 relative">
+                <div class="flex justify-between items-start mb-3 lg:mb-4">
+                  <div>
+                    <p class="font-mono text-[8px] lg:text-[10px] text-gray-500 tracking-widest uppercase mb-1">LOT
+                      #NL-2026-08-4471</p>
+                    <h3 class="font-display font-bold text-lg lg:text-3xl text-white">iPhone 14 Pro <span
+                        class="text-gray-500 font-light hidden sm:inline">— Grade A</span></h3>
+                  </div>
+
+                  <!-- LIVE BADGE -->
+                  <div
+                    class="flex items-center gap-1.5 lg:gap-2 bg-red-500/10 border border-red-500/20 px-2 lg:px-3 py-1 lg:py-1.5 rounded-full shrink-0">
+                    <div class="w-1.5 h-1.5 lg:w-2 lg:h-2 bg-red-500 rounded-full animate-pulse"></div>
+                    <span
+                      class="font-sans text-[8px] lg:text-[10px] font-bold text-red-400 tracking-widest uppercase">Live
+                      <span class="hidden sm:inline">— 2h 14m</span></span>
+                  </div>
+                </div>
+
+                <!-- SPECS / SOURCE -->
+                <div id="ui-specs-box"
+                  class="bg-[#151518] border border-gray-800 rounded-lg lg:rounded-xl p-3 lg:p-4 flex flex-row items-center gap-3 lg:gap-4 transition-all duration-300">
+                  <div
+                    class="w-8 h-8 lg:w-10 lg:h-10 shrink-0 bg-brand-mint/20 border border-brand-mint text-brand-mint flex items-center justify-center rounded-lg font-display font-bold text-sm lg:text-xl">
+                    A</div>
+                  <div class="flex-1">
+                    <p id="ui-source-text"
+                      class="font-sans text-[10px] lg:text-sm font-semibold text-white mb-0.5 lg:mb-1 transition-colors duration-300">
+                      128 units <span class="text-gray-600 px-1">•</span> EU stock</p>
+                    <p id="ui-specs-text"
+                      class="font-sans text-[8px] lg:text-xs text-gray-500 transition-colors duration-300 line-clamp-1">
+                      128GB • Midnight • Unlocked • Verified</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bidding Area -->
+              <div class="p-4 lg:p-8 bg-[#0D0D0F]">
+
+                <!-- PROGRESS & BIDS (Fixed Overlap by aligning properly within the grid) -->
+                <div id="ui-bid-box"
+                  class="flex justify-between items-end mb-4 lg:mb-6 transition-all duration-300 p-2 -mx-2 rounded-lg gap-2">
+                  <div class="w-full">
+                    <div class="flex justify-between text-[8px] lg:text-xs text-gray-500 mb-2">
+                      <span>Start: €280/u</span>
+                      <span class="text-brand-bright">14 active bidders</span>
+                      <span class="hidden sm:inline">23 bids placed</span>
+                    </div>
+                    <div class="w-full h-1 lg:h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                      <div class="w-[65%] h-full bg-brand-bright relative">
+                        <div class="absolute top-0 right-0 w-8 h-full bg-white/40 blur-[2px]"></div>
+                      </div>
+                    </div>
+
+                    <!-- NEW PLACEMENT: Links moved directly under the progress bar to avoid overlapping the price -->
+                    <div class="flex items-center justify-start gap-3 lg:gap-4 mt-3 pointer-events-none">
+                      <span id="ui-ar-link"
+                        class="flex items-center gap-1 font-sans text-[8px] lg:text-[10px] font-semibold text-gray-500 transition-colors duration-300">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                          </path>
+                        </svg>
+                        AR video
+                      </span>
+                      <span id="ui-cert-link"
+                        class="flex items-center gap-1 font-sans text-[8px] lg:text-[10px] font-semibold text-gray-500 transition-colors duration-300">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                          </path>
+                        </svg>
+                        Grade cert
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="text-right pl-2 lg:pl-6 shrink-0 pb-1 lg:pb-3">
+                    <p class="font-sans text-[8px] lg:text-[10px] text-gray-500 uppercase tracking-widest mb-0.5">High
+                      bid</p>
+                    <p class="font-display font-bold text-xl lg:text-3xl text-brand-mint">€334<span
+                        class="text-xs lg:text-base text-brand-mint/60 font-light">/u</span></p>
+                  </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="flex flex-row items-center gap-2 lg:gap-4 mt-2 lg:mt-0">
+                  <div class="flex-1 relative">
+                    <input type="text" placeholder="Enter bid... (€335+)"
+                      class="w-full bg-[#1A1A1C] border border-gray-700 text-white text-xs lg:text-sm px-3 lg:px-4 py-2.5 lg:py-3.5 rounded-lg focus:outline-none focus:border-brand-primary placeholder-gray-600"
+                      readonly>
+                  </div>
+                  <button
+                    class="shrink-0 bg-[#FFD700] text-brand-obsidian font-sans font-bold text-xs lg:text-sm px-4 lg:px-8 py-2.5 lg:py-3.5 rounded-lg">
+                    Place bid
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: PUBLISHED FEES (THE TRUST LEDGER) -->
+    <section id="fees-section" class="relative w-full bg-white py-24 lg:py-32 overflow-hidden">
+
+      <!-- Subtle background ambient glow -->
+      <div
+        class="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-bg/50 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/4">
+      </div>
+
+      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+
+        <!-- Section Header -->
+        <div class="mb-12 lg:mb-16 fee-anim">
+          <p class="font-mono text-[10px] md:text-xs font-bold tracking-[0.2em] text-[#FFB800] uppercase mb-3">
+            Published Fees
+          </p>
+          <h2
+            class="font-display font-light text-3xl md:text-4xl lg:text-5xl text-brand-obsidian tracking-tight leading-[1.1]">
+            No hidden costs. <span class="font-medium">Ever.</span>
+          </h2>
+        </div>
+
+        <!-- 2-Column Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+
+          <!-- LEFT COLUMN: The Ledger Table -->
+          <div class="w-full lg:col-span-7 flex flex-col">
+
+            <div class="w-full border border-gray-200 rounded-2xl overflow-hidden shadow-sm bg-white">
+
+              <!-- Table Header -->
+              <div class="flex justify-between items-center px-5 lg:px-8 py-4 bg-gray-50 border-b border-gray-200">
+                <span class="font-sans text-[10px] font-bold text-gray-500 uppercase tracking-widest">Fee Type</span>
+                <span class="font-sans text-[10px] font-bold text-gray-500 uppercase tracking-widest">Amount</span>
+              </div>
+
+              <!-- Table Rows -->
+              <div class="flex flex-col">
+                <!-- Row 1 -->
+                <div
+                  class="fee-row flex justify-between items-center px-5 lg:px-8 py-5 md:py-6 border-b border-gray-100 hover:bg-gray-50/80 transition-colors group">
+                  <span
+                    class="font-sans text-sm md:text-base text-gray-600 font-medium group-hover:text-brand-obsidian transition-colors">Buyer
+                    commission (per lot)</span>
+                  <span class="font-sans text-sm md:text-base font-bold text-[#FFB800] text-right">Published · Fixed
+                    rate</span>
+                </div>
+
+                <!-- Row 2 -->
+                <div
+                  class="fee-row flex justify-between items-center px-5 lg:px-8 py-5 md:py-6 border-b border-gray-100 hover:bg-gray-50/80 transition-colors group">
+                  <span
+                    class="font-sans text-sm md:text-base text-gray-600 font-medium group-hover:text-brand-obsidian transition-colors">Registration</span>
+                  <span class="font-sans text-sm md:text-base font-bold text-brand-mint text-right">Free</span>
+                </div>
+
+                <!-- Row 3 -->
+                <div
+                  class="fee-row flex justify-between items-center px-5 lg:px-8 py-5 md:py-6 border-b border-gray-100 hover:bg-gray-50/80 transition-colors group">
+                  <span
+                    class="font-sans text-sm md:text-base text-gray-600 font-medium group-hover:text-brand-obsidian transition-colors">Bidding</span>
+                  <span class="font-sans text-sm md:text-base font-bold text-brand-mint text-right">Free</span>
+                </div>
+
+                <!-- Row 4 -->
+                <div
+                  class="fee-row flex justify-between items-center px-5 lg:px-8 py-5 md:py-6 border-b border-gray-100 hover:bg-gray-50/80 transition-colors group">
+                  <span
+                    class="font-sans text-sm md:text-base text-gray-600 font-medium group-hover:text-brand-obsidian transition-colors">Grading
+                    certificates</span>
+                  <span class="font-sans text-sm md:text-base font-bold text-brand-mint text-right">Included</span>
+                </div>
+
+                <!-- Row 5 -->
+                <div
+                  class="fee-row flex justify-between items-center px-5 lg:px-8 py-5 md:py-6 border-b border-gray-100 hover:bg-gray-50/80 transition-colors group">
+                  <span
+                    class="font-sans text-sm md:text-base text-gray-600 font-medium group-hover:text-brand-obsidian transition-colors">Logistics
+                    coordination</span>
+                  <span class="font-sans text-sm md:text-base font-bold text-brand-obsidian text-right">Optional
+                    add-on</span>
+                </div>
+
+                <!-- Row 6 -->
+                <div
+                  class="fee-row flex justify-between items-center px-5 lg:px-8 py-5 md:py-6 hover:bg-gray-50/80 transition-colors group">
+                  <span
+                    class="font-sans text-sm md:text-base text-gray-600 font-medium group-hover:text-brand-obsidian transition-colors">Payment
+                    processing</span>
+                  <span class="font-sans text-sm md:text-base font-bold text-brand-obsidian text-right">Included</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Table Footer Link -->
+            <div class="mt-6 fee-anim">
+              <a href="#"
+                class="inline-flex items-center gap-1.5 font-sans text-sm font-semibold text-brand-mint hover:text-brand-mint/80 transition-colors">
+                View complete fee schedule
+                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                  </path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN: Narrative Context Card -->
+          <div class="w-full lg:col-span-5 relative">
+            <!-- sticky top-32 allows the card to smoothly float down alongside the table on desktop -->
+            <div
+              class="bg-brand-bg rounded-2xl lg:rounded-[2rem] p-8 lg:p-10 sticky top-32 fee-card shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] border border-white/50 backdrop-blur-sm">
+              <h3 class="font-display font-bold text-xl lg:text-2xl text-brand-obsidian mb-4 lg:mb-5">
+                Why we publish every fee
+              </h3>
+              <p class="font-sans text-sm lg:text-base text-gray-600 leading-relaxed mb-6 lg:mb-8">
+                NorthLadder charges the same rate to every buyer and every seller — and publishes it. This is what
+                "neutral marketplace" means in practice. You never pay a hidden margin because NL never holds inventory
+                or acts as a buyer itself.
+              </p>
+              <a href="#"
+                class="inline-flex items-center gap-1.5 font-sans text-sm font-semibold text-brand-mint hover:text-brand-mint/80 transition-colors group">
+                The neutral marketplace model explained
+                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                  </path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: WHO CAN BUY (THE SECURITY GATEWAY) -->
+    <section id="kyb-gateway-section" class="relative w-full py-24 lg:py-32 bg-brand-obsidian overflow-hidden">
+
+      <!-- Subtle ambient security glow -->
+      <div
+        class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand-primary/10 rounded-[100%] blur-[100px] pointer-events-none translate-y-1/2">
+      </div>
+
+      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+
+        <!-- Section Header -->
+        <div class="mb-16 md:mb-24 text-center lg:text-left gateway-fade">
+          <p class="font-mono text-[10px] md:text-xs font-bold tracking-[0.2em] text-[#FFD700] uppercase mb-4">
+            Who Can Buy
+          </p>
+          <h2 class="font-display font-medium text-3xl md:text-5xl text-white tracking-tight leading-[1.1]">
+            Registered B2B buyers <span class="text-gray-500 font-light">only.</span>
+          </h2>
+        </div>
+
+        <!-- The Node Circuit Grid -->
+        <div class="relative w-full">
+
+          <!-- Background Track Line (Desktop Horizontal) -->
+          <div class="hidden lg:block absolute top-[36px] left-8 right-8 h-[1px] bg-gray-800 z-0">
+            <!-- Animated Glowing Line -->
+            <div id="gateway-line-x"
+              class="h-full w-0 bg-gradient-to-r from-brand-primary via-brand-bright to-brand-mint shadow-[0_0_15px_rgba(72,180,141,0.8)]">
+            </div>
+          </div>
+
+          <!-- Background Track Line (Mobile/Tablet Vertical) -->
+          <div class="block lg:hidden absolute top-8 bottom-8 left-[36px] w-[1px] bg-gray-800 z-0">
+            <!-- Animated Glowing Line -->
+            <div id="gateway-line-y"
+              class="w-full h-0 bg-gradient-to-b from-brand-primary via-brand-bright to-brand-mint shadow-[0_0_15px_rgba(72,180,141,0.8)]">
+            </div>
+          </div>
+
+          <!-- 4-Step Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-6 relative z-10">
+
+            <!-- Node 1: Registered Business -->
+            <div class="gateway-node flex flex-row lg:flex-col items-start gap-6 lg:gap-8 group">
+              <!-- Icon Container -->
+              <div
+                class="shrink-0 w-16 h-16 lg:w-[72px] lg:h-[72px] rounded-2xl bg-[#151518] border border-gray-800 flex items-center justify-center relative transition-colors duration-500 node-icon-box">
+                <svg class="w-6 h-6 lg:w-8 lg:h-8 text-gray-500 transition-colors duration-500 node-icon" fill="none"
+                  stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                  </path>
+                </svg>
+                <!-- Success Ping -->
+                <div class="absolute inset-0 rounded-2xl border-2 border-brand-mint scale-[1.5] opacity-0 node-ping">
+                </div>
+              </div>
+              <!-- Text Content -->
+              <div class="flex flex-col pt-1 lg:pt-0">
+                <h3 class="font-display font-bold text-lg md:text-xl text-white mb-2">Registered business</h3>
+                <p class="font-sans text-sm text-gray-400 leading-relaxed">
+                  Active business registration in your jurisdiction. We accept businesses from 40+ countries.
+                </p>
+              </div>
+            </div>
+
+            <!-- Node 2: IBAN / Bank Account -->
+            <div class="gateway-node flex flex-row lg:flex-col items-start gap-6 lg:gap-8 group">
+              <div
+                class="shrink-0 w-16 h-16 lg:w-[72px] lg:h-[72px] rounded-2xl bg-[#151518] border border-gray-800 flex items-center justify-center relative transition-colors duration-500 node-icon-box">
+                <svg class="w-6 h-6 lg:w-8 lg:h-8 text-gray-500 transition-colors duration-500 node-icon" fill="none"
+                  stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                </svg>
+                <div class="absolute inset-0 rounded-2xl border-2 border-brand-mint scale-[1.5] opacity-0 node-ping">
+                </div>
+              </div>
+              <div class="flex flex-col pt-1 lg:pt-0">
+                <h3 class="font-display font-bold text-lg md:text-xl text-white mb-2">IBAN / bank account</h3>
+                <p class="font-sans text-sm text-gray-400 leading-relaxed">
+                  Valid IBAN for settlement. Required for invoice processing and rapid payment refunds.
+                </p>
+              </div>
+            </div>
+
+            <!-- Node 3: Trading Credentials -->
+            <div class="gateway-node flex flex-row lg:flex-col items-start gap-6 lg:gap-8 group">
+              <div
+                class="shrink-0 w-16 h-16 lg:w-[72px] lg:h-[72px] rounded-2xl bg-[#151518] border border-gray-800 flex items-center justify-center relative transition-colors duration-500 node-icon-box">
+                <svg class="w-6 h-6 lg:w-8 lg:h-8 text-gray-500 transition-colors duration-500 node-icon" fill="none"
+                  stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                  </path>
+                </svg>
+                <div class="absolute inset-0 rounded-2xl border-2 border-brand-mint scale-[1.5] opacity-0 node-ping">
+                </div>
+              </div>
+              <div class="flex flex-col pt-1 lg:pt-0">
+                <h3 class="font-display font-bold text-lg md:text-xl text-white mb-2">Trading credentials</h3>
+                <p class="font-sans text-sm text-gray-400 leading-relaxed">
+                  Evidence of secondary market trading activity. We support importers, refurbishers, distributors, and
+                  retailers.
+                </p>
+              </div>
+            </div>
+
+            <!-- Node 4: KYB Verification -->
+            <div class="gateway-node flex flex-row lg:flex-col items-start gap-6 lg:gap-8 group">
+              <div
+                class="shrink-0 w-16 h-16 lg:w-[72px] lg:h-[72px] rounded-2xl bg-[#151518] border border-gray-800 flex items-center justify-center relative transition-colors duration-500 node-icon-box">
+                <svg class="w-6 h-6 lg:w-8 lg:h-8 text-gray-500 transition-colors duration-500 node-icon" fill="none"
+                  stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                  </path>
+                </svg>
+                <div class="absolute inset-0 rounded-2xl border-2 border-brand-mint scale-[1.5] opacity-0 node-ping">
+                </div>
+              </div>
+              <div class="flex flex-col pt-1 lg:pt-0">
+                <h3 class="font-display font-bold text-lg md:text-xl text-white mb-2">KYB verification</h3>
+                <p class="font-sans text-sm text-gray-400 leading-relaxed">
+                  Know-Your-Business check completed by our compliance team. Clearances typically granted within 24
+                  hours.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Call To Actions -->
+        <div
+          class="mt-16 lg:mt-24 flex flex-col sm:flex-row justify-center lg:justify-start items-center gap-4 gateway-fade">
+          <a href="#register"
+            class="w-full sm:w-auto inline-flex items-center justify-center font-sans font-semibold text-brand-obsidian bg-[#FFD700] px-8 py-3.5 rounded-lg hover:bg-[#F2C800] transition-transform hover:-translate-y-1 shadow-[0_0_20px_rgba(255,215,0,0.15)]">
+            Start registration
+            <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
+          <a href="#contact"
+            class="w-full sm:w-auto inline-flex items-center justify-center font-sans font-semibold text-white bg-transparent border border-gray-700 px-8 py-3.5 rounded-lg hover:bg-gray-800 transition-colors">
+            Got questions? Contact us
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 6: FINAL CTA (MINIMAL STRIP) -->
+    <section id="final-cta-section" class="w-full bg-white border-t border-gray-200 py-12 md:py-16">
+      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-8">
+
+        <!-- Text Content -->
+        <div class="text-center md:text-left cta-fade">
+          <h2 class="font-display font-medium text-2xl md:text-3xl text-brand-obsidian mb-2 tracking-tight">
+            Ready to bid on your first lot?
+          </h2>
+          <p class="font-sans text-sm md:text-base text-gray-500 font-medium">
+            Verification in 24h. Browse live auctions immediately after approval.
+          </p>
+        </div>
+
+        <!-- Call To Action Button -->
+        <div class="shrink-0 cta-fade group">
+          <a href="#register"
+            class="inline-flex items-center justify-center font-sans font-bold text-brand-obsidian bg-[#FFD700] px-8 py-3.5 md:py-4 rounded-lg hover:bg-[#F2C800] transition-all duration-300 hover:shadow-md">
+            Register as buyer
+            <svg class="w-4 h-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+        </div>
+
+      </div>
+    </section>
   </main>
 
   <!-- FOOTER -->
@@ -1380,6 +1918,215 @@
 
         // Buffer for reading
         tlProcess.to({}, { duration: 0.5 });
+      }
+
+      // --- SECTION 3: THE BUYER PORTAL (INTERACTIVE UI DEMO) ---
+      const portalPin = document.getElementById("portal-pin-wrapper");
+
+      if (portalPin) {
+        const features = gsap.utils.toArray(".portal-feature");
+        const indicator = document.getElementById("feature-indicator");
+
+        const uiArLink = document.getElementById("ui-ar-link");
+        const uiCertLink = document.getElementById("ui-cert-link");
+        const uiBidBox = document.getElementById("ui-bid-box");
+        const uiSpecsBox = document.getElementById("ui-specs-box");
+        const uiSpecsText = document.getElementById("ui-specs-text");
+        const uiSourceText = document.getElementById("ui-source-text");
+        const uiCard = document.getElementById("ui-card-mockup");
+
+        gsap.set(uiCard, { rotationY: -5, rotationX: 5 });
+
+        const tlPortal = gsap.timeline({
+          scrollTrigger: {
+            trigger: portalPin,
+            start: "top top",
+            end: "+=300%",
+            pin: true,
+            scrub: 0.5,
+          }
+        });
+
+        features.forEach((feature, i) => {
+
+          // Using offsetTop ensures perfect mobile tracking regardless of padding changes
+          tlPortal.to(indicator, { y: () => feature.offsetTop, duration: 0.5 }, i)
+            .to(feature, { opacity: 1, duration: 0.5 }, i);
+
+          // Trigger specific UI highlights
+          if (i === 0) {
+            tlPortal.to(uiArLink, { color: "#B599FA", scale: 1.1, duration: 0.5 }, i);
+          }
+          else if (i === 1) {
+            tlPortal.to(uiArLink, { color: "#6B7280", scale: 1, duration: 0.5 }, i)
+              .to(uiCertLink, { color: "#B599FA", scale: 1.1, duration: 0.5 }, i);
+          }
+          else if (i === 2) {
+            tlPortal.to(uiCertLink, { color: "#6B7280", scale: 1, duration: 0.5 }, i)
+              .to(uiBidBox, { backgroundColor: "rgba(181, 153, 250, 0.1)", scale: 1.02, duration: 0.5 }, i);
+          }
+          else if (i === 3) {
+            tlPortal.to(uiBidBox, { backgroundColor: "transparent", scale: 1, duration: 0.5 }, i)
+              .to(uiSpecsBox, { borderColor: "#B599FA", duration: 0.5 }, i)
+              .to(uiSpecsText, { color: "#B599FA", duration: 0.5 }, i);
+          }
+          else if (i === 4) {
+            tlPortal.to(uiSpecsText, { color: "#6B7280", duration: 0.5 }, i)
+              .to(uiSourceText, { color: "#B599FA", duration: 0.5 }, i);
+          }
+
+          if (i !== features.length - 1) {
+            tlPortal.to(feature, { opacity: 0.3, duration: 0.5 }, i + 0.8);
+          }
+
+          tlPortal.to(uiCard, { rotationY: -5 + (i * 2), duration: 1 }, i);
+        });
+
+        tlPortal.to(uiSpecsBox, { borderColor: "#1F2937", duration: 0.5 }, features.length)
+          .to(uiSourceText, { color: "#FFFFFF", duration: 0.5 }, features.length);
+      }
+
+
+      // --- SECTION 4: PUBLISHED FEES (THE TRUST LEDGER) ---
+      const feesSection = document.getElementById("fees-section");
+
+      if (feesSection) {
+
+        const tlFees = gsap.timeline({
+          scrollTrigger: {
+            trigger: feesSection,
+            start: "top 75%", // Triggers when the top of the section hits 75% down the viewport
+            toggleActions: "play none none reverse" // Reverses cleanly if the user scrolls back up
+          }
+        });
+
+        // 1. Fade up the headers
+        tlFees.from(".fee-anim", {
+          y: 30,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out"
+        });
+
+        // 2. Stagger the table rows like lines of code executing
+        tlFees.from(".fee-row", {
+          x: -20,
+          opacity: 0,
+          duration: 0.5,
+          stagger: 0.08,
+          ease: "power2.out"
+        }, "-=0.4"); // Starts slightly before the headers finish
+
+        // 3. Drop in the narrative card on the right
+        tlFees.from(".fee-card", {
+          y: 40,
+          opacity: 0,
+          duration: 1,
+          ease: "back.out(1.2)"
+        }, "-=0.6");
+      }
+
+      // --- SECTION 5: WHO CAN BUY (SECURITY GATEWAY) ---
+      const gatewaySection = document.getElementById("kyb-gateway-section");
+
+      if (gatewaySection) {
+
+        const tlGateway = gsap.timeline({
+          scrollTrigger: {
+            trigger: gatewaySection,
+            start: "top 70%",
+            end: "bottom 80%",
+            toggleActions: "play none none reverse"
+          }
+        });
+
+        // 1. Fade up the headers and CTAs
+        tlGateway.from(".gateway-fade", {
+          y: 30,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.2,
+          ease: "power3.out"
+        }, 0);
+
+        // 2. Draw the connection line (Detect if mobile or desktop)
+        const isDesktop = window.innerWidth >= 1024;
+
+        if (isDesktop) {
+          // Draw horizontally on Desktop
+          tlGateway.to("#gateway-line-x", {
+            width: "100%",
+            duration: 2,
+            ease: "power1.inOut"
+          }, 0.5);
+        } else {
+          // Draw vertically on Mobile
+          tlGateway.to("#gateway-line-y", {
+            height: "100%",
+            duration: 2,
+            ease: "power1.inOut"
+          }, 0.5);
+        }
+
+        // 3. Stagger the nodes activating as the line passes them
+        const nodes = gsap.utils.toArray(".gateway-node");
+
+        nodes.forEach((node, i) => {
+          // Calculate delay so nodes light up progressively as the line draws
+          const nodeDelay = 0.5 + (i * 0.45);
+
+          const iconBox = node.querySelector(".node-icon-box");
+          const icon = node.querySelector(".node-icon");
+          const ping = node.querySelector(".node-ping");
+
+          // Slide the text block up slightly
+          tlGateway.from(node, {
+            y: 20,
+            opacity: 0,
+            duration: 0.6,
+            ease: "power2.out"
+          }, nodeDelay - 0.2);
+
+          // Ignite the Icon Box
+          tlGateway.to(iconBox, {
+            borderColor: "#48B48D", // brand-mint
+            backgroundColor: "rgba(72,180,141,0.1)",
+            duration: 0.3
+          }, nodeDelay);
+
+          // Light up the SVG Icon
+          tlGateway.to(icon, {
+            color: "#48B48D",
+            duration: 0.3
+          }, nodeDelay);
+
+          // Fire the "Access Granted" Ping ring
+          tlGateway.fromTo(ping,
+            { scale: 0.8, opacity: 1 },
+            { scale: 1.6, opacity: 0, duration: 0.8, ease: "power2.out" },
+            nodeDelay
+          );
+        });
+      }
+
+
+      // --- SECTION 6: FINAL CTA (MINIMAL STRIP) ---
+      const ctaSection = document.getElementById("final-cta-section");
+
+      if (ctaSection) {
+        gsap.from(".cta-fade", {
+          scrollTrigger: {
+            trigger: ctaSection,
+            start: "top 90%", // Triggers nicely just as the strip enters the viewport
+            toggleActions: "play none none reverse"
+          },
+          y: 20,
+          opacity: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "power2.out"
+        });
       }
       // --- CURSOR LOGIC ---
       const prefersReducedMotion = window.matchMedia(
