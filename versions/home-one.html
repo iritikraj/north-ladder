@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorthLadder - Circular Commerce Engine</title>
+
+  <!-- High-Trust Enterprise Typography: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- GSAP Core -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: "#0A0F1C",       // Deepest navy/black for high-contrast text
+            surface: "#FFFFFF",   // Pure white for foregrounds
+            pearl: "#F7F8FA",     // Soft off-white for backgrounds and footers
+            steel: "#64748B",     // Professional gray for secondary text
+            mint: "#10B981",      // Vivid tech-green for interactive accents
+            "mint-light": "#D1FAE5"
+          },
+          fontFamily: {
+            sans: ['"Inter"', 'sans-serif'],
+          },
+          boxShadow: {
+            'elevated': '0 20px 40px -15px rgba(10, 15, 28, 0.05)',
+            'dropdown': '0 10px 30px -10px rgba(10, 15, 28, 0.1)',
+          }
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body {
+      background-color: #FFFFFF;
+      color: #0A0F1C;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection {
+      background: #D1FAE5;
+      color: #0A0F1C;
+    }
+
+    /* Enterprise Glass Header */
+    .glass-header {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(10, 15, 28, 0.06);
+    }
+
+    /* Clean Dropdown Animations */
+    .nav-item {
+      perspective: 1000px;
+    }
+
+    .dropdown-tray {
+      visibility: hidden;
+      opacity: 0;
+      transform: translateY(8px) rotateX(-2deg);
+      transform-origin: top center;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-item:hover .dropdown-tray {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0) rotateX(0deg);
+    }
+
+    /* Minimalist underline effect */
+    .hover-underline {
+      position: relative;
+    }
+
+    .hover-underline::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 1.5px;
+      bottom: -2px;
+      left: 0;
+      background-color: #10B981;
+      transition: width 0.3s ease;
+    }
+
+    .hover-underline:hover::after {
+      width: 100%;
+    }
+
+    /* Hide scrollbar for clean UI */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #F7F8FA;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+
+    @keyframes marqueeScroll {
+      0% {
+        transform: translate3d(0, 0, 0);
+      }
+
+      100% {
+        transform: translate3d(-50%, 0, 0);
+      }
+    }
+  </style>
+</head>
+
+<body class="flex flex-col min-h-screen">
+
+  <!-- ========================================= -->
+  <!-- NAVBAR: THE CONTROL PANEL                 -->
+  <!-- ========================================= -->
+  <header id="main-nav" class="fixed top-0 left-0 w-full z-[100] glass-header transition-transform duration-500">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-10 h-[72px] flex items-center justify-between">
+
+      <!-- Left: Logo & Main Navigation -->
+      <div class="flex items-center gap-12 h-full">
+
+        <!-- Strictly Left-Aligned Logo -->
+        <a href="#" class="font-sans text-xl font-bold tracking-tight text-ink shrink-0">
+          <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+            class="h-6 w-auto brightness-0" />
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden lg:flex items-center gap-8 h-full">
+
+          <!-- Dropdown 1: Partners -->
+          <div class="nav-item h-full flex items-center relative cursor-pointer">
+            <span class="text-[13px] font-medium text-steel hover:text-ink transition-colors flex items-center gap-1.5">
+              For Partners
+              <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </span>
+            <div
+              class="dropdown-tray absolute top-[72px] left-0 w-[240px] bg-white border border-gray-100 rounded-xl shadow-dropdown p-3 z-50">
+              <div class="flex flex-col">
+                <a href="partner-hub.html"
+                  class="px-4 py-2.5 text-[13px] font-semibold text-ink hover:bg-pearl rounded-lg transition-colors">Partner
+                  Hub</a>
+                <div class="h-[1px] bg-gray-100 my-1 mx-4"></div>
+                <a href="#retailers"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">For
+                  Retailers</a>
+                <a href="partners/telcos.html"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">For
+                  Telcos & Operators</a>
+                <a href="#oems"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">For
+                  OEMs & Brands</a>
+                <a href="#ecommerce"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">For
+                  Ecommerce</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dropdown 2: Buyers -->
+          <div class="nav-item h-full flex items-center relative cursor-pointer">
+            <span class="text-[13px] font-medium text-steel hover:text-ink transition-colors flex items-center gap-1.5">
+              For Buyers
+              <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </span>
+            <div
+              class="dropdown-tray absolute top-[72px] left-0 w-[220px] bg-white border border-gray-100 rounded-xl shadow-dropdown p-3 z-50">
+              <div class="flex flex-col">
+                <a href="buyer-hub.html"
+                  class="px-4 py-2.5 text-[13px] font-semibold text-ink hover:bg-pearl rounded-lg transition-colors">Buyer
+                  Hub</a>
+                <div class="h-[1px] bg-gray-100 my-1 mx-4"></div>
+                <a href="how-auction-work.html"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">How
+                  Auctions Work</a>
+                <a href="#register"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">Register
+                  as Buyer</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dropdown 3: Marketplace -->
+          <div class="nav-item h-full flex items-center relative cursor-pointer">
+            <span class="text-[13px] font-medium text-steel hover:text-ink transition-colors flex items-center gap-1.5">
+              Marketplace
+              <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </span>
+            <div
+              class="dropdown-tray absolute top-[72px] left-0 w-[200px] bg-white border border-gray-100 rounded-xl shadow-dropdown p-3 z-50">
+              <div class="flex flex-col">
+                <a href="#platform"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">The
+                  Platform</a>
+                <a href="#ai-grading"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">AI
+                  Grading Engine</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dropdown 4: Insights -->
+          <div class="nav-item h-full flex items-center relative cursor-pointer">
+            <span class="text-[13px] font-medium text-steel hover:text-ink transition-colors flex items-center gap-1.5">
+              Insights
+              <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </span>
+            <div
+              class="dropdown-tray absolute top-[72px] left-0 w-[260px] bg-white border border-gray-100 rounded-xl shadow-dropdown p-3 z-50">
+              <div class="flex flex-col">
+                <a href="#rv-index"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">RV
+                  Index Data</a>
+                <a href="#reports"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">Market
+                  Reports</a>
+                <a href="#leaders"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">60
+                  Secs With Leaders</a>
+                <a href="#blogs"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">Blogs</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dropdown 5: Company -->
+          <div class="nav-item h-full flex items-center relative cursor-pointer">
+            <span class="text-[13px] font-medium text-steel hover:text-ink transition-colors flex items-center gap-1.5">
+              Company
+              <svg class="w-3.5 h-3.5 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </span>
+            <div
+              class="dropdown-tray absolute top-[72px] left-0 w-[200px] bg-white border border-gray-100 rounded-xl shadow-dropdown p-3 z-50">
+              <div class="flex flex-col">
+                <a href="#about"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">Inside
+                  NorthLadder</a>
+                <a href="#builders"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">The
+                  Builders</a>
+                <a href="#stories"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">Customer
+                  Stories</a>
+                <a href="#newsroom"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">Newsroom</a>
+                <a href="#careers"
+                  class="px-4 py-2 text-[13px] font-medium text-steel hover:text-ink hover:bg-pearl rounded-lg transition-colors">Join
+                  The Team</a>
+              </div>
+            </div>
+          </div>
+
+        </nav>
+      </div>
+
+      <!-- Right: Utilities & CTA -->
+      <div class="flex items-center gap-6">
+
+        <!-- Desktop Language Toggle -->
+        <div class="nav-item h-full hidden lg:flex items-center relative cursor-pointer">
+          <span class="text-[13px] font-medium text-steel hover:text-ink transition-colors">EN</span>
+          <div
+            class="dropdown-tray absolute top-[72px] right-0 w-[140px] bg-white border border-gray-100 rounded-xl shadow-dropdown p-2 z-50">
+            <div class="flex flex-col text-[12px] font-medium text-steel">
+              <a href="#" class="px-3 py-2 hover:bg-pearl hover:text-ink rounded-lg">English</a>
+              <a href="#" class="px-3 py-2 hover:bg-pearl hover:text-ink rounded-lg">العربية (AR)</a>
+              <a href="#" class="px-3 py-2 hover:bg-pearl hover:text-ink rounded-lg">Deutsch</a>
+              <a href="#" class="px-3 py-2 hover:bg-pearl hover:text-ink rounded-lg">Español</a>
+              <a href="#" class="px-3 py-2 hover:bg-pearl hover:text-ink rounded-lg">Français</a>
+            </div>
+          </div>
+        </div>
+
+        <a href="#login" class="hidden md:block text-[13px] font-medium text-steel hover:text-ink transition-colors">Log
+          in</a>
+
+        <button
+          class="hidden md:block bg-ink text-white text-[13px] font-semibold px-5 py-2.5 rounded-lg hover:bg-mint hover:shadow-elevated transition-all duration-300">
+          Get Started
+        </button>
+
+        <!-- Mobile Hamburger Menu -->
+        <button id="mobile-menu-btn" class="lg:hidden text-ink p-1">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================= -->
+  <!-- MOBILE FULL-SCREEN MENU                   -->
+  <!-- ========================================= -->
+  <div id="mobile-menu" class="fixed inset-0 bg-white z-[90] invisible opacity-0 pt-[80px] pb-10 px-6 overflow-y-auto">
+    <div class="flex flex-col h-full">
+
+      <!-- Mobile Links -->
+      <nav class="flex flex-col gap-6 mt-8">
+        <div class="mobile-item border-b border-gray-100 pb-4">
+          <p class="text-[11px] font-bold text-steel uppercase tracking-wider mb-4">Ecosystem</p>
+          <div class="flex flex-col gap-4 pl-2">
+            <a href="partner-hub.html" class="text-xl font-semibold text-ink">For Partners</a>
+            <a href="buyer-hub.html" class="text-xl font-semibold text-ink">For Buyers</a>
+            <a href="#marketplace" class="text-xl font-semibold text-ink">Neutral Marketplace</a>
+          </div>
+        </div>
+
+        <div class="mobile-item border-b border-gray-100 pb-4">
+          <p class="text-[11px] font-bold text-steel uppercase tracking-wider mb-4">Enterprise</p>
+          <div class="flex flex-col gap-4 pl-2">
+            <a href="#insights" class="text-lg font-medium text-gray-700">Data Insights & RV Index</a>
+            <a href="#company" class="text-lg font-medium text-gray-700">Inside NorthLadder</a>
+            <a href="#newsroom" class="text-lg font-medium text-gray-700">News & Media</a>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Mobile Footer Actions -->
+      <div class="mobile-item mt-auto pt-8 flex flex-col gap-4">
+        <select
+          class="w-full bg-pearl border border-gray-200 rounded-lg px-4 py-3 text-sm font-medium text-ink outline-none">
+          <option>English (Global)</option>
+          <option>العربية (Arabic)</option>
+          <option>Deutsch</option>
+          <option>Español</option>
+        </select>
+        <div class="flex gap-4">
+          <a href="#login"
+            class="flex-1 text-center bg-pearl border border-gray-200 text-ink text-sm font-semibold py-3.5 rounded-lg">Log
+            in</a>
+          <button class="flex-1 text-center bg-ink text-white text-sm font-semibold py-3.5 rounded-lg">Get
+            Started</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Temporary empty space to allow scrolling -->
+  <main class="w-full items-center justify-center bg-white">
+    <section class="relative w-full min-h-[100vh] lg:min-h-[850px] flex items-center bg-surface overflow-hidden">
+
+      <!-- Subtle environmental gradient behind the globe -->
+      <div
+        class="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#D1FAE5]/40 via-surface to-surface z-0">
+      </div>
+
+      <div
+        class="max-w-[1440px] w-full mx-auto px-6 lg:px-10 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-0 items-center relative z-10">
+
+        <!-- LEFT: Typography & CTA -->
+        <div class="flex flex-col items-start pt-12 lg:pt-0 z-20">
+          <!-- Mint Tech Pill -->
+          <div
+            class="hero-anim inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-mint/10 border border-mint/20 mb-6">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-mint opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-mint"></span>
+            </span>
+            <span class="font-sans text-[11px] font-bold uppercase tracking-widest text-mint">NorthLadder</span>
+          </div>
+
+          <!-- Strict Typography Scale -->
+          <h1 class="hero-anim font-sans text-3xl md:text-4xl font-bold text-ink leading-[1.15] tracking-tight mb-5">
+            Democratization <br />
+            <span class="text-steel font-medium">Of Trade-ins</span>
+          </h1>
+
+          <p class="hero-anim font-sans text-base md:text-lg font-medium text-steel max-w-[480px] leading-relaxed mb-8">
+            Connecting millions of Grade-A devices directly to vetted B2B buyers through our real-time, global auction
+            engine.
+          </p>
+
+          <div class="hero-anim flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+            <button
+              class="bg-ink text-white font-sans text-sm font-semibold px-8 py-3.5 rounded-lg hover:bg-mint hover:shadow-elevated transition-all duration-300">
+              Request Enterprise Demo
+            </button>
+            <button
+              class="bg-pearl border border-gray-200 text-ink font-sans text-sm font-semibold px-8 py-3.5 rounded-lg hover:bg-gray-50 transition-all duration-300">
+              Explore Documentation
+            </button>
+          </div>
+        </div>
+
+        <!-- RIGHT: 3D Canvas & HTML HUD -->
+        <div class="relative w-full h-[450px] lg:h-[650px] flex items-center justify-center z-10 mt-8 lg:mt-0">
+
+          <!-- Three.js Container -->
+          <div id="hero-globe-container" class="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing">
+          </div>
+
+          <!-- GSAP Floating Bid Cards (HUD) -->
+          <!-- Card 1 -->
+          <div
+            class="bid-card absolute top-[15%] left-[5%] lg:left-[-10%] bg-white/90 backdrop-blur-md border border-gray-100 shadow-elevated rounded-xl p-3 w-[180px] opacity-0">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-mono text-[9px] text-steel uppercase tracking-widest">Incoming Bid</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-mint"></span>
+            </div>
+            <p class="font-sans text-[11px] font-bold text-ink truncate">EU Refurbisher Hub</p>
+            <p class="font-sans text-lg font-bold text-mint mt-0.5">€610.00</p>
+          </div>
+
+          <!-- Card 2 -->
+          <div
+            class="bid-card absolute bottom-[20%] right-[5%] lg:right-[5%] bg-white/90 backdrop-blur-md border border-gray-100 shadow-elevated rounded-xl p-3 w-[180px] opacity-0">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-mono text-[9px] text-steel uppercase tracking-widest">Incoming Bid</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-mint"></span>
+            </div>
+            <p class="font-sans text-[11px] font-bold text-ink truncate">Asia Distributor</p>
+            <p class="font-sans text-lg font-bold text-mint mt-0.5">€635.50</p>
+          </div>
+
+          <!-- Card 3 (Winning Match) -->
+          <div
+            class="bid-card absolute top-[40%] right-[10%] lg:right-[-5%] bg-mint/10 backdrop-blur-md border border-mint/30 shadow-elevated rounded-xl p-3 w-[200px] opacity-0">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-mono text-[9px] text-mint font-bold uppercase tracking-widest">Winning Match</span>
+              <span class="flex h-2 w-2 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-mint opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-mint"></span>
+              </span>
+            </div>
+            <p class="font-sans text-[11px] font-bold text-ink truncate">Global Retail Network</p>
+            <p class="font-sans text-xl font-bold text-ink mt-0.5">€685.00</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+    <!-- ========================================= -->
+    <!-- SECTION 2: ECOSYSTEM PROOF (THE LEDGER)   -->
+    <!-- ========================================= -->
+    <section id="ecosystem-proof"
+      class="relative w-full py-24 lg:py-32 bg-pearl border-y border-gray-200 overflow-hidden">
+
+      <!-- Subtle Background Illumination -->
+      <div
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white rounded-full blur-[100px] pointer-events-none opacity-60">
+      </div>
+
+      <div class="max-w-[1440px] w-full mx-auto px-6 lg:px-10 relative z-10">
+
+        <!-- Metrics Grid -->
+        <div
+          class="grid grid-cols-1 md:grid-cols-3 gap-16 lg:gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-200 mb-24 md:mb-32">
+
+          <!-- Stat 1 -->
+          <div
+            class="flex flex-col items-center md:items-start text-center md:text-left pt-8 md:pt-0 pl-0 md:pl-8 lg:pl-12 first:pl-0 first:pt-0 border-t-0">
+            <h3 class="font-sans text-5xl lg:text-7xl font-light text-ink tracking-tight mb-2 flex items-baseline">
+              <span>75</span>
+              <span class="text-3xl lg:text-5xl font-medium text-steel ml-1">+</span>
+            </h3>
+            <p class="font-sans text-[11px] lg:text-xs font-bold uppercase tracking-widest text-steel">
+              Tier-1 Partners
+            </p>
+          </div>
+
+          <!-- Stat 2 -->
+          <div
+            class="flex flex-col items-center md:items-start text-center md:text-left pt-8 md:pt-0 pl-0 md:pl-8 lg:pl-12 border-gray-200">
+            <h3 class="font-sans text-5xl lg:text-7xl font-light text-ink tracking-tight mb-2 flex items-baseline">
+              <span>20</span>
+              <span class="text-3xl lg:text-5xl font-medium text-steel ml-1">+</span>
+            </h3>
+            <p class="font-sans text-[11px] lg:text-xs font-bold uppercase tracking-widest text-steel">
+              Countries Live
+            </p>
+          </div>
+
+          <!-- Stat 3 (The Hero Metric) -->
+          <div
+            class="flex flex-col items-center md:items-start text-center md:text-left pt-8 md:pt-0 pl-0 md:pl-8 lg:pl-12 border-gray-200">
+            <h3 class="font-sans text-5xl lg:text-7xl font-medium text-mint tracking-tight mb-2">
+              Zero
+            </h3>
+            <p class="font-sans text-[11px] lg:text-xs font-bold uppercase tracking-widest text-ink">
+              Inventory Held
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Partner Marquee -->
+        <div class="w-full flex flex-col items-center">
+          <p class="font-sans text-[10px] font-bold tracking-[0.2em] text-steel uppercase mb-10 text-center">
+            Trusted Ecosystem Partners
+          </p>
+
+          <!-- Marquee Container -->
+          <div class="relative w-full overflow-hidden flex items-center h-16 group">
+
+            <!-- Frosted Edge Masks to blend the text seamlessly into the background -->
+            <div
+              class="absolute inset-y-0 left-0 w-20 lg:w-40 bg-gradient-to-r from-pearl to-transparent z-10 pointer-events-none">
+            </div>
+            <div
+              class="absolute inset-y-0 right-0 w-20 lg:w-40 bg-gradient-to-l from-pearl to-transparent z-10 pointer-events-none">
+            </div>
+
+            <!-- Infinite Scrolling Track -->
+            <div
+              class="flex items-center gap-16 lg:gap-24 animate-[marqueeScroll_30s_linear_infinite] group-hover:[animation-play-state:paused] w-max pr-16 lg:pr-24">
+
+              <!-- Set 1 -->
+              <span
+                class="font-sans text-2xl lg:text-3xl font-bold tracking-widest text-steel/40 hover:text-ink transition-colors duration-300 cursor-default">AMAZON</span>
+              <span
+                class="font-sans text-2xl lg:text-3xl font-bold tracking-widest text-steel/40 hover:text-ink transition-colors duration-300 cursor-default">VODAFONE</span>
+              <span
+                class="font-sans text-2xl lg:text-3xl font-bold tracking-widest text-steel/40 hover:text-ink transition-colors duration-300 cursor-default">MMS</span>
+              <span
+                class="font-sans text-2xl lg:text-3xl font-bold tracking-widest text-steel/40 hover:text-ink transition-colors duration-300 cursor-default">VIVO</span>
+              <span
+                class="font-sans text-2xl lg:text-3xl font-bold tracking-widest text-steel/40 hover:text-ink transition-colors duration-300 cursor-default">SAMSUNG</span>
+
+              <!-- Set 2 (Duplicated for seamless infinite looping) -->
+              <span
+                class="font-sans text-2xl lg:text-3xl font-bold tracking-widest text-steel/40 hover:text-ink transition-colors duration-300 cursor-default">AMAZON</span>
+              <span
+                class="font-sans text-2xl lg:text-3xl font-bold tracking-widest text-steel/40 hover:text-ink transition-colors duration-300 cursor-default">VODAFONE</span>
+              <span
+                class="font-sans text-2xl lg:text-3xl font-bold tracking-widest text-steel/40 hover:text-ink transition-colors duration-300 cursor-default">MMS</span>
+              <span
+                class="font-sans text-2xl lg:text-3xl font-bold tracking-widest text-steel/40 hover:text-ink transition-colors duration-300 cursor-default">VIVO</span>
+              <span
+                class="font-sans text-2xl lg:text-3xl font-bold tracking-widest text-steel/40 hover:text-ink transition-colors duration-300 cursor-default">SAMSUNG</span>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+    <!-- ========================================= -->
+    <!-- SECTION 3: THE PIPELINE (CORE WORKFLOW)   -->
+    <!-- ========================================= -->
+    <section id="core-pipeline" class="relative w-full py-24 lg:py-32 bg-surface overflow-hidden">
+      <div class="max-w-[1440px] mx-auto px-6 lg:px-10">
+
+        <!-- Section Header -->
+        <div class="max-w-2xl mb-16 md:mb-24">
+          <p class="font-mono text-[10px] text-steel tracking-[0.2em] uppercase mb-4">Core Workflow</p>
+          <h2 class="font-sans text-3xl md:text-4xl font-bold text-ink leading-[1.2] tracking-tight mb-6">
+            End-to-end infrastructure. <br />
+            <span class="text-steel font-medium">Built for scale.</span>
+          </h2>
+          <p class="font-sans text-base md:text-lg font-medium text-steel leading-relaxed">
+            We manage the entire lifecycle of a trade-in device, from API ingestion at the retail counter to the final
+            B2B auction settlement.
+          </p>
+        </div>
+
+        <!-- Vertical Stepped Layout -->
+        <div class="flex flex-col gap-12 lg:gap-20">
+
+          <!-- Step 1: Ingestion -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+            <div class="lg:col-span-5 order-2 lg:order-1">
+              <span
+                class="inline-block px-3 py-1 bg-pearl border border-gray-200 rounded-full font-mono text-[10px] font-bold text-ink mb-6">01
+                / INGESTION</span>
+              <h3 class="font-sans text-2xl md:text-3xl font-bold text-ink mb-4">Limitless Integration.</h3>
+              <p class="font-sans text-base text-steel leading-relaxed">
+                Connect instantly via our enterprise APIs. Millions of devices flow from OEMs, distributors, and Telcos
+                into the ecosystem with absolute zero friction.
+              </p>
+            </div>
+            <!-- Dummy UI Box -->
+            <div
+              class="lg:col-span-7 order-1 lg:order-2 bg-pearl border border-gray-100 rounded-2xl p-6 md:p-10 shadow-sm">
+              <div class="bg-white border border-gray-200 rounded-xl p-4 md:p-6 w-full max-w-md shadow-sm">
+                <div class="flex justify-between items-center border-b border-gray-100 pb-3 mb-3">
+                  <span class="font-sans text-xs font-bold text-ink">API Stream Status</span>
+                  <span
+                    class="font-mono text-[9px] bg-mint-light text-mint px-2 py-1 rounded uppercase">Connected</span>
+                </div>
+                <div class="space-y-3">
+                  <div class="flex justify-between items-center">
+                    <span class="font-sans text-sm text-steel">EU Telco Hub</span>
+                    <span class="font-mono text-xs text-ink">+1,450 Units</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="font-sans text-sm text-steel">Retail Partner (NA)</span>
+                    <span class="font-mono text-xs text-ink">+820 Units</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Assessment -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+            <!-- Dummy UI Box -->
+            <div
+              class="lg:col-span-7 bg-pearl border border-gray-100 rounded-2xl p-6 md:p-10 shadow-sm flex justify-end">
+              <div class="bg-white border border-gray-200 rounded-xl p-4 md:p-6 w-full max-w-md shadow-sm">
+                <div class="flex justify-between items-center border-b border-gray-100 pb-3 mb-4">
+                  <span class="font-sans text-xs font-bold text-ink">AI Diagnostic Output</span>
+                  <span class="font-mono text-[9px] text-steel uppercase">ID: 892-A</span>
+                </div>
+                <div class="flex items-center gap-4 mb-4">
+                  <div class="w-12 h-12 rounded-full bg-pearl border border-gray-200 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-steel" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-sans text-sm font-bold text-ink">Apple iPhone 14 Pro</p>
+                    <p class="font-sans text-xs text-steel">Cosmetic Scan Complete</p>
+                  </div>
+                </div>
+                <div class="bg-mint-light/50 border border-mint/20 rounded-lg p-3 flex justify-between items-center">
+                  <span class="font-sans text-xs font-medium text-ink">Final Grade</span>
+                  <span class="font-sans text-sm font-bold text-mint">Grade A+ Pristine</span>
+                </div>
+              </div>
+            </div>
+            <div class="lg:col-span-5">
+              <span
+                class="inline-block px-3 py-1 bg-pearl border border-gray-200 rounded-full font-mono text-[10px] font-bold text-ink mb-6">02
+                / ASSESSMENT</span>
+              <h3 class="font-sans text-2xl md:text-3xl font-bold text-ink mb-4">Objective AI Grading.</h3>
+              <p class="font-sans text-base text-steel leading-relaxed">
+                Every device is instantly analyzed by our proprietary intelligence engine. We remove human bias,
+                creating a universal, globally trusted standard of quality.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 3: Liquidity -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+            <div class="lg:col-span-5 order-2 lg:order-1">
+              <span
+                class="inline-block px-3 py-1 bg-pearl border border-gray-200 rounded-full font-mono text-[10px] font-bold text-ink mb-6">03
+                / LIQUIDITY</span>
+              <h3 class="font-sans text-2xl md:text-3xl font-bold text-ink mb-4">Instant Settlement.</h3>
+              <p class="font-sans text-base text-steel leading-relaxed">
+                A real-time, multi-buyer auction dynamically matches supply with demand globally. Devices find their
+                highest value in milliseconds, ensuring maximum yield.
+              </p>
+            </div>
+            <!-- Dummy UI Box -->
+            <div
+              class="lg:col-span-7 order-1 lg:order-2 bg-pearl border border-gray-100 rounded-2xl p-6 md:p-10 shadow-sm">
+              <div class="bg-white border border-gray-200 rounded-xl p-4 md:p-6 w-full max-w-md shadow-sm">
+                <div class="flex justify-between items-center border-b border-gray-100 pb-3 mb-3">
+                  <span class="font-sans text-xs font-bold text-ink">Live Order Book</span>
+                  <span class="font-mono text-[9px] bg-gray-100 text-steel px-2 py-1 rounded uppercase">Auction
+                    Closed</span>
+                </div>
+                <div class="space-y-3">
+                  <div class="flex justify-between items-center opacity-50">
+                    <span class="font-sans text-sm text-steel">B2B Dealer (NA)</span>
+                    <span class="font-sans text-sm font-medium text-ink">€610.00</span>
+                  </div>
+                  <div class="flex justify-between items-center opacity-70">
+                    <span class="font-sans text-sm text-steel">Refurbisher (EU)</span>
+                    <span class="font-sans text-sm font-medium text-ink">€625.50</span>
+                  </div>
+                  <div
+                    class="flex justify-between items-center bg-pearl border border-gray-200 p-3 rounded-lg relative overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-mint"></div>
+                    <div>
+                      <span class="font-mono text-[9px] text-mint uppercase tracking-widest block mb-0.5">Winning
+                        Match</span>
+                      <span class="font-sans text-sm font-bold text-ink">Asia Distributor Hub</span>
+                    </div>
+                    <span class="font-sans text-lg font-bold text-ink">€645.00</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+    <!-- ========================================= -->
+    <!-- SECTION 4: DUAL ARCHITECTURE (PATHS)      -->
+    <!-- ========================================= -->
+    <section id="dual-architecture" class="relative w-full py-24 lg:py-32 bg-pearl border-t border-gray-200">
+      <div class="max-w-[1440px] mx-auto px-6 lg:px-10">
+
+        <!-- Section Header -->
+        <div class="text-center max-w-2xl mx-auto mb-16 md:mb-20">
+          <p class="font-mono text-[10px] text-steel tracking-[0.2em] uppercase mb-4">Dual Architecture</p>
+          <h2 class="font-sans text-3xl md:text-4xl font-bold text-ink leading-[1.2] tracking-tight mb-6">
+            Choose your ecosystem path.
+          </h2>
+        </div>
+
+        <!-- 2-Column Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
+
+          <!-- Card 1: Partners -->
+          <div
+            class="bg-white border border-gray-200 rounded-[2rem] p-10 lg:p-14 shadow-sm flex flex-col group hover:shadow-elevated transition-shadow duration-300">
+            <div class="w-14 h-14 bg-pearl border border-gray-100 rounded-2xl flex items-center justify-center mb-8">
+              <svg class="w-6 h-6 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                </path>
+              </svg>
+            </div>
+            <h3 class="font-sans text-3xl font-bold text-ink mb-4">For Partners</h3>
+            <p class="font-sans text-base md:text-lg text-steel leading-relaxed mb-10 flex-1">
+              Retailers, Telcos, and OEMs. Offload inventory risk instantly and plug directly into the world's most
+              aggressive bidding algorithms to maximize your margins.
+            </p>
+            <a href="partner-hub.html"
+              class="inline-flex items-center justify-center w-full sm:w-auto bg-pearl border border-gray-200 text-ink font-sans text-sm font-semibold px-8 py-3.5 rounded-lg hover:bg-gray-50 transition-colors">
+              Join 75+ Partners
+            </a>
+          </div>
+
+          <!-- Card 2: Buyers -->
+          <div
+            class="bg-white border border-gray-200 rounded-[2rem] p-10 lg:p-14 shadow-sm flex flex-col group hover:shadow-elevated transition-shadow duration-300">
+            <div
+              class="w-14 h-14 bg-mint-light/30 border border-mint/20 rounded-2xl flex items-center justify-center mb-8">
+              <svg class="w-6 h-6 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+              </svg>
+            </div>
+            <h3 class="font-sans text-3xl font-bold text-ink mb-4">For Buyers</h3>
+            <p class="font-sans text-base md:text-lg text-steel leading-relaxed mb-10 flex-1">
+              Vetted B2B buyers and refurbishers. Source high-volume, globally certified Grade-A inventory directly from
+              origin without intermediaries slowing you down.
+            </p>
+            <a href="buyer-hub.html"
+              class="inline-flex items-center justify-center w-full sm:w-auto bg-ink text-white font-sans text-sm font-semibold px-8 py-3.5 rounded-lg hover:bg-mint transition-colors">
+              Request Marketplace Access
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+    <!-- ========================================= -->
+    <!-- SECTION 5: RESIDUAL VALUE INDEX (DATA)    -->
+    <!-- ========================================= -->
+    <section id="rv-index" class="relative w-full py-24 lg:py-32 bg-surface border-b border-gray-200 overflow-hidden">
+      <div class="max-w-[1440px] mx-auto px-6 lg:px-10">
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
+          <!-- Left: Narrative Copy -->
+          <div class="lg:col-span-5 flex flex-col items-start">
+            <span
+              class="inline-block px-3 py-1 bg-pearl border border-gray-200 rounded-full font-mono text-[10px] font-bold text-ink mb-6">DATA
+              INTELLIGENCE</span>
+            <h2 class="font-sans text-3xl md:text-4xl font-bold text-ink leading-[1.2] tracking-tight mb-6">
+              Residual Value Index.
+            </h2>
+            <p class="font-sans text-base md:text-lg font-medium text-steel leading-relaxed mb-8">
+              Proprietary pricing intelligence. Our machine learning models process millions of data points to predict
+              residual value decay curves and market shifts months in advance.
+            </p>
+            <a href="#data-sample"
+              class="inline-flex items-center gap-2 bg-pearl border border-gray-200 text-ink font-sans text-sm font-semibold px-8 py-3.5 rounded-lg hover:bg-gray-50 transition-colors">
+              Download Data Sample
+              <svg class="w-4 h-4 text-steel" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Right: Dummy Data Visualization UI -->
+          <div class="lg:col-span-7 bg-pearl border border-gray-100 rounded-2xl p-6 md:p-10 shadow-sm">
+            <div class="bg-white border border-gray-200 rounded-xl p-6 w-full shadow-sm">
+
+              <!-- Card Header -->
+              <div class="flex justify-between items-start mb-8">
+                <div>
+                  <span class="font-mono text-[10px] text-steel uppercase tracking-widest block mb-1">Global Market
+                    Alpha</span>
+                  <p class="font-sans text-3xl font-bold text-ink">+14.2%</p>
+                </div>
+                <div class="bg-mint-light/50 border border-mint/20 px-3 py-1.5 rounded-lg flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-mint"></span>
+                  <span class="font-mono text-[9px] text-mint font-bold uppercase tracking-widest">Live Model
+                    Active</span>
+                </div>
+              </div>
+
+              <!-- Static Simulated Chart Grid Lines -->
+              <div
+                class="relative h-48 w-full border-b border-l border-gray-200 flex items-end justify-between px-4 pb-2 mb-4">
+                <!-- Grid background guides -->
+                <div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20">
+                  <div class="w-full h-[1px] bg-gray-300"></div>
+                  <div class="w-full h-[1px] bg-gray-300"></div>
+                  <div class="w-full h-[1px] bg-gray-300"></div>
+                </div>
+
+                <!-- Simulated Chart Bars / Points -->
+                <div class="w-12 bg-pearl border-t-2 border-steel rounded-t h-[30%]"></div>
+                <div class="w-12 bg-pearl border-t-2 border-steel rounded-t h-[45%]"></div>
+                <div class="w-12 bg-pearl border-t-2 border-steel rounded-t h-[60%]"></div>
+                <div class="w-12 bg-mint-light border-t-2 border-mint rounded-t h-[85%]"></div>
+              </div>
+
+              <!-- Bottom Axis Labels -->
+              <div class="flex justify-between items-center pt-2 font-mono text-[10px] text-steel tracking-widest">
+                <span>Q1</span>
+                <span>Q2</span>
+                <span>Q3</span>
+                <span class="text-mint font-bold">PROJ. Q4</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+    <!-- ========================================= -->
+    <!-- SECTION 6: EDITORIAL & INSIGHTS (NEWS)    -->
+    <!-- ========================================= -->
+    <section id="newsroom" class="relative w-full py-24 lg:py-32 bg-pearl">
+      <div class="max-w-[1440px] mx-auto px-6 lg:px-10">
+
+        <!-- Section Header & Filter Tabs -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16">
+          <div>
+            <p class="font-mono text-[10px] text-steel tracking-[0.2em] uppercase mb-4">Editorial</p>
+            <h2 class="font-sans text-3xl md:text-4xl font-bold text-ink leading-[1.2] tracking-tight">
+              Latest Insights.
+            </h2>
+          </div>
+
+          <!-- Static Segmented Control Tabs -->
+          <div class="inline-flex p-1 bg-white border border-gray-200 rounded-lg shadow-sm">
+            <button
+              class="px-4 py-2 font-sans text-[11px] font-bold uppercase tracking-wider text-ink bg-pearl rounded-md">All</button>
+            <button
+              class="px-4 py-2 font-sans text-[11px] font-medium uppercase tracking-wider text-steel hover:text-ink transition-colors">Company</button>
+            <button
+              class="px-4 py-2 font-sans text-[11px] font-medium uppercase tracking-wider text-steel hover:text-ink transition-colors">Market</button>
+          </div>
+        </div>
+
+        <!-- 3-Column Staggered Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+          <!-- Article 1 -->
+          <article
+            class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm flex flex-col group cursor-pointer hover:shadow-elevated transition-all duration-300">
+            <div class="relative w-full h-64 overflow-hidden bg-pearl">
+              <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=800&auto=format&fit=crop"
+                alt="Market Update"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div
+                class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full font-sans text-[9px] font-bold uppercase tracking-widest text-ink">
+                Market Update
+              </div>
+            </div>
+            <div class="p-8 flex flex-col flex-1">
+              <p class="font-mono text-[10px] text-steel tracking-widest uppercase mb-3">August 12, 2026</p>
+              <h3 class="font-sans text-xl font-bold text-ink mb-3 group-hover:text-mint transition-colors">
+                The shift in secondary market dynamics across the EU.
+              </h3>
+              <p class="font-sans text-base font-medium text-steel line-clamp-2 mb-6 flex-1">
+                As telcos adapt to new circularity mandates, the secondary market is seeing a massive influx of Grade-A
+                devices, altering global pricing structures.
+              </p>
+              <span
+                class="inline-flex items-center gap-2 font-sans text-xs font-bold text-ink uppercase tracking-wider">
+                Read Article
+                <svg class="w-3.5 h-3.5 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7-7"></path>
+                </svg>
+              </span>
+            </div>
+          </article>
+
+          <!-- Article 2 -->
+          <article
+            class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm flex flex-col group cursor-pointer hover:shadow-elevated transition-all duration-300">
+            <div class="relative w-full h-64 overflow-hidden bg-pearl">
+              <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop"
+                alt="Product Release"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div
+                class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full font-sans text-[9px] font-bold uppercase tracking-widest text-ink">
+                Product Release
+              </div>
+            </div>
+            <div class="p-8 flex flex-col flex-1">
+              <p class="font-mono text-[10px] text-steel tracking-widest uppercase mb-3">July 28, 2026</p>
+              <h3 class="font-sans text-xl font-bold text-ink mb-3 group-hover:text-mint transition-colors">
+                NorthLadder launches next-gen AI grading API.
+              </h3>
+              <p class="font-sans text-base font-medium text-steel line-clamp-2 mb-6 flex-1">
+                Our new diagnostic engine eliminates human bias entirely, securing a 99.8% accuracy rate for cosmetic
+                and hardware inspections.
+              </p>
+              <span
+                class="inline-flex items-center gap-2 font-sans text-xs font-bold text-ink uppercase tracking-wider">
+                Read Article
+                <svg class="w-3.5 h-3.5 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7-7"></path>
+                </svg>
+              </span>
+            </div>
+          </article>
+
+          <!-- Article 3 -->
+          <article
+            class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm flex flex-col group cursor-pointer hover:shadow-elevated transition-all duration-300">
+            <div class="relative w-full h-64 overflow-hidden bg-pearl">
+              <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=800&auto=format&fit=crop"
+                alt="Partnerships"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div
+                class="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full font-sans text-[9px] font-bold uppercase tracking-widest text-ink">
+                Partnerships
+              </div>
+            </div>
+            <div class="p-8 flex flex-col flex-1">
+              <p class="font-mono text-[10px] text-steel tracking-widest uppercase mb-3">July 15, 2026</p>
+              <h3 class="font-sans text-xl font-bold text-ink mb-3 group-hover:text-mint transition-colors">
+                Expanding the ecosystem: 5 new Tier-1 OEMs onboarded.
+              </h3>
+              <p class="font-sans text-base font-medium text-steel line-clamp-2 mb-6 flex-1">
+                By integrating directly with top-tier manufacturers, we are guaranteeing a steady flow of premium
+                inventory to our global buyer network.
+              </p>
+              <span
+                class="inline-flex items-center gap-2 font-sans text-xs font-bold text-ink uppercase tracking-wider">
+                Read Article
+                <svg class="w-3.5 h-3.5 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7-7"></path>
+                </svg>
+              </span>
+            </div>
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================= -->
+  <!-- FOOTER: THE CLEAN EXIT                    -->
+  <!-- ========================================= -->
+  <footer class="bg-pearl border-t border-gray-200 pt-20 pb-8 mt-auto z-10 relative">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-10">
+
+      <!-- Top Grid: Brand & Sitemaps -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-8 mb-20">
+
+        <!-- Brand & Narrative (Col 1-4) -->
+        <div class="md:col-span-4 pr-0 lg:pr-12">
+          <a href="#" class="font-sans text-xl font-bold tracking-tight text-ink block mb-6">
+            <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+              class="h-6 w-auto brightness-0" />
+          </a>
+          <p class="text-[14px] text-steel font-medium leading-relaxed max-w-sm mb-8">
+            Democratization Of Trade-ins. Powering the world's most advanced circularity infrastructure for Grade-A
+            inventory with absolute neutrality.
+          </p>
+
+          <!-- Language Selector -->
+          <div class="relative inline-block w-full max-w-[200px]">
+            <select
+              class="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-[13px] font-medium text-ink focus:outline-none focus:border-mint transition-colors appearance-none cursor-pointer">
+              <option>English (Global)</option>
+              <option>العربية (Arabic)</option>
+              <option>Deutsch</option>
+              <option>Español</option>
+              <option>Français</option>
+            </select>
+            <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-steel" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sitemaps (Col 6-12) -->
+        <div class="md:col-span-7 md:col-start-6 grid grid-cols-2 sm:grid-cols-3 gap-8">
+
+          <!-- Sitemap 1: Ecosystem -->
+          <div class="flex flex-col gap-4">
+            <h4 class="text-[11px] font-bold text-ink uppercase tracking-wider mb-2">Ecosystem</h4>
+            <a href="#partners" class="text-[13px] font-medium text-steel hover-underline w-max">For Partners</a>
+            <a href="#buyers" class="text-[13px] font-medium text-steel hover-underline w-max">For Buyers</a>
+            <a href="#marketplace" class="text-[13px] font-medium text-steel hover-underline w-max">Neutral
+              Marketplace</a>
+            <a href="#insights" class="text-[13px] font-medium text-steel hover-underline w-max">Data Insights</a>
+          </div>
+
+          <!-- Sitemap 2: Enterprise -->
+          <div class="flex flex-col gap-4">
+            <h4 class="text-[11px] font-bold text-ink uppercase tracking-wider mb-2">Enterprise</h4>
+            <a href="#about" class="text-[13px] font-medium text-steel hover-underline w-max">Inside NorthLadder</a>
+            <a href="#careers" class="text-[13px] font-medium text-steel hover-underline w-max">Global Careers</a>
+            <a href="#newsroom" class="text-[13px] font-medium text-steel hover-underline w-max">News & Media</a>
+            <a href="#contact" class="text-[13px] font-medium text-steel hover-underline w-max">Contact Relations</a>
+          </div>
+
+          <!-- Sitemap 3: Contact/Social -->
+          <div class="flex flex-col gap-4">
+            <h4 class="text-[11px] font-bold text-ink uppercase tracking-wider mb-2">Connect</h4>
+            <a href="#" class="text-[13px] font-medium text-steel hover-underline w-max">LinkedIn</a>
+            <a href="#" class="text-[13px] font-medium text-steel hover-underline w-max">Twitter (X)</a>
+            <a href="#" class="text-[13px] font-medium text-steel hover-underline w-max">Support Portal</a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Bottom Legal Bar -->
+      <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-200 gap-4 md:gap-0">
+        <p class="text-[12px] font-medium text-steel">
+          © 2026 NorthLadder. All rights reserved.
+        </p>
+        <div class="flex gap-6">
+          <a href="#" class="text-[12px] font-medium text-steel hover:text-ink transition-colors">Privacy Policy</a>
+          <a href="#" class="text-[12px] font-medium text-steel hover:text-ink transition-colors">Terms of Service</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+      // Register GSAP ScrollTrigger if not already done
+      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 1. Reveal the entire section smoothly
+        gsap.fromTo(".stat-block",
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            stagger: 0.15,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: "#ecosystem-proof",
+              start: "top 80%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+
+        // 2. Animate the Number Counters natively in GSAP
+        // 2. Animate the Number Counters safely using a proxy object
+        const counters = document.querySelectorAll(".counter");
+        counters.forEach((counter) => {
+          const target = parseInt(counter.getAttribute("data-target"), 10);
+
+          // Create a plain object to hold the starting value
+          const counterProxy = { val: 0 };
+
+          ScrollTrigger.create({
+            trigger: counter,
+            start: "top 85%",
+            once: true, // Only count up once
+            onEnter: () => {
+              gsap.to(counterProxy, {
+                val: target,
+                duration: 2.5, // Slightly longer for a more premium feel
+                ease: "power2.out",
+                onUpdate: function () {
+                  // Push the rounded proxy value to the actual DOM element
+                  counter.innerHTML = Math.round(counterProxy.val);
+                }
+              });
+            }
+          });
+        });
+
+        // 3. Special pop-in for the "Zero" text
+        gsap.to(".zero-text", {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          delay: 0.4, // Waits slightly for the counting numbers to start
+          ease: "back.out(1.5)",
+          scrollTrigger: {
+            trigger: "#ecosystem-proof",
+            start: "top 80%",
+            once: true
+          }
+        });
+
+        // 4. Reveal the Marquee at the bottom
+        gsap.to(".marquee-fade", {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          delay: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#ecosystem-proof",
+            start: "top 75%",
+            once: true
+          }
+        });
+      }
+
+
+      // 1. Reveal Text cleanly
+      gsap.fromTo(".hero-anim", {
+        y: 20,
+        opacity: 0
+      }, {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "power2.out",
+        delay: 0.2
+      });
+
+      // 2. Animate Bidding Cards (Infinite Loop)
+      const cards = gsap.utils.toArray(".bid-card");
+      if (cards.length > 0) {
+        const cardTl = gsap.timeline({ repeat: -1 });
+
+        // Card 1 pops in, floats, disappears
+        cardTl.fromTo(cards[0],
+          { y: 20, opacity: 0, scale: 0.95 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.2)" }
+        )
+          .to(cards[0], { y: -10, duration: 2, ease: "sine.inOut" })
+          .to(cards[0], { opacity: 0, scale: 0.95, duration: 0.4 }, "-=0.4");
+
+        // Card 2 pops in
+        cardTl.fromTo(cards[1],
+          { y: 20, opacity: 0, scale: 0.95 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.2)" },
+          "-=0.2" // Overlap slightly
+        )
+          .to(cards[1], { y: -10, duration: 2, ease: "sine.inOut" })
+          .to(cards[1], { opacity: 0, scale: 0.95, duration: 0.4 }, "-=0.4");
+
+        // Card 3 (Winner) pops in, stays a bit longer
+        cardTl.fromTo(cards[2],
+          { y: 20, opacity: 0, scale: 0.95 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.5)" },
+          "-=0.2"
+        )
+          .to(cards[2], { y: -5, duration: 3, ease: "sine.inOut" })
+          .to(cards[2], { opacity: 0, scale: 0.95, duration: 0.4 });
+      }
+
+      // =========================================
+      // THREE.JS: THE LIQUIDITY GLOBE
+      // =========================================
+      const container = document.getElementById('hero-globe-container');
+      if (!container) return;
+
+      const scene = new THREE.Scene();
+
+      // Transparent background so the HTML gradient shows through
+      const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+      camera.position.z = 18;
+
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+
+      const globeGroup = new THREE.Group();
+      scene.add(globeGroup);
+
+      // 1. Create Globe Dots
+      const radius = 6;
+      const segments = 64;
+      const rings = 64;
+
+      // Use Points to make it look like a tech node network
+      const geometry = new THREE.SphereGeometry(radius, segments, rings);
+      const material = new THREE.PointsMaterial({
+        color: 0x94A3B8, // Tailwind Slate-400
+        size: 0.06,
+        transparent: true,
+        opacity: 0.6
+      });
+      const globe = new THREE.Points(geometry, material);
+      globeGroup.add(globe);
+
+      // 2. Inner Glow Sphere (gives it volume)
+      const innerGeom = new THREE.SphereGeometry(radius * 0.98, 32, 32);
+      const innerMat = new THREE.MeshBasicMaterial({
+        color: 0xF7F8FA, // Tailwind Pearl
+        transparent: true,
+        opacity: 0.8
+      });
+      const innerSphere = new THREE.Mesh(innerGeom, innerMat);
+      globeGroup.add(innerSphere);
+
+      // 3. Add Orbiting Data Rings (Arcs)
+      const ringGeom = new THREE.TorusGeometry(radius * 1.1, 0.02, 16, 100);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x10B981, transparent: true, opacity: 0.4 }); // Tailwind Mint
+
+      const ring1 = new THREE.Mesh(ringGeom, ringMat);
+      ring1.rotation.x = Math.PI / 3;
+      globeGroup.add(ring1);
+
+      const ring2 = new THREE.Mesh(ringGeom, ringMat);
+      ring2.rotation.y = Math.PI / 4;
+      globeGroup.add(ring2);
+
+      // Tilt the globe nicely
+      globeGroup.rotation.z = 0.2;
+      globeGroup.rotation.x = 0.2;
+
+      // Mouse Interaction tracking
+      let mouseX = 0;
+      let mouseY = 0;
+      let targetX = 0;
+      let targetY = 0;
+
+      container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        mouseX = (e.clientX - rect.left) - (rect.width / 2);
+        mouseY = (e.clientY - rect.top) - (rect.height / 2);
+      });
+
+      // Render Loop
+      const clock = new THREE.Clock();
+
+      const animate = () => {
+        requestAnimationFrame(animate);
+        const elapsedTime = clock.getElapsedTime();
+
+        // Base rotation
+        globeGroup.rotation.y = elapsedTime * 0.1;
+
+        // Rings spin faster
+        ring1.rotation.z = elapsedTime * 0.3;
+        ring2.rotation.x = elapsedTime * 0.2;
+
+        // Smooth mouse follow
+        targetX = mouseX * 0.001;
+        targetY = mouseY * 0.001;
+
+        globeGroup.rotation.y += 0.05 * (targetX - globeGroup.rotation.y);
+        globeGroup.rotation.x += 0.05 * (targetY - globeGroup.rotation.x);
+
+        renderer.render(scene, camera);
+      };
+      animate();
+
+      // Handle Resize properly
+      window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+
+
+      // --- NAVBAR HIDE/SHOW ON SCROLL ---
+      let lastScroll = 0;
+      const navbar = document.getElementById("main-nav");
+
+      window.addEventListener("scroll", () => {
+        const currentScroll = window.pageYOffset;
+        if (currentScroll <= 0) {
+          navbar.style.transform = "translateY(0)";
+          navbar.style.boxShadow = "none";
+        } else if (currentScroll > lastScroll) {
+          // Scroll down - hide
+          navbar.style.transform = "translateY(-100%)";
+        } else {
+          // Scroll up - show with shadow
+          navbar.style.transform = "translateY(0)";
+          navbar.style.boxShadow = "0 10px 30px -10px rgba(10, 15, 28, 0.05)";
+        }
+        lastScroll = currentScroll;
+      });
+
+      // --- MOBILE MENU TOGGLE WITH GSAP ---
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileItems = document.querySelectorAll('.mobile-item');
+      let isMenuOpen = false;
+
+      // Create reusable SVG icons for hamburger vs close state
+      const iconMenu = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path></svg>`;
+      const iconClose = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+
+      const menuTl = gsap.timeline({ paused: true, reversed: true });
+
+      // Menu background fade in
+      menuTl.to(mobileMenu, {
+        autoAlpha: 1,
+        duration: 0.3,
+        ease: "power2.out"
+      })
+        // Stagger items rising up
+        .fromTo(mobileItems, {
+          y: 20,
+          opacity: 0
+        }, {
+          y: 0,
+          opacity: 1,
+          duration: 0.4,
+          stagger: 0.05,
+          ease: "power2.out"
+        }, "-=0.1");
+
+      mobileBtn.addEventListener('click', () => {
+        isMenuOpen = !isMenuOpen;
+
+        if (isMenuOpen) {
+          document.body.style.overflow = 'hidden';
+          mobileBtn.innerHTML = iconClose;
+          navbar.classList.remove('glass-header');
+          navbar.classList.add('bg-white'); // Solid white when menu is open
+          menuTl.play();
+        } else {
+          document.body.style.overflow = '';
+          mobileBtn.innerHTML = iconMenu;
+          navbar.classList.add('glass-header');
+          navbar.classList.remove('bg-white');
+          menuTl.reverse();
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

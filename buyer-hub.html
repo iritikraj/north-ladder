@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorthLadder - The world's most advanced Trade-in solution</title>
+
+  <!-- Brand Approved Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- GSAP Core & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <!-- Three.js Core -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: "#EDEEF5",
+              obsidian: "#0A0A0B",
+              charcoal: "#2D2D32",
+              primary: "#4E008E",
+              light: "#774AA2",
+              bright: "#B599FA",
+              mint: "#48B48D",
+            },
+          },
+          fontFamily: {
+            sans: ["Poppins", "sans-serif"],
+            display: ["Montserrat", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Hide scrollbars */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    body {
+      background-color: #edeef5;
+      color: #0a0a0b;
+      overflow-x: hidden;
+    }
+
+    .apple-blur-light {
+      background: rgba(237, 238, 245, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    #cursor-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 480px;
+      height: 480px;
+      margin-left: -240px;
+      margin-top: -240px;
+      background: radial-gradient(circle, rgba(181, 153, 250, 0.16) 0%, rgba(78, 0, 142, 0.05) 45%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    @media (max-width: 768px) {
+      #cursor-glow {
+        display: none;
+      }
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.035;
+      mix-blend-mode: multiply;
+    }
+
+    /* Premium Apple-Style Navbar Dropdown Animations */
+    .nav-group {
+      position: static;
+    }
+
+    .mega-menu {
+      position: absolute;
+      left: 0;
+      top: 100%;
+      width: 100%;
+      background: rgba(237, 238, 245, 0.95);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.05);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+      cursor: default;
+    }
+
+    .nav-group:hover .mega-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .mega-item {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-group:hover .mega-item {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .nav-group:hover .col-1 .mega-item:nth-child(1) {
+      transition-delay: 0.04s;
+    }
+
+    .nav-group:hover .col-1 .mega-item:nth-child(2) {
+      transition-delay: 0.08s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(1) {
+      transition-delay: 0.12s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(2) {
+      transition-delay: 0.16s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(3) {
+      transition-delay: 0.20s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(4) {
+      transition-delay: 0.24s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(5) {
+      transition-delay: 0.28s;
+    }
+
+    /* Mobile Apple-style Navigation */
+    #mobile-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #EDEEF5;
+      z-index: 40;
+      padding-top: 85px;
+      padding-inline: 24px;
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0.4s, opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    #mobile-menu.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .mobile-nav-item {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #mobile-menu.active .mobile-nav-item {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(1) {
+      transition-delay: 0.10s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(2) {
+      transition-delay: 0.14s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(3) {
+      transition-delay: 0.18s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(4) {
+      transition-delay: 0.22s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(5) {
+      transition-delay: 0.26s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(6) {
+      transition-delay: 0.30s;
+    }
+
+
+    .menu-line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform-origin: center;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+    }
+
+    .line-1 {
+      transform: translate(-50%, -6px);
+    }
+
+    .line-2 {
+      transform: translate(-50%, 0);
+    }
+
+    .line-3 {
+      transform: translate(-50%, 6px);
+    }
+
+    .menu-open .line-1 {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .menu-open .line-2 {
+      opacity: 0;
+    }
+
+    .menu-open .line-3 {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    /* Mobile Drilldown Enhancements */
+    #mobile-menu {
+      overflow-x: hidden;
+    }
+
+    .submenu-active #mobile-menu-slider {
+      transform: translateX(-100%);
+    }
+
+    .submenu-active #mobile-back-header {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .mobile-submenu a,
+    .mobile-submenu p {
+      opacity: 0;
+      transform: translateX(20px);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .submenu-active .mobile-submenu.active a,
+    .submenu-active .mobile-submenu.active p {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(1) {
+      transition-delay: 0.10s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(2) {
+      transition-delay: 0.14s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(3) {
+      transition-delay: 0.18s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(4) {
+      transition-delay: 0.22s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(5) {
+      transition-delay: 0.26s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(6) {
+      transition-delay: 0.30s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(7) {
+      transition-delay: 0.34s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(8) {
+      transition-delay: 0.38s;
+    }
+
+    /* Clean up any rogue arrows in the mobile submenu */
+    .mobile-submenu a {
+      position: relative;
+      background-image: none !important;
+      padding-left: 0 !important;
+    }
+
+    .mobile-submenu a svg {
+      display: none !important;
+    }
+
+    /* CSS 3D Engine Utilities */
+    .perspective-hero {
+      perspective: 1500px;
+    }
+
+    .preserve-3d {
+      transform-style: preserve-3d;
+    }
+  </style>
+
+  <link rel="icon" type="image/x-icon" href="./favicon.png" />
+</head>
+
+<body>
+  <!-- Grain texture -->
+  <svg class="grain" xmlns="http://www.w3.org/2000/svg">
+    <filter id="noiseFilter">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"></feTurbulence>
+      <feColorMatrix type="saturate" values="0"></feColorMatrix>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#noiseFilter)"></rect>
+  </svg>
+
+  <div id="cursor-glow"></div>
+
+  <!-- NAVBAR -->
+  <header id="main-nav"
+    class="fixed top-0 left-1/2 -translate-x-1/2 w-full z-50 apple-blur-light transition-all duration-500">
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+      <div class="flex items-center justify-between h-[72px]">
+        <a href="home.html" class="flex items-center gap-3 cursor-pointer">
+          <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+            class="h-6 w-auto brightness-0" />
+        </a>
+
+        <nav class="hidden md:flex space-x-8 lg:space-x-10 h-full">
+          <!-- 1. For Partners -->
+          <div class="nav-group h-full flex items-center">
+            <a href="partner-hub.html"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              For Partners
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <!-- Apple-style Primary Column -->
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Explore</p>
+                  <a href="partner-hub.html"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-3">Partner
+                    Hub</a>
+                </div>
+                <!-- Apple-style Secondary Column -->
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Solutions</p>
+                  <a href="#retailers"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Retailers</a>
+                  <a href="partners/telcos-and-operators.html"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Telcos & Operators</a>
+                  <a href="#oems"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    OEMs & Brands</a>
+                  <a href="#ecommerce"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Ecommerce</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. For Buyers -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#buyers"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              For Buyers
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Explore</p>
+                  <a href="#buyer-hub"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-mint transition-colors mb-3">Buyer
+                    Hub</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Resources</p>
+                  <a href="buyers/how-auction-work.html"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">How
+                    Auctions Work</a>
+                  <a href="#register"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Register
+                    as Buyer</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Neutral Marketplace -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#neutral-marketplace"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Neutral Marketplace
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Infrastructure</p>
+                  <a href="#platform"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">The
+                    Platform</a>
+                  <a href="#ai-grading"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">AI
+                    Grading</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Intelligence -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#insights"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Insights
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Data</p>
+                  <a href="#rv-index"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">RV
+                    Index</a>
+                  <a href="#market-reports"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">Market
+                    Reports</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Editorial</p>
+                  <a href="#leaders"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">60
+                    Seconds With Circularity Leaders</a>
+                  <a href="#blogs"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Blogs</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Company -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#company"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Company
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    About</p>
+                  <a href="#inside"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">Inside
+                    NorthLadder</a>
+                  <a href="#builders"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">The
+                    Builders</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Discover</p>
+                  <a href="#stories"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Customer
+                    Stories</a>
+                  <a href="#newsroom"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Newsroom</a>
+                  <a href="#join"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Join
+                    The Team</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Language Toggle (Navbar) -->
+        <div class="relative group hidden md:block">
+          <button
+            class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418">
+              </path>
+            </svg>
+            EN
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+
+          <!-- Dropdown -->
+          <div
+            class="absolute right-0 mt-4 w-32 bg-white/90 backdrop-blur-xl border border-gray-100 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden translate-y-2 group-hover:translate-y-0">
+            <div class="p-1.5 space-y-0.5">
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-brand-obsidian bg-gray-50 rounded-lg">English</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">العربية
+                (AR)</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Deutsch</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Español</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Français</a>
+            </div>
+          </div>
+        </div>
+        <div class="items-center space-x-8">
+          <button id="mobile-menu-btn" class="md:hidden flex justify-center items-center w-8 h-8 z-50 relative"
+            aria-label="Toggle menu">
+            <span class="menu-line line-1 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+            <span class="menu-line line-2 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+            <span class="menu-line line-3 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+          </button>
+          <div class="flex justify-center items-center space-x-8">
+            <a href="#login"
+              class="hidden md:flex text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">Log
+              in</a>
+            <a href="#contact"
+              class="hidden md:flex text-[13px] font-sans font-medium text-white bg-brand-obsidian hover:bg-brand-primary px-6 py-2.5 rounded-full transition-all duration-300 shadow-lg shadow-black/10">
+              Get Started
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE APPLE-STYLE FULLSCREEN MENU -->
+  <nav id="mobile-menu" class="md:hidden">
+    <!-- Menu Slider Container -->
+    <div id="mobile-menu-slider"
+      class="relative w-full h-[calc(100%-80px)] flex transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] px-6">
+
+      <!-- LEVEL 1: MAIN MENU -->
+      <div id="mobile-level-1" class="w-full flex-shrink-0 flex flex-col space-y-7 pt-4">
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-partners">
+          For Partners
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-buyers">
+          For Buyers
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-marketplace">
+          Neutral Marketplace
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-intelligence">
+          Insights
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-company">
+          Company
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+
+        <div class="mobile-nav-item pt-8 border-t border-gray-300/50 mt-4 flex flex-col space-y-4">
+          <a href="#login" class="text-lg font-sans font-medium text-brand-charcoal">Log in</a>
+          <a href="#contact" class="text-lg font-sans font-medium text-brand-primary">Get Started</a>
+        </div>
+      </div>
+
+      <!-- LEVEL 2: SUBMENUS -->
+      <div id="mobile-level-2" class="absolute top-0 left-full w-full h-full pb-24 overflow-y-auto px-6 pt-4">
+
+        <!-- Submenu: Partners -->
+        <div id="submenu-partners" class="mobile-submenu hidden flex-col space-y-6">
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mb-2">Explore</p>
+          <a href="partner-hub.html" class="text-xl font-display font-semibold text-brand-obsidian block mb-4">Partner
+            Hub</a>
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mt-6 mb-2">Solutions</p>
+          <a href="#retailers"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For Retailers</a>
+          <a href="partners/telcos-and-operators.html"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For
+            Telcos & Operators</a>
+          <a href="#oems" class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For
+            OEMs & Brands</a>
+          <a href="#ecommerce"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For Ecommerce</a>
+        </div>
+
+        <!-- Remaining Submenus (Buyers, Marketplace, Intelligence, Company) go here, exact same pristine format... -->
+
+      </div>
+    </div>
+  </nav>
+  <main>
+
+    <!-- SECTION 1: THE HERO (THE TRANSPARENT FLOOR) -->
+    <section id="buyer-hero" class="relative w-full h-[200vh] bg-brand-bg">
+
+      <!-- Sticky wrapper locking the viewport during scroll -->
+      <div class="sticky top-0 w-full h-screen overflow-hidden flex flex-col justify-center">
+
+        <!-- Content Container -->
+        <!-- FIXED: Added pt-24 pb-6 to account for mobile nav, explicitly set to flex-col on mobile -->
+        <div
+          class="relative z-20 w-full max-w-[1400px] mx-auto px-6 lg:px-12 flex flex-col lg:flex-row items-center justify-between h-full perspective-hero pt-24 lg:pt-0 pb-6 lg:pb-0">
+
+          <!-- Left Column: Typography & CTAs -->
+          <!-- FIXED: Added shrink-0 so it doesn't get crushed, and reduced bottom margins slightly for mobile fit -->
+          <div id="hero-text-block"
+            class="h-[90vh] md:h-auto w-full lg:w-[55%] flex flex-col justify-center md:justify-auto items-center lg:items-start text-center lg:text-left shrink-0 pointer-events-none z-30">
+            <h1
+              class="hero-stagger font-display font-light text-4xl sm:text-5xl md:text-6xl !leading-[1.15] tracking-tight text-brand-obsidian mb-4 lg:mb-6 drop-shadow-sm pointer-events-auto">
+              The world's <br /> most transparent <br class="hidden lg:block" />
+              <span
+                class="font-medium text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-mint">B2B
+                device auction.</span>
+            </h1>
+
+            <p
+              class="hero-stagger font-sans text-xs sm:text-sm md:text-xl text-gray-600 font-light max-w-xl leading-relaxed mb-6 lg:mb-8 pointer-events-auto">
+              Access vetted multi-market inventory from 75+ partners across EU, GCC, and Asia. Every lot AR-video
+              graded. Every bid visible. Every price real.
+            </p>
+
+            <!-- Data Chips -->
+            <div
+              class="hero-stagger flex flex-wrap justify-center lg:justify-start gap-2 mb-6 lg:mb-8 pointer-events-auto max-w-lg">
+              <span
+                class="px-2.5 md:px-3 py-1.5 bg-white/60 border border-gray-200 rounded-lg text-[9px] md:text-[10px] lg:text-xs font-bold font-sans text-gray-500 uppercase tracking-widest backdrop-blur-sm">Grade-backed
+                SLA</span>
+              <span
+                class="px-2.5 md:px-3 py-1.5 bg-white/60 border border-gray-200 rounded-lg text-[9px] md:text-[10px] lg:text-xs font-bold font-sans text-gray-500 uppercase tracking-widest backdrop-blur-sm">94%
+                sell-through</span>
+              <span
+                class="px-2.5 md:px-3 py-1.5 bg-white/60 border border-gray-200 rounded-lg text-[9px] md:text-[10px] lg:text-xs font-bold font-sans text-gray-500 uppercase tracking-widest backdrop-blur-sm">Settlement
+                &lt; 48h</span>
+            </div>
+
+            <!-- CTAs -->
+            <div
+              class="hero-stagger flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 lg:gap-4 w-full sm:w-auto pointer-events-auto">
+              <a href="#register"
+                class="w-full sm:w-auto inline-flex items-center justify-center font-sans font-semibold text-brand-obsidian bg-[#FFD700] px-8 py-3.5 rounded-full hover:bg-[#F2C800] transition-transform hover:-translate-y-1 shadow-lg">
+                Register as buyer
+                <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </a>
+              <a href="#how-it-works"
+                class="w-full sm:w-auto inline-flex items-center justify-center font-sans font-semibold text-brand-obsidian bg-white border border-gray-300 px-8 py-3.5 rounded-full hover:bg-gray-50 transition-transform hover:-translate-y-1 shadow-sm">
+                How auctions work
+              </a>
+            </div>
+          </div>
+
+          <!-- Right Column: The Photorealistic CSS 3D Device -->
+          <!-- FIXED: Removed 'absolute inset-0'. It is now a standard flex-grow item that perfectly stacks below the text on mobile. -->
+          <div
+            class="hidden md:flex relative w-full lg:w-[45%] flex-grow items-center justify-center lg:justify-end z-10 pointer-events-none mt-6 lg:mt-0">
+
+            <!-- Master 3D Group -->
+            <!-- FIXED: Drastically scaled down base dimensions for mobile to prevent overflow -->
+            <div id="hero-device-group"
+              class="relative w-[160px] h-[320px] sm:w-[200px] sm:h-[400px] lg:w-[300px] lg:h-[600px] preserve-3d">
+
+              <!-- LAYER 1: Back Chassis -->
+              <div
+                class="device-layer absolute inset-0 rounded-[2.5rem] lg:rounded-[3rem] bg-[#1a1a1c] border-2 border-gray-600 shadow-2xl flex flex-col p-4 preserve-3d"
+                data-z="-120" data-x="-30" data-y="40">
+                <div
+                  class="absolute inset-0 rounded-[2.5rem] lg:rounded-[3rem] bg-gradient-to-tr from-white/5 to-transparent pointer-events-none">
+                </div>
+                <!-- Camera Bump -->
+                <div
+                  class="w-12 h-12 md:w-20 md:h-20 bg-black/80 rounded-2xl lg:rounded-3xl border border-gray-700 shadow-inner flex flex-wrap gap-1 p-1.5 lg:p-2">
+                  <div
+                    class="w-[40%] h-[40%] rounded-full bg-gray-800 border border-gray-600 flex items-center justify-center">
+                    <div class="w-1/2 h-1/2 rounded-full bg-black"></div>
+                  </div>
+                  <div
+                    class="w-[40%] h-[40%] rounded-full bg-gray-800 border border-gray-600 flex items-center justify-center">
+                    <div class="w-1/2 h-1/2 rounded-full bg-black"></div>
+                  </div>
+                  <div class="w-[30%] h-[30%] rounded-full bg-gray-800 border border-gray-600 mt-1 ml-1"></div>
+                </div>
+              </div>
+
+              <!-- LAYER 2: Purple Logic Board -->
+              <div
+                class="device-layer absolute top-[20%] left-[10%] right-[10%] bottom-[40%] rounded-2xl bg-brand-primary/40 backdrop-blur-md border border-brand-primary/50 shadow-[0_0_30px_rgba(78,0,142,0.4)] flex items-center justify-center preserve-3d"
+                data-z="-40" data-x="-40" data-y="-20">
+                <div
+                  class="w-3/4 h-3/4 border border-brand-bright/30 rounded-xl flex items-center justify-center bg-brand-primary/20">
+                  <span
+                    class="text-brand-bright/80 font-mono text-[7px] lg:text-[10px] tracking-widest text-center">AUCTION
+                    <br /> ENGINE</span>
+                </div>
+              </div>
+
+              <!-- LAYER 3: Mint Data Core -->
+              <div
+                class="device-layer absolute top-[65%] left-[10%] right-[10%] bottom-[10%] rounded-2xl bg-brand-mint/40 backdrop-blur-md border border-brand-mint/50 shadow-[0_0_30px_rgba(72,180,141,0.4)] flex items-center justify-center preserve-3d"
+                data-z="40" data-x="40" data-y="20">
+                <span
+                  class="text-white font-mono text-[7px] lg:text-[10px] tracking-widest font-bold drop-shadow-md">LIVE
+                  DATA</span>
+              </div>
+
+              <!-- LAYER 4: Front Glass Screen & UI -->
+              <div
+                class="device-layer absolute inset-0 rounded-[2.5rem] lg:rounded-[3rem] bg-[#0A0A0B] border-[4px] lg:border-[6px] border-gray-800 shadow-2xl overflow-hidden preserve-3d"
+                data-z="120" data-x="40" data-y="-40">
+
+                <!-- Mock NorthLadder UI -->
+                <div class="w-full h-full p-4 lg:p-5 flex flex-col font-sans relative z-10">
+                  <!-- Hardware Notch -->
+                  <div
+                    class="absolute top-0 left-1/2 -translate-x-1/2 w-16 lg:w-24 h-4 lg:h-6 bg-gray-900 rounded-b-lg lg:rounded-b-xl z-50 border-b border-gray-800">
+                  </div>
+
+                  <!-- App Header -->
+                  <div class="mt-6 lg:mt-8 flex justify-between items-center mb-4 lg:mb-6">
+                    <span class="text-[7px] lg:text-[10px] text-gray-400 font-bold tracking-widest uppercase">Live
+                      Auction</span>
+                    <span
+                      class="text-[7px] lg:text-[10px] text-brand-mint font-bold animate-pulse flex items-center gap-1"><span
+                        class="w-1 h-1 lg:w-1.5 lg:h-1.5 bg-brand-mint rounded-full"></span> LIVE</span>
+                  </div>
+
+                  <!-- Device Image -->
+                  <div
+                    class="w-full h-20 lg:h-32 bg-gray-800 rounded-lg lg:rounded-xl mb-3 lg:mb-4 bg-cover bg-center border border-gray-700"
+                    style="background-image: url('https://images.unsplash.com/photo-1605236453806-6ff36851218e?q=80&w=600&auto=format&fit=crop');">
+                  </div>
+
+                  <!-- Device Info -->
+                  <h3 class="text-white text-sm lg:text-lg font-bold font-display mb-0.5 lg:mb-1">iPhone 14 Pro Max</h3>
+                  <p class="text-[8px] lg:text-[10px] text-gray-400 mb-4 lg:mb-6">Grade A • Pristine • 256GB</p>
+
+                  <!-- Bidding Block -->
+                  <div class="p-3 lg:p-4 bg-gray-900 rounded-lg lg:rounded-xl mb-3 border border-gray-800">
+                    <div class="flex justify-between items-end mb-1 lg:mb-2">
+                      <span class="text-[7px] lg:text-[10px] text-gray-500 uppercase font-bold tracking-wider">Current
+                        Bid</span>
+                      <span class="text-brand-mint font-display font-bold text-base lg:text-xl leading-none">€
+                        850.00</span>
+                    </div>
+                    <div class="w-full h-1 lg:h-1.5 bg-gray-800 rounded-full mt-2 lg:mt-3 overflow-hidden">
+                      <div class="w-[85%] h-full bg-brand-mint rounded-full"></div>
+                    </div>
+                  </div>
+
+                  <!-- Fake Button -->
+                  <div
+                    class="mt-auto w-full py-2.5 lg:py-3.5 bg-white text-brand-obsidian text-center rounded-lg lg:rounded-xl font-bold text-xs lg:text-sm shadow-lg">
+                    Place Bid
+                  </div>
+                </div>
+
+                <!-- Glass Screen Reflection Overlay -->
+                <div
+                  class="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent pointer-events-none z-20">
+                </div>
+                <div
+                  class="absolute top-[-20%] left-[-20%] w-[140%] h-[50%] bg-gradient-to-b from-white/10 to-transparent -rotate-12 pointer-events-none z-20">
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section id="proof-strip"
+      class="relative w-full py-24 lg:py-32 bg-brand-bg overflow-hidden border-t border-gray-200/50">
+      <!-- Subtle Background Mesh -->
+      <div class="absolute inset-0 w-full h-full pointer-events-none opacity-20" style="
+      background-image: radial-gradient(
+       rgba(10, 10, 11, 0.1) 1px,
+       transparent 1px
+      );
+      background-size: 40px 40px;
+     "></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent to-[#EDEEF5] pointer-events-none"></div>
+
+      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+        <!-- Animated Number Counters -->
+        <div
+          class="grid grid-cols-1 md:grid-cols-5 gap-16 lg:gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-300/50 mb-24">
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
+                <span class="counter" data-target="94">0</span><span class="text-brand-primary">%</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              lot sell-through rate
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
+                <span class="text-black">&lt;</span><span class="counter" data-target="48">0</span><span
+                  class="text-brand-bright">h</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              settlement after close
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
+                <span class="counter" data-target="20">0</span><span class="text-brand-primary">+</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              Source Markets
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
+                <span class="counter" data-target="40">0</span><span class="text-brand-bright">%</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              Source Markets
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <h3
+              class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-mint tracking-tighter mb-2 zero-text">
+              Zero
+            </h3>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-brand-mint uppercase font-bold mt-2">
+              preferred buyer deals
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: WHY NORTHLADDER (THE REFRACTIVE PILLARS) -->
+    <section id="pillars-section" class="relative w-full bg-brand-bg overflow-hidden">
+
+      <!-- The pin wrapper (GSAP natively controls this height) -->
+      <div id="pillars-pin-wrapper" class="relative w-full h-screen flex flex-col justify-center">
+
+        <!-- Abstract Background Orbs -->
+        <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <div
+            class="absolute top-[20%] right-[10%] w-[50vw] md:w-[30vw] h-[50vw] md:h-[30vw] bg-brand-mint/20 rounded-full blur-[80px] animate-[pulse_6s_ease-in-out_infinite]">
+          </div>
+          <div
+            class="absolute bottom-[20%] right-[40%] w-[60vw] md:w-[40vw] h-[60vw] md:h-[40vw] bg-brand-primary/10 rounded-full blur-[100px] animate-[pulse_8s_ease-in-out_infinite_reverse]">
+          </div>
+        </div>
+
+        <!-- The Horizontal Track -->
+        <!-- FIXED: The Title and Cards are now in the same flex container -->
+        <div class="relative z-10 w-full flex items-center shrink-0 h-full">
+          <div id="pillars-track" class="flex items-center gap-6 md:gap-12 px-6 md:px-12 lg:px-20 w-max h-full">
+
+            <!-- Section Header (Now inside the track, scrolls away smoothly) -->
+            <div class="w-[85vw] md:w-[350px] lg:w-[450px] shrink-0 flex flex-col justify-center md:mr-10">
+              <p class="font-sans text-[10px] md:text-xs font-bold tracking-[0.2em] text-brand-mint uppercase mb-3">Why
+                NorthLadder</p>
+              <h2
+                class="font-display font-light text-3xl md:text-4xl lg:text-5xl text-brand-obsidian tracking-tight leading-[1.1]">
+                What makes <br /> this marketplace <br class="hidden md:block" />
+                <span class="font-medium">different for buyers.</span>
+              </h2>
+            </div>
+
+            <!-- Pillar 1 -->
+            <div
+              class="pillar-card relative w-[85vw] md:w-[450px] h-[60vh] min-h-[380px] md:h-[550px] bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05),inset_0_0_20px_rgba(255,255,255,0.5)] rounded-3xl p-6 md:p-12 flex flex-col justify-between shrink-0 transform hover:-translate-y-2 transition-transform duration-500">
+              <div>
+                <div
+                  class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white border border-gray-200 flex items-center justify-center mb-6 md:mb-8 text-brand-primary shadow-sm">
+                  <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                  </svg>
+                </div>
+                <h3 class="font-display font-bold text-lg md:text-2xl text-brand-obsidian mb-3 md:mb-4">Open auction —
+                  no preferred buyers</h3>
+                <p class="font-sans text-xs md:text-sm text-gray-600 leading-relaxed">
+                  Every verified buyer bids simultaneously. NorthLadder never allocates lots before auction or creates
+                  exclusive buyer relationships. The best price wins, always.
+                </p>
+              </div>
+              <a href="#how-bidding-works"
+                class="inline-flex items-center font-sans text-[13px] md:text-sm font-semibold text-brand-primary hover:text-brand-obsidian transition-colors w-fit mt-6">
+                How bidding works
+                <svg class="w-4 h-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </a>
+            </div>
+
+            <!-- Pillar 2 -->
+            <div
+              class="pillar-card relative w-[85vw] md:w-[450px] h-[60vh] min-h-[380px] md:h-[550px] bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05),inset_0_0_20px_rgba(255,255,255,0.5)] rounded-3xl p-6 md:p-12 flex flex-col justify-between shrink-0 transform hover:-translate-y-2 transition-transform duration-500">
+              <div>
+                <div
+                  class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white border border-gray-200 flex items-center justify-center mb-6 md:mb-8 text-brand-mint shadow-sm">
+                  <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <h3 class="font-display font-bold text-lg md:text-2xl text-brand-obsidian mb-3 md:mb-4">AR video grading
+                  per lot</h3>
+                <p class="font-sans text-xs md:text-sm text-gray-600 leading-relaxed">
+                  Every lot is graded by AR video — not 7 photos and a checklist. You see what you're bidding on. 40%
+                  fewer disputes because the evidence is objective and on record.
+                </p>
+              </div>
+              <a href="#grading-standards"
+                class="inline-flex items-center font-sans text-[13px] md:text-sm font-semibold text-brand-mint hover:text-brand-obsidian transition-colors w-fit mt-6">
+                View grading standards
+                <svg class="w-4 h-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </a>
+            </div>
+
+            <!-- Pillar 3 -->
+            <div
+              class="pillar-card relative w-[85vw] md:w-[450px] h-[60vh] min-h-[380px] md:h-[550px] bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05),inset_0_0_20px_rgba(255,255,255,0.5)] rounded-3xl p-6 md:p-12 flex flex-col justify-between shrink-0 transform hover:-translate-y-2 transition-transform duration-500">
+              <div>
+                <div
+                  class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-white border border-gray-200 flex items-center justify-center mb-6 md:mb-8 text-brand-primary shadow-sm">
+                  <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                </div>
+                <h3 class="font-display font-bold text-lg md:text-2xl text-brand-obsidian mb-3 md:mb-4">Deep,
+                  multi-market supply</h3>
+                <p class="font-sans text-xs md:text-sm text-gray-600 leading-relaxed">
+                  75+ partners feed inventory from EU, GCC, and Asia. Smartphones, tablets, wearables, and accessories
+                  across all grades. Volume buyers and selective buyers both served.
+                </p>
+              </div>
+              <a href="#live-inventory"
+                class="inline-flex items-center font-sans text-[13px] md:text-sm font-semibold text-brand-primary hover:text-brand-obsidian transition-colors w-fit mt-6">
+                Browse live inventory
+                <svg class="w-4 h-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </a>
+            </div>
+
+            <!-- Spacer element so the 3rd card can scroll nicely into the center of the screen -->
+            <div class="w-[5vw] md:w-[15vw] shrink-0"></div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 4: 3 STEPS TO BID (THE KINETIC TIMELINE) -->
+    <section id="timeline-section" class="relative w-full bg-brand-bg">
+
+      <!-- The Pin Wrapper -->
+      <!-- FIXED: Added py-20 to ensure generous spacing at the top and bottom of the screen -->
+      <div id="timeline-pin"
+        class="relative w-full h-screen overflow-hidden flex flex-col items-center justify-between py-20 md:py-24">
+
+        <div class="w-full max-w-[1200px] mx-auto px-4 md:px-12 relative z-10 h-full flex flex-col justify-between">
+
+          <!-- Section Header -->
+          <div class="text-center shrink-0 mb-6 lg:mb-10">
+            <p class="font-sans text-[10px] md:text-xs font-bold tracking-[0.2em] text-brand-mint uppercase mb-3">Get
+              Started</p>
+            <h2 class="font-display font-light text-3xl md:text-5xl text-brand-obsidian tracking-tight leading-[1.1]">
+              From registration to first bid <br class="hidden md:block" /> in 3 steps
+            </h2>
+          </div>
+
+          <!-- The Kinetic Track Container -->
+          <!-- FIXED: Uses flex-grow and justify-between to physically space out the cards so they never overlap the header/footer -->
+          <div class="relative w-full max-w-5xl mx-auto flex-grow flex flex-col justify-between min-h-[400px]">
+
+            <!-- Background Inset Track -->
+            <!-- Top and bottom margins (top-4 bottom-4) perfectly align the line with the center of the nodes -->
+            <div
+              class="absolute left-6 md:left-1/2 -translate-x-1/2 top-4 md:top-5 bottom-4 md:bottom-5 w-1 bg-gray-200/60 rounded-full shadow-[inset_0_1px_3px_rgba(0,0,0,0.1)]">
+            </div>
+
+            <!-- Animated Glowing Laser Line -->
+            <div id="laser-line"
+              class="absolute left-6 md:left-1/2 -translate-x-1/2 top-4 md:top-5 w-1 h-0 bg-gradient-to-b from-brand-mint via-brand-primary to-brand-bright rounded-full z-10 shadow-[0_0_15px_rgba(78,0,142,0.6)]">
+            </div>
+
+            <!-- STEP 1 -->
+            <div class="relative w-full flex items-center">
+              <!-- Node -->
+              <div
+                class="timeline-node absolute left-6 md:left-1/2 -translate-x-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-brand-bg border-2 border-gray-300 flex items-center justify-center z-20 font-display font-bold text-xs md:text-sm text-gray-500 transition-all duration-300">
+                1</div>
+              <!-- Card Wrapper -->
+              <div class="w-full flex md:w-1/2 md:justify-end pl-16 md:pl-0 md:pr-10 lg:pr-16">
+                <div
+                  class="timeline-card w-full bg-white/80 backdrop-blur-xl border border-white p-5 md:p-6 lg:p-8 rounded-2xl md:rounded-3xl shadow-sm flex flex-col md:items-end text-left md:text-right transition-all duration-300">
+                  <h3 class="font-display font-bold text-lg md:text-xl text-brand-obsidian mb-2">Register and verify
+                  </h3>
+                  <p class="font-sans text-xs md:text-sm text-gray-500 leading-relaxed">Submit your business details,
+                    IBAN, and trading credentials. Our team verifies within 24h. No volume minimums to start.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="relative w-full flex items-center">
+              <div
+                class="timeline-node absolute left-6 md:left-1/2 -translate-x-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-brand-bg border-2 border-gray-300 flex items-center justify-center z-20 font-display font-bold text-xs md:text-sm text-gray-500 transition-all duration-300">
+                2</div>
+              <div class="w-full flex md:w-1/2 md:ml-auto md:justify-start pl-16 md:pl-10 lg:pl-16">
+                <div
+                  class="timeline-card w-full bg-white/80 backdrop-blur-xl border border-white p-5 md:p-6 lg:p-8 rounded-2xl md:rounded-3xl shadow-sm flex flex-col items-start text-left transition-all duration-300">
+                  <h3 class="font-display font-bold text-lg md:text-xl text-brand-obsidian mb-2">Browse and bid</h3>
+                  <p class="font-sans text-xs md:text-sm text-gray-500 leading-relaxed">Access live and upcoming
+                    auctions. Filter by device type, grade, market, and volume. Place bids or set auto-bid limits.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="relative w-full flex items-center">
+              <div
+                class="timeline-node absolute left-6 md:left-1/2 -translate-x-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-brand-bg border-2 border-gray-300 flex items-center justify-center z-20 font-display font-bold text-xs md:text-sm text-gray-500 transition-all duration-300">
+                3</div>
+              <div class="w-full flex md:w-1/2 md:justify-end pl-16 md:pl-0 md:pr-10 lg:pr-16">
+                <div
+                  class="timeline-card w-full bg-white/80 backdrop-blur-xl border border-white p-5 md:p-6 lg:p-8 rounded-2xl md:rounded-3xl shadow-sm flex flex-col md:items-end text-left md:text-right transition-all duration-300">
+                  <h3 class="font-display font-bold text-lg md:text-xl text-brand-obsidian mb-2">Win and settle</h3>
+                  <p class="font-sans text-xs md:text-sm text-gray-500 leading-relaxed">Receive invoice immediately
+                    after auction closes. Arrange logistics or use our coordinated collection. Settlement in &lt;48h.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Final CTAs -->
+          <div id="timeline-ctas"
+            class="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mt-6 lg:mt-10 shrink-0 opacity-0 translate-y-4">
+            <a href="#register"
+              class="w-full sm:w-auto inline-flex items-center justify-center font-sans font-semibold text-brand-obsidian bg-[#FFD700] px-8 py-3.5 md:py-4 rounded-full hover:bg-[#F2C800] transition-colors shadow-lg hover:-translate-y-1">
+              Register as buyer
+              <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+            <a href="#how-it-works"
+              class="w-full sm:w-auto inline-flex items-center justify-center font-sans font-semibold text-brand-obsidian bg-white border border-gray-300 px-8 py-3.5 md:py-4 rounded-full hover:bg-gray-50 transition-colors shadow-sm hover:-translate-y-1">
+              How auctions work
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- SECTION 5: BUYER TYPES (THE DUAL LENSES) -->
+    <section id="buyer-types-section"
+      class="relative w-full py-24 lg:py-32 bg-brand-bg overflow-hidden border-t border-gray-200/50">
+
+      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+
+        <!-- Section Header -->
+        <div class="mb-12 md:mb-16 pointer-events-none">
+          <p class="font-sans text-[10px] md:text-xs font-bold tracking-[0.2em] text-brand-mint uppercase mb-3">Buyer
+            Types</p>
+          <h2 class="font-display font-light text-3xl md:text-5xl text-brand-obsidian tracking-tight !leading-[1.15]">
+            Serving volume buyers <br class="hidden md:block" /> and <span class="font-medium">selective traders</span>
+          </h2>
+        </div>
+
+        <!-- The Bento Box Grid -->
+        <!-- 'group' enables the cross-card dimming effect on desktop -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 group">
+
+          <!-- BENTO CARD 1: VOLUME BUYERS -->
+          <!-- hover:!opacity-100 overrides the group-hover dimming so the active card stays bright -->
+          <div
+            class="bento-lens relative overflow-hidden bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-8 md:p-12 transition-all duration-500 ease-out md:group-hover:opacity-40 hover:!opacity-100 hover:-translate-y-2 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] flex flex-col h-full cursor-default"
+            data-glow="rgba(72,180,141,0.15)">
+
+            <!-- Dynamic Spotlight Element (Positioned by JS) -->
+            <div class="lens-spotlight absolute inset-0 pointer-events-none transition-opacity duration-300 opacity-0"
+              style="background: radial-gradient(circle 400px at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--glow-color, rgba(255,255,255,0)), transparent 80%);">
+            </div>
+
+            <div class="relative z-10 flex flex-col h-full">
+              <p class="font-sans text-[10px] md:text-xs font-bold tracking-[0.15em] text-gray-400 uppercase mb-4">
+                Volume Buyers · Resellers · Distributors</p>
+              <h3 class="font-display font-bold text-2xl md:text-3xl text-brand-obsidian mb-4">High-volume, recurring
+                sourcing</h3>
+              <p class="font-sans text-sm md:text-base text-gray-500 leading-relaxed mb-10 flex-grow">
+                Access consistent supply across EU, GCC, and Asia. Set grade thresholds and auto-bid parameters.
+                Dedicated account support for buyers placing &gt; €50K/month.
+              </p>
+
+              <!-- Features Layout -->
+              <div class="flex flex-wrap gap-2 md:gap-3 mt-auto">
+                <span
+                  class="px-3 md:px-4 py-1.5 md:py-2 bg-white/80 border border-gray-200 rounded-full text-[10px] md:text-xs font-semibold font-sans text-gray-500">API
+                  access available</span>
+                <span
+                  class="px-3 md:px-4 py-1.5 md:py-2 bg-white/80 border border-gray-200 rounded-full text-[10px] md:text-xs font-semibold font-sans text-gray-500">Volume
+                  SLA</span>
+                <span
+                  class="px-3 md:px-4 py-1.5 md:py-2 bg-white/80 border border-gray-200 rounded-full text-[10px] md:text-xs font-semibold font-sans text-gray-500">Dedicated
+                  account manager</span>
+                <span
+                  class="px-3 md:px-4 py-1.5 md:py-2 bg-white/80 border border-gray-200 rounded-full text-[10px] md:text-xs font-semibold font-sans text-gray-500">Flexible
+                  payment terms</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BENTO CARD 2: SELECTIVE TRADERS -->
+          <div
+            class="bento-lens relative overflow-hidden bg-white/60 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-8 md:p-12 transition-all duration-500 ease-out md:group-hover:opacity-40 hover:!opacity-100 hover:-translate-y-2 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] flex flex-col h-full cursor-default"
+            data-glow="rgba(78,0,142,0.12)">
+
+            <!-- Dynamic Spotlight Element (Positioned by JS) -->
+            <div class="lens-spotlight absolute inset-0 pointer-events-none transition-opacity duration-300 opacity-0"
+              style="background: radial-gradient(circle 400px at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--glow-color, rgba(255,255,255,0)), transparent 80%);">
+            </div>
+
+            <div class="relative z-10 flex flex-col h-full">
+              <p class="font-sans text-[10px] md:text-xs font-bold tracking-[0.15em] text-gray-400 uppercase mb-4">
+                Selective Buyers · Boutique Traders · Specialists</p>
+              <h3 class="font-display font-bold text-2xl md:text-3xl text-brand-obsidian mb-4">Specific models, specific
+                markets</h3>
+              <p class="font-sans text-sm md:text-base text-gray-500 leading-relaxed mb-10 flex-grow">
+                Filter to exact specifications — device model, colour, grade, region of origin. Set bidding alerts for
+                incoming lots that match your criteria. No volume minimum.
+              </p>
+
+              <!-- Features Layout -->
+              <div class="flex flex-wrap gap-2 md:gap-3 mt-auto">
+                <span
+                  class="px-3 md:px-4 py-1.5 md:py-2 bg-white/80 border border-gray-200 rounded-full text-[10px] md:text-xs font-semibold font-sans text-gray-500">Lot-level
+                  alerts</span>
+                <span
+                  class="px-3 md:px-4 py-1.5 md:py-2 bg-white/80 border border-gray-200 rounded-full text-[10px] md:text-xs font-semibold font-sans text-gray-500">Model
+                  and spec filters</span>
+                <span
+                  class="px-3 md:px-4 py-1.5 md:py-2 bg-white/80 border border-gray-200 rounded-full text-[10px] md:text-xs font-semibold font-sans text-gray-500">Grading
+                  certification download</span>
+                <span
+                  class="px-3 md:px-4 py-1.5 md:py-2 bg-white/80 border border-gray-200 rounded-full text-[10px] md:text-xs font-semibold font-sans text-gray-500">No
+                  minimum order</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: DISPUTE PROTECTION (THE AR SCANNER) -->
+    <section id="ar-scanner-section" class="relative w-full bg-brand-bg pt-20 md:pt-32 pb-24 overflow-hidden">
+      <!-- PHASE 1: Text Payload -->
+      <!-- PHASE 1: The Text Payload (Elevated Luxury Design) -->
+      <div id="ar-text-payload"
+        class="relative z-30 w-full max-w-5xl mx-auto px-6 flex flex-col items-center text-center">
+
+        <!-- Kicker with subtle icon -->
+        <div
+          class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand-mint/30 bg-brand-mint/5 backdrop-blur-md mb-6 shadow-sm">
+          <svg class="w-3.5 h-3.5 text-brand-mint" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+          <p class="font-sans text-[10px] md:text-xs font-bold tracking-[0.2em] text-brand-mint uppercase mt-0.5">
+            Dispute Protection</p>
+        </div>
+
+        <h2
+          class="font-display font-light text-4xl md:text-6xl lg:text-7xl !leading-[1.1] tracking-tight text-brand-obsidian mb-6 drop-shadow-sm">
+          Grade-backed. On record. <br class="hidden md:block" />
+          <span
+            class="font-light text-transparent bg-clip-text bg-gradient-to-r from-brand-obsidian via-brand-primary to-brand-mint">No
+            ambiguity.</span>
+        </h2>
+
+        <p class="font-sans text-sm md:text-lg font-light text-gray-600 leading-relaxed mb-14 max-w-3xl">
+          Every NorthLadder lot is graded by AR video before auction. The 20-second scan captures the device's physical
+          condition with timestamp and serial confirmation. If a lot arrives inconsistent with its grade, our dispute
+          resolution process uses the auction-time video as the objective record — not a buyer's word against a seller's
+          word.
+        </p>
+
+        <!-- Upgraded Metrics Grid: Premium Glass Bento Cards -->
+        <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+          <!-- Card 1 -->
+          <div
+            class="relative overflow-hidden bg-white/40 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-8 flex flex-col items-center justify-center shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] transform hover:-translate-y-1 transition-transform duration-500">
+            <!-- Subtle internal glow -->
+            <div
+              class="absolute -top-10 -right-10 w-32 h-32 bg-brand-mint/20 rounded-full blur-[40px] pointer-events-none">
+            </div>
+            <span class="font-display font-bold text-3xl md:text-4xl text-brand-obsidian mb-3 drop-shadow-sm">40%</span>
+            <span
+              class="font-sans text-[10px] md:text-xs text-gray-500 uppercase tracking-widest font-semibold leading-relaxed">fewer
+              disputes <br /> vs photo grading</span>
+          </div>
+
+          <!-- Card 2 -->
+          <div
+            class="relative overflow-hidden bg-white/40 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-8 flex flex-col items-center justify-center shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] transform hover:-translate-y-1 transition-transform duration-500">
+            <div
+              class="absolute -bottom-10 -left-10 w-32 h-32 bg-brand-primary/10 rounded-full blur-[40px] pointer-events-none">
+            </div>
+            <span
+              class="font-display font-bold text-3xl md:text-4xl text-brand-obsidian mb-3 drop-shadow-sm">100%</span>
+            <span
+              class="font-sans text-[10px] md:text-xs text-gray-500 uppercase tracking-widest font-semibold leading-relaxed">lots
+              AR-video <br /> graded</span>
+          </div>
+
+          <!-- Card 3 -->
+          <div
+            class="relative overflow-hidden bg-white/40 backdrop-blur-2xl border border-white/80 rounded-[2rem] p-8 flex flex-col items-center justify-center shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] transform hover:-translate-y-1 transition-transform duration-500">
+            <div
+              class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-brand-mint/15 rounded-full blur-[40px] pointer-events-none">
+            </div>
+            <span
+              class="font-display font-bold text-2xl md:text-3xl text-brand-obsidian mb-3 drop-shadow-sm">Grade-backed</span>
+            <span
+              class="font-sans text-[10px] md:text-xs text-gray-500 uppercase tracking-widest font-semibold leading-relaxed">SLA
+              on every <br /> auction</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- PHASE 2: Pinned AR Scanner Device -->
+      <div id="ar-pin-wrapper" class="relative w-full h-screen min-h-[600px] flex items-center justify-center">
+        <div class="relative w-[260px] md:w-[320px] h-[520px] md:h-[640px]">
+          <!-- Chips -->
+          <div
+            class="float-chip chip-a absolute -left-6 md:-left-40 top-[12%] bg-white/90 backdrop-blur-xl border border-gray-200 shadow-xl rounded-xl p-2 md:p-3 flex items-center gap-3 z-40 transition-colors duration-300">
+            <div
+              class="w-8 h-8 rounded bg-[#29955F] text-white flex items-center justify-center font-bold text-sm shadow-sm">
+              A</div>
+            <span
+              class="font-sans text-[11px] md:text-xs font-medium text-gray-700 hidden md:block whitespace-nowrap">Pristine
+              — no visible marks</span>
+          </div>
+          <div
+            class="float-chip absolute -left-4 md:-left-32 bottom-[25%] bg-white/90 backdrop-blur-xl border border-gray-200 shadow-xl rounded-xl p-2 md:p-3 flex items-center gap-3 z-40">
+            <div
+              class="w-8 h-8 rounded bg-[#4A79B9] text-white flex items-center justify-center font-bold text-sm shadow-sm">
+              B</div>
+            <span
+              class="font-sans text-[11px] md:text-xs font-medium text-gray-700 hidden md:block whitespace-nowrap">Light
+              use — minor marks</span>
+          </div>
+          <div
+            class="float-chip absolute -right-6 md:-right-40 top-[25%] bg-white/90 backdrop-blur-xl border border-gray-200 shadow-xl rounded-xl p-2 md:p-3 flex items-center gap-3 z-40">
+            <div
+              class="w-8 h-8 rounded bg-[#E4B832] text-white flex items-center justify-center font-bold text-sm shadow-sm">
+              C</div>
+            <span
+              class="font-sans text-[11px] md:text-xs font-medium text-gray-700 hidden md:block whitespace-nowrap">Heavy
+              use — visible wear</span>
+          </div>
+          <div
+            class="float-chip absolute -right-4 md:-right-32 bottom-[15%] bg-white/90 backdrop-blur-xl border border-gray-200 shadow-xl rounded-xl p-2 md:p-3 flex items-center gap-3 z-40">
+            <div
+              class="w-8 h-8 rounded bg-[#DE4C4A] text-white flex items-center justify-center font-bold text-sm shadow-sm">
+              D</div>
+            <span
+              class="font-sans text-[11px] md:text-xs font-medium text-gray-700 hidden md:block whitespace-nowrap">Defective
+              — functional issues</span>
+          </div>
+
+          <!-- Device -->
+          <div
+            class="absolute inset-0 bg-[#0A0A0B] rounded-[3rem] border-[8px] border-gray-800 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.5)] overflow-hidden z-20 flex items-center justify-center">
+            <div
+              class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:20px_20px]">
+            </div>
+            <div id="ar-laser"
+              class="absolute top-0 left-0 w-full h-[2px] bg-brand-mint shadow-[0_0_15px_3px_rgba(72,180,141,0.6),0_0_30px_8px_rgba(72,180,141,0.3)] z-30 opacity-0">
+            </div>
+            <div id="ui-analyzing"
+              class="absolute z-40 bg-black/60 backdrop-blur-md border border-brand-mint/30 px-5 py-2 rounded-full font-mono text-[10px] md:text-xs text-brand-mint tracking-widest shadow-[0_0_20px_rgba(72,180,141,0.2)] flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-brand-mint animate-pulse"></span>
+              ANALYZING
+            </div>
+            <div id="ui-result"
+              class="absolute z-50 bg-[#29955F]/20 backdrop-blur-xl border border-[#29955F] px-6 py-4 rounded-2xl shadow-[0_0_40px_rgba(41,149,95,0.4)] flex flex-col items-center">
+              <span
+                class="font-display font-bold text-3xl md:text-4xl text-[#29955F] drop-shadow-[0_0_10px_rgba(41,149,95,0.8)]">GRADE
+                A</span>
+              <span
+                class="font-sans text-[10px] md:text-xs font-semibold tracking-widest text-white uppercase mt-1">Pristine
+                Condition</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer id="main-footer" class="relative z-30 bg-white overflow-hidden pt-32 pb-16">
+    <!-- Subtle top ambient separator & glow for depth -->
+    <div
+      class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-primary/15 to-transparent">
+    </div>
+    <div
+      class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand-primary/[0.02] blur-[120px] pointer-events-none">
+    </div>
+
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-8 mb-24">
+        <!-- Brand & Mission Column -->
+        <div class="col-span-1 md:col-span-5 pr-0 lg:pr-12">
+          <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+            class="h-6 w-auto brightness-0 mb-8 opacity-90" />
+          <p class="font-sans text-[13px] text-gray-500 font-light leading-[1.9] mb-10 max-w-sm">
+            Democratization Of Trade-ins. Powering the world's most advanced
+            circularity infrastructure for Grade-A inventory with absolute
+            neutrality.
+          </p>
+
+          <!-- Premium Language Pill with Hover State -->
+          <div class="inline-flex items-center relative group">
+            <div
+              class="absolute inset-0 bg-gray-50 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            </div>
+            <div
+              class="relative flex items-center bg-white border border-gray-100/80 rounded-full px-5 py-2.5 hover:border-gray-200 hover:shadow-[0_10px_20px_-10px_rgba(0,0,0,0.05)] transition-all duration-300">
+              <svg class="w-4 h-4 text-gray-400 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9">
+                </path>
+              </svg>
+              <select
+                class="bg-transparent text-[11px] font-sans font-medium tracking-wide text-brand-obsidian focus:outline-none pr-7 appearance-none cursor-pointer w-full select-arrow">
+                <option>English (Global)</option>
+                <option>العربية (Arabic)</option>
+                <option>Deutsch (German)</option>
+                <option>Español (Spanish)</option>
+                <option>Français (French)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ecosystem Links -->
+        <div class="col-span-1 md:col-span-2 md:col-start-7">
+          <h4 class="font-sans text-[9px] uppercase tracking-[0.25em] font-bold text-gray-400 mb-8">
+            Ecosystem
+          </h4>
+          <ul class="space-y-5 font-sans text-[13px] font-light text-gray-500">
+            <li>
+              <a href="#partners"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">For
+                Partners</a>
+            </li>
+            <li>
+              <a href="#buyers"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">For
+                Buyers</a>
+            </li>
+            <li>
+              <a href="#neutral-marketplace"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Neutral
+                Marketplace</a>
+            </li>
+            <li>
+              <a href="#insights"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Data
+                Insights</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Enterprise Links -->
+        <div class="col-span-1 md:col-span-2">
+          <h4 class="font-sans text-[9px] uppercase tracking-[0.25em] font-bold text-gray-400 mb-8">
+            Enterprise
+          </h4>
+          <ul class="space-y-5 font-sans text-[13px] font-light text-gray-500">
+            <li>
+              <a href="#about"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Inside
+                NorthLadder</a>
+            </li>
+            <li>
+              <a href="#careers"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Global
+                Careers</a>
+            </li>
+            <li>
+              <a href="#newsroom"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">News
+                & Media</a>
+            </li>
+            <li>
+              <a href="#contact"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Contact
+                Relations</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Refined Bottom Bar -->
+      <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-100/80">
+        <p class="font-sans text-[11px] font-medium tracking-wide text-gray-400">
+          © 2026 NorthLadder. All rights reserved.
+        </p>
+        <div class="flex gap-8 mt-6 md:mt-0">
+          <a href="#"
+            class="text-gray-400 hover:text-brand-obsidian transition-colors text-[11px] tracking-wide font-sans font-medium">Privacy
+            Policy</a>
+          <a href="#"
+            class="text-gray-400 hover:text-brand-obsidian transition-colors text-[11px] tracking-wide font-sans font-medium">Terms
+            of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // --- SECTION 1: PHOTOREALISTIC CSS 3D ASSEMBLY ---
+      const heroSection = document.getElementById("buyer-hero");
+      const deviceGroup = document.getElementById("hero-device-group");
+      const textBlock = document.getElementById("hero-text-block");
+      const deviceLayers = gsap.utils.toArray(".device-layer");
+
+      if (heroSection && deviceGroup) {
+        const isMobile = window.innerWidth < 1024;
+
+        // 1. Initial State: Exploded in 3D Space
+        gsap.set(deviceGroup, {
+          rotationY: -25,
+          rotationX: 15,
+          rotationZ: -5
+        });
+
+        // Initialize layer offsets
+        deviceLayers.forEach(layer => {
+          gsap.set(layer, {
+            z: layer.getAttribute("data-z"),
+            x: layer.getAttribute("data-x"),
+            y: layer.getAttribute("data-y")
+          });
+        });
+
+        // 2. Ambient Floating Animation
+        gsap.to(deviceGroup, {
+          y: "+=15",
+          duration: 2.5,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1
+        });
+
+        // 3. The Assembly Timeline
+        const tlAssembly = gsap.timeline({
+          scrollTrigger: {
+            trigger: heroSection,
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 1.2,
+          }
+        });
+
+        tlAssembly
+          // Fade text out and push it up
+          .to(textBlock, {
+            x: isMobile ? 0 : -40,
+            y: isMobile ? -60 : 0,
+            opacity: 0,
+            duration: 1,
+            ease: "power2.inOut"
+          }, 0)
+
+          // Physically snap the layers together
+          .to(deviceLayers, {
+            x: 0, y: 0, z: 0,
+            duration: 1,
+            ease: "power3.inOut"
+          }, 0)
+
+          // Rotate to presentation angle and pull UP slightly on mobile to fill the text void
+          .to(deviceGroup, {
+            y: isMobile ? -60 : 0,
+            rotationY: -15,
+            rotationX: 5,
+            rotationZ: 0,
+            duration: 1,
+            ease: "power2.inOut"
+          }, 0)
+
+          // Fade out into the Proof Strip
+          .to(deviceGroup, {
+            opacity: 0,
+            duration: 0.3
+          }, 0.8);
+      }
+
+      // --- SECTION 2: PROOF STRIP ---
+      const statBlocks = gsap.utils.toArray(".stat-block");
+      if (statBlocks.length > 0) {
+        gsap.fromTo(statBlocks, { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, stagger: 0.2, scrollTrigger: { trigger: "#proof-strip", start: "top 80%" } });
+        document.querySelectorAll(".counter").forEach(counter => {
+          ScrollTrigger.create({
+            trigger: counter, start: "top 85%", once: true, onEnter: () => {
+              gsap.to(counter, { innerHTML: counter.getAttribute("data-target"), duration: 2.5, snap: { innerHTML: 1 } });
+            }
+          });
+        });
+      }
+
+      // --- SECTION 3: PILLARS ---
+      const pillarsSection = document.getElementById("pillars-section");
+      const pillarsTrack = document.getElementById("pillars-track");
+      if (pillarsSection && pillarsTrack) {
+        gsap.to(pillarsTrack, {
+          x: () => -(pillarsTrack.scrollWidth - window.innerWidth),
+          ease: "none",
+          scrollTrigger: {
+            trigger: pillarsSection,
+            start: "top top",
+            end: () => "+=" + pillarsTrack.scrollWidth,
+            pin: true,
+            scrub: 1,
+            invalidateOnRefresh: true
+          }
+        });
+      }
+
+      // --- SECTION 4: TIMELINE ---
+      const timelinePin = document.getElementById("timeline-pin");
+      if (timelinePin) {
+        const tlSteps = gsap.timeline({ scrollTrigger: { trigger: timelinePin, start: "top top", end: "+=200%", pin: true, scrub: 1 } });
+        const cards = gsap.utils.toArray(".timeline-card");
+        const nodes = gsap.utils.toArray(".timeline-node");
+
+        gsap.set(cards, { opacity: 0.4, scale: 0.95 });
+        tlSteps.to(cards[0], { opacity: 1, scale: 1, boxShadow: "0 20px 40px -10px rgba(0,0,0,0.1)", duration: 0.05 }, 0);
+        tlSteps.to(nodes[0], { borderColor: "#48B48D", color: "#ffffff", backgroundColor: "#48B48D", duration: 0.05 }, 0);
+
+        tlSteps.to("#laser-line", { height: "50%", duration: 0.4 }, 0);
+        tlSteps.to(cards[1], { opacity: 1, scale: 1, boxShadow: "0 20px 40px -10px rgba(0,0,0,0.1)", duration: 0.1 }, 0.4);
+        tlSteps.to(nodes[1], { borderColor: "#4E008E", color: "#ffffff", backgroundColor: "#4E008E", duration: 0.1 }, 0.4);
+        tlSteps.to(cards[0], { opacity: 0.4, scale: 0.95, boxShadow: "none", duration: 0.1 }, 0.4);
+        tlSteps.to(nodes[0], { borderColor: "#D1D5DB", color: "#6B7280", backgroundColor: "#EDEEF5", duration: 0.1 }, 0.4);
+
+        tlSteps.to("#laser-line", { height: "100%", duration: 0.4 }, 0.5);
+        tlSteps.to(cards[2], { opacity: 1, scale: 1, boxShadow: "0 20px 40px -10px rgba(0,0,0,0.1)", duration: 0.1 }, 0.9);
+        tlSteps.to(nodes[2], { borderColor: "#B599FA", color: "#ffffff", backgroundColor: "#B599FA", duration: 0.1 }, 0.9);
+        tlSteps.to(cards[1], { opacity: 0.4, scale: 0.95, boxShadow: "none", duration: 0.1 }, 0.9);
+        tlSteps.to(nodes[1], { borderColor: "#D1D5DB", color: "#6B7280", backgroundColor: "#EDEEF5", duration: 0.1 }, 0.9);
+      }
+
+      // --- SECTION 5: BENTO HOVER ---
+      document.querySelectorAll('.bento-lens').forEach(lens => {
+        const spotlight = lens.querySelector('.lens-spotlight');
+        spotlight.style.setProperty('--glow-color', lens.getAttribute('data-glow'));
+        lens.addEventListener('mousemove', (e) => {
+          const rect = lens.getBoundingClientRect();
+          spotlight.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+          spotlight.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        });
+        lens.addEventListener('mouseenter', () => spotlight.style.opacity = '1');
+        lens.addEventListener('mouseleave', () => spotlight.style.opacity = '0');
+      });
+
+      // --- SECTION 6: AR SCANNER ---
+      const arPinWrapper = document.getElementById("ar-pin-wrapper");
+      if (arPinWrapper) {
+        gsap.set(".float-chip", { opacity: 0, scale: 0.8 });
+        gsap.set("#ui-result", { opacity: 0, scale: 0.8 });
+        gsap.set("#ui-analyzing", { opacity: 1, y: 0, scale: 1 });
+        gsap.set("#ar-laser", { top: "0%", opacity: 0 });
+
+        gsap.to(".float-chip", { y: -10, rotation: () => gsap.utils.random(-3, 3), duration: 3, ease: "sine.inOut", yoyo: true, repeat: -1, stagger: { amount: 1.5, from: "random" } });
+
+        const tlScanner = gsap.timeline({
+          scrollTrigger: { trigger: arPinWrapper, start: "center center", end: "+=150%", pin: true, scrub: 1, invalidateOnRefresh: true }
+        });
+
+        tlScanner
+          .to(".float-chip", { opacity: 1, scale: 1, duration: 0.2, stagger: 0.05, ease: "back.out(1.5)" }, 0)
+          .to("#ar-laser", { opacity: 1, duration: 0.1 }, 0.2)
+          .to("#ar-laser", { top: "100%", duration: 1.5, ease: "none" }, 0.2)
+          .to("#ui-analyzing", { opacity: 0, scale: 0.8, y: -10, duration: 0.1 }, 1.0)
+          .to("#ui-result", { opacity: 1, scale: 1, duration: 0.2, ease: "back.out(2)" }, 1.1)
+          .to(".chip-a", { borderColor: "#29955F", boxShadow: "0 0 30px rgba(41,149,95,0.6)", scale: 1.05, duration: 0.2 }, 1.1)
+          .to("#ar-laser", { opacity: 0, duration: 0.1 }, 1.6);
+      }
+
+      // Navbar Starts Here...
+      window.addEventListener("scroll", () => {
+        const nav = document.getElementById("main-nav");
+        if (window.scrollY > 20) {
+          // Scrolled state: Translucent (keeps apple-blur-light), Oval, Floating
+          nav.classList.remove("w-full");
+          nav.classList.add(
+            "w-[90%]",
+            "max-w-[1400px]",
+            "top-2",
+            "rounded-full",
+            "shadow-sm",
+            "border",
+            "border-white/40",
+          );
+        } else {
+          // Top state: Full width
+          nav.classList.add("w-full");
+          nav.classList.remove(
+            "w-[90%]",
+            "max-w-[1400px]",
+            "top-2",
+            "rounded-full",
+            "shadow-sm",
+            "border",
+            "border-white/40",
+          );
+        }
+      });
+
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileBackBtn = document.getElementById('mobile-back-btn');
+      const submenus = document.querySelectorAll('.mobile-submenu');
+      const level1Btns = document.querySelectorAll('.mobile-nav-item[data-target]');
+
+      if (mobileBtn && mobileMenu) {
+        // Toggle the entire mobile menu
+        mobileBtn.addEventListener('click', () => {
+          mobileBtn.classList.toggle('menu-open');
+          mobileMenu.classList.toggle('active');
+          document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+
+          // Reset drilldown state when closing
+          if (!mobileMenu.classList.contains('active')) {
+            setTimeout(() => {
+              mobileMenu.classList.remove('submenu-active');
+              submenus.forEach(sub => sub.classList.add('hidden', 'active'));
+            }, 400); // Wait for menu to fade out
+          }
+        });
+
+        // Drill down to submenu
+        level1Btns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('data-target');
+
+            // Hide all submenus first
+            submenus.forEach(sub => {
+              sub.classList.add('hidden');
+              sub.classList.remove('active');
+            });
+
+            // Show targeted submenu
+            const targetSubmenu = document.getElementById(targetId);
+            if (targetSubmenu) {
+              targetSubmenu.classList.remove('hidden');
+              // Tiny delay to allow display:block to apply before adding active class for CSS transitions
+              requestAnimationFrame(() => {
+                targetSubmenu.classList.add('active');
+                mobileMenu.classList.add('submenu-active');
+              });
+            }
+          });
+        });
+
+        // Go back to main menu
+        if (mobileBackBtn) {
+          mobileBackBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('submenu-active');
+            // Remove active class from submenus after transition completes
+            setTimeout(() => {
+              submenus.forEach(sub => {
+                sub.classList.add('hidden');
+                sub.classList.remove('active');
+              });
+            }, 500);
+          });
+        }
+      }
+      // Navbar Ends Here...
+    }); 
+  </script>
+</body>
+
+</html>

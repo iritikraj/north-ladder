@@ -1,0 +1,2173 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Partner Hub | NorthLadder</title>
+
+  <!-- Brand Approved Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <link rel="icon" type="image/x-icon" href="favicon.png" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- GSAP Core & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <!-- Three.js Core -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: "#EDEEF5",
+              obsidian: "#0A0A0B",
+              charcoal: "#2D2D32",
+              primary: "#4E008E",
+              light: "#774AA2",
+              bright: "#B599FA",
+              mint: "#48B48D",
+            },
+          },
+          fontFamily: {
+            sans: ["Poppins", "sans-serif"],
+            display: ["Montserrat", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Hide scrollbars */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    body {
+      background-color: #EDEEF5;
+      color: #0A0A0B;
+      overflow-x: hidden;
+    }
+
+    /* Subtle Film Grain */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.035;
+      mix-blend-mode: multiply;
+    }
+
+    /* Hero Entrance Animation */
+    .hero-fade {
+      opacity: 0;
+      animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 2D to 3D Perspective Grid */
+    .grid-container {
+      position: absolute;
+      inset: -100%;
+      /* Massive inset so it doesn't clip when rotated */
+      background-image:
+        linear-gradient(to right, rgba(181, 153, 250, 0.15) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(181, 153, 250, 0.15) 1px, transparent 1px);
+      background-size: 60px 60px;
+      transform-origin: center center;
+      /* Soft radial mask to fade out the edges */
+      -webkit-mask-image: radial-gradient(circle at center, black 20%, transparent 65%);
+      mask-image: radial-gradient(circle at center, black 20%, transparent 65%);
+      will-change: transform;
+    }
+
+    .grid-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 1000px;
+      height: 1000px;
+      background: radial-gradient(circle, rgba(78, 0, 142, 0.15) 0%, rgba(72, 180, 141, 0.05) 40%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #cursor-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 480px;
+      height: 480px;
+      margin-left: -240px;
+      margin-top: -240px;
+      background: radial-gradient(circle,
+          rgba(181, 153, 250, 0.16) 0%,
+          rgba(78, 0, 142, 0.05) 45%,
+          transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    @media (max-width: 768px) {
+      #cursor-glow {
+        display: none;
+      }
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.035;
+      mix-blend-mode: multiply;
+    }
+
+    /* Critical: allows menu to span full width of header */
+    .mega-menu {
+      position: absolute;
+      left: 0;
+      top: 100%;
+      width: 100%;
+      background: rgba(237, 238, 245, 0.95);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.05);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+      cursor: default;
+    }
+
+    .nav-group:hover .mega-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .apple-blur-light {
+      background: rgba(237, 238, 245, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    /* Staggered items inside the menu */
+    .mega-item {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-group:hover .mega-item {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .nav-group:hover .col-1 .mega-item:nth-child(1) {
+      transition-delay: 0.04s;
+    }
+
+    .nav-group:hover .col-1 .mega-item:nth-child(2) {
+      transition-delay: 0.08s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(1) {
+      transition-delay: 0.12s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(2) {
+      transition-delay: 0.16s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(3) {
+      transition-delay: 0.20s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(4) {
+      transition-delay: 0.24s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(5) {
+      transition-delay: 0.28s;
+    }
+
+    /* Mobile Apple-style Navigation */
+    /* Premium Apple-Style Navbar Dropdown Animations */
+    .nav-group {
+      position: static;
+    }
+
+    #mobile-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #EDEEF5;
+      z-index: 40;
+      padding-top: 85px;
+      padding-inline: 24px;
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0.4s, opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+
+    #mobile-menu.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .mobile-nav-item {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #mobile-menu.active .mobile-nav-item {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(1) {
+      transition-delay: 0.10s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(2) {
+      transition-delay: 0.14s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(3) {
+      transition-delay: 0.18s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(4) {
+      transition-delay: 0.22s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(5) {
+      transition-delay: 0.26s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(6) {
+      transition-delay: 0.30s;
+    }
+
+    .menu-line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform-origin: center;
+      transition:
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.2s ease;
+    }
+
+    .line-1 {
+      transform: translate(-50%, -6px);
+    }
+
+    .line-2 {
+      transform: translate(-50%, 0);
+    }
+
+    .line-3 {
+      transform: translate(-50%, 6px);
+    }
+
+    .menu-open .line-1 {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .menu-open .line-2 {
+      opacity: 0;
+    }
+
+    .menu-open .line-3 {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    #mobile-menu {
+      overflow-x: hidden;
+    }
+
+    .submenu-active #mobile-menu-slider {
+      transform: translateX(-100%);
+    }
+
+    .submenu-active #mobile-back-header {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .mobile-submenu a,
+    .mobile-submenu p {
+      opacity: 0;
+      transform: translateX(20px);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .submenu-active .mobile-submenu.active a,
+    .submenu-active .mobile-submenu.active p {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(1) {
+      transition-delay: 0.10s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(2) {
+      transition-delay: 0.14s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(3) {
+      transition-delay: 0.18s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(4) {
+      transition-delay: 0.22s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(5) {
+      transition-delay: 0.26s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(6) {
+      transition-delay: 0.30s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(7) {
+      transition-delay: 0.34s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(8) {
+      transition-delay: 0.38s;
+    }
+
+    .mobile-submenu a {
+      position: relative;
+      background-image: none !important;
+      padding-left: 0 !important;
+    }
+
+    .mobile-submenu a svg {
+      display: none !important;
+    }
+
+    /* 3D Carousel Mechanics */
+    .perspective-container {
+      perspective: 2000px;
+    }
+
+    .transform-3d {
+      transform-style: preserve-3d;
+    }
+
+    .carousel-card {
+      will-change: transform, opacity;
+      backface-visibility: visible;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="cursor-glow"></div>
+  <!-- NAVBAR -->
+  <!-- Grain texture -->
+  <svg class="grain" xmlns="http://www.w3.org/2000/svg">
+    <filter id="noiseFilter">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"></feTurbulence>
+      <feColorMatrix type="saturate" values="0"></feColorMatrix>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#noiseFilter)"></rect>
+  </svg>
+
+  <header id="main-nav"
+    class="fixed top-0 left-1/2 -translate-x-1/2 w-full z-50 apple-blur-light transition-all duration-500">
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+      <div class="flex items-center justify-between h-[72px]">
+        <a class="flex items-center gap-3 cursor-pointer" href="home.html">
+          <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+            class="h-6 w-auto brightness-0" />
+        </a>
+
+        <nav class="hidden md:flex space-x-8 lg:space-x-10 h-full">
+          <!-- 1. For Partners -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#partners"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              For Partners
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <!-- Apple-style Primary Column -->
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Explore</p>
+                  <a href="partner-hub.html"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-3">Partner
+                    Hub</a>
+                </div>
+                <!-- Apple-style Secondary Column -->
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Solutions</p>
+                  <a href="#retailers"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Retailers</a>
+                  <a href="partners/telcos-and-operators.html"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Telcos & Operators</a>
+                  <a href="#oems"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    OEMs & Brands</a>
+                  <a href="#ecommerce"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Ecommerce</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. For Buyers -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#buyers"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              For Buyers
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Explore</p>
+                  <a href="buyer-hub.html"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-mint transition-colors mb-3">Buyer
+                    Hub</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Resources</p>
+                  <a href="buyers/how-auction-work.html"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">How
+                    Auctions Work</a>
+                  <a href="#register"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Register
+                    as Buyer</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Neutral Marketplace -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#neutral-marketplace"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Neutral Marketplace
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Infrastructure</p>
+                  <a href="#platform"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">The
+                    Platform</a>
+                  <a href="#ai-grading"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">AI
+                    Grading</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Intelligence -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#insights"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Insights
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Data</p>
+                  <a href="#rv-index"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">RV
+                    Index</a>
+                  <a href="#market-reports"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">Market
+                    Reports</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Editorial</p>
+                  <a href="#leaders"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">60
+                    Seconds With Circularity Leaders</a>
+                  <a href="#blogs"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Blogs</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Company -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#company"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Company
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    About</p>
+                  <a href="#inside"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">Inside
+                    NorthLadder</a>
+                  <a href="#builders"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">The
+                    Builders</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Discover</p>
+                  <a href="#stories"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Customer
+                    Stories</a>
+                  <a href="#newsroom"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Newsroom</a>
+                  <a href="#join"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Join
+                    The Team</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Language Toggle (Navbar) -->
+        <div class="relative group hidden md:block">
+          <button
+            class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418">
+              </path>
+            </svg>
+            EN
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+
+          <!-- Dropdown -->
+          <div
+            class="absolute right-0 mt-4 w-32 bg-white/90 backdrop-blur-xl border border-gray-100 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden translate-y-2 group-hover:translate-y-0">
+            <div class="p-1.5 space-y-0.5">
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-brand-obsidian bg-gray-50 rounded-lg">English</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">العربية
+                (AR)</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Deutsch</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Español</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Français</a>
+            </div>
+          </div>
+        </div>
+        <div class="items-center space-x-8">
+          <button id="mobile-menu-btn" class="md:hidden flex justify-center items-center w-8 h-8 z-50 relative"
+            aria-label="Toggle menu">
+            <span class="menu-line line-1 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+            <span class="menu-line line-2 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+            <span class="menu-line line-3 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+          </button>
+          <div class="flex justify-center items-center space-x-8">
+            <a href="#login"
+              class="hidden md:flex text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">Log
+              in</a>
+            <a href="#contact"
+              class="hidden md:flex text-[13px] font-sans font-medium text-white bg-brand-obsidian hover:bg-brand-primary px-6 py-2.5 rounded-full transition-all duration-300 shadow-lg shadow-black/10">
+              Get Started
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav id="mobile-menu" class="md:hidden">
+    <!-- Menu Slider Container -->
+    <div id="mobile-menu-slider"
+      class="relative w-full h-[calc(100%-80px)] flex transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] px-6">
+
+      <!-- LEVEL 1: MAIN MENU -->
+      <div id="mobile-level-1" class="w-full flex-shrink-0 flex flex-col space-y-7 pt-4">
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-partners">
+          For Partners
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-buyers">
+          For Buyers
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-marketplace">
+          Neutral Marketplace
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-intelligence">
+          Insights
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-company">
+          Company
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+
+        <div class="mobile-nav-item pt-8 border-t border-gray-300/50 mt-4 flex flex-col space-y-4">
+          <a href="#login" class="text-lg font-sans font-medium text-brand-charcoal">Log in</a>
+          <a href="#contact" class="text-lg font-sans font-medium text-brand-primary">Get Started</a>
+        </div>
+      </div>
+
+      <!-- LEVEL 2: SUBMENUS -->
+      <div id="mobile-level-2" class="absolute top-0 left-full w-full h-full pb-24 overflow-y-auto px-6 pt-4">
+
+        <!-- Submenu: Partners -->
+        <div id="submenu-partners" class="mobile-submenu hidden flex-col space-y-6">
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mb-2">Explore</p>
+          <a href="#partner-hub" class="text-xl font-display font-semibold text-brand-obsidian block mb-4">Partner
+            Hub</a>
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mt-6 mb-2">Solutions</p>
+          <a href="#retailers"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For Retailers</a>
+          <a href="partners/telcos-and-operators.html"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For
+            Telcos & Operators</a>
+          <a href="#oems" class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For
+            OEMs & Brands</a>
+          <a href="#ecommerce"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For Ecommerce</a>
+        </div>
+
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section id="partner-hero-wrapper" class="relative w-full h-[150vh] bg-brand-bg">
+
+      <!-- Sticky wrapper: Changed h-screen to h-[100dvh], fixed mobile centering/overflow -->
+      <div
+        class="sticky top-0 w-full h-[100dvh] overflow-hidden flex flex-col items-center justify-start md:justify-center pt-[100px] md:pt-0 perspective-[1500px]">
+
+        <!-- The Background Glowing 2D Grid -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
+          style="transform-style: preserve-3d;">
+          <div class="grid-glow"></div>
+          <div id="hero-grid" class="grid-container"></div>
+        </div>
+
+        <!-- The Typography Payload -->
+        <div id="hero-text-content"
+          class="relative z-10 text-center flex flex-col items-center px-4 md:px-6 w-full max-w-4xl">
+
+          <!-- Scaled down responsive typography -->
+          <h1
+            class="hero-fade font-display font-light text-4xl md:text-5xl lg:text-6xl !leading-[1.2] tracking-tight text-brand-obsidian mb-4 md:mb-6"
+            style="animation-delay: 0.3s;">
+            Your trade-in programme <br class="hidden sm:block" />
+            <span class="font-medium text-transparent bg-clip-text bg-gradient-to-r from-brand-obsidian to-brand-primary">
+              Our neutral infrastructure.</span>
+          </h1>
+
+          <!-- Scaled down paragraph text -->
+          <p class="hero-fade font-sans text-sm md:text-lg lg:text-xl text-gray-500 font-light max-w-2xl leading-relaxed px-2 md:px-0"
+            style="animation-delay: 0.5s;">
+            Scale your trade-in program with absolute zero inventory risk. Connect to the world's most aggressive
+            bidding algorithms instantly.
+          </p>
+
+          <!-- CTAs: Reduced top margin on mobile -->
+          <div
+            class="hero-fade flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mt-6 md:mt-10 w-full px-4"
+            style="animation-delay: 0.7s;">
+
+            <!-- Primary CTA -->
+            <button
+              class="group relative inline-flex items-center justify-center gap-3 px-6 py-3.5 md:px-8 md:py-3.5 bg-brand-obsidian text-white rounded-full overflow-hidden transition-all duration-500 ease-out hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] w-full sm:w-auto">
+              <!-- Subtle inner glow effect -->
+              <div
+                class="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              </div>
+              <span class="relative font-sans text-sm md:text-sm font-medium tracking-wide">Book a demo</span>
+              <svg class="relative w-4 h-4 transition-transform duration-500 ease-out group-hover:translate-x-1"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </button>
+
+            <!-- Secondary CTA -->
+            <a href="#portal"
+              class="group relative inline-flex items-center justify-center gap-3 px-6 py-3.5 md:px-8 md:py-3.5 bg-brand-bg/50 backdrop-blur-md border border-brand-obsidian/10 text-brand-obsidian rounded-full transition-all duration-500 ease-out hover:-translate-y-1 hover:bg-white hover:border-brand-obsidian/20 hover:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] w-full sm:w-auto">
+              <span class="font-sans text-sm md:text-sm font-medium tracking-wide">View partner portal</span>
+            </a>
+          </div>
+
+          <div class="hero-fade relative z-30 flex flex-col items-center mt-8 md:mt-16" style="animation-delay: 0.9s;">
+            <p
+              class="font-sans text-[9px] md:text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase mb-3 md:mb-5 text-center">
+              Seamlessly integrated for
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-2 md:gap-3 max-w-[95%] md:max-w-2xl">
+              <!-- Chip 1 -->
+              <div
+                class="!opacity-100 group px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-gray-200/60 bg-white/60 backdrop-blur-md transition-all duration-300 ease-out hover:border-brand-primary/30 hover:bg-white hover:-translate-y-0.5 hover:shadow-sm cursor-default">
+                <span
+                  class="font-sans text-[10px] md:text-xs font-medium text-gray-500 group-hover:text-brand-obsidian transition-colors duration-300">Retailers
+                  & E-commerce</span>
+              </div>
+
+              <!-- Chip 2 -->
+              <div
+                class="!opacity-100 group px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-gray-200/60 bg-white/60 backdrop-blur-md transition-all duration-300 ease-out hover:border-brand-primary/30 hover:bg-white hover:-translate-y-0.5 hover:shadow-sm cursor-default">
+                <span
+                  class="font-sans text-[10px] md:text-xs font-medium text-gray-500 group-hover:text-brand-obsidian transition-colors duration-300">Telcos
+                  & Operators</span>
+              </div>
+
+              <!-- Chip 3 -->
+              <div
+                class="!opacity-100 group px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-gray-200/60 bg-white/60 backdrop-blur-md transition-all duration-300 ease-out hover:border-brand-primary/30 hover:bg-white hover:-translate-y-0.5 hover:shadow-sm cursor-default">
+                <span
+                  class="font-sans text-[10px] md:text-xs font-medium text-gray-500 group-hover:text-brand-obsidian transition-colors duration-300">OEMs
+                  & Brands</span>
+              </div>
+
+              <!-- Chip 4 -->
+              <div
+                class="!opacity-100 group px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-gray-200/60 bg-white/60 backdrop-blur-md transition-all duration-300 ease-out hover:border-brand-primary/30 hover:bg-white hover:-translate-y-0.5 hover:shadow-sm cursor-default">
+                <span
+                  class="font-sans text-[10px] md:text-xs font-medium text-gray-500 group-hover:text-brand-obsidian transition-colors duration-300">Leasing
+                  & DaaS</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Foggy Gradient at the bottom: Reduced height on mobile so it doesn't hide the chips -->
+        <div
+          class="absolute bottom-0 left-0 w-full h-12 md:h-40 bg-gradient-to-t from-brand-bg to-transparent z-20 pointer-events-none">
+        </div>
+      </div>
+    </section>
+
+    <section id="proof-strip"
+      class="relative w-full py-24 lg:py-32 bg-brand-bg overflow-hidden border-t border-gray-200/50">
+      <!-- Subtle Background Mesh -->
+      <div class="absolute inset-0 w-full h-full pointer-events-none opacity-20" style="
+      background-image: radial-gradient(
+       rgba(10, 10, 11, 0.1) 1px,
+       transparent 1px
+      );
+      background-size: 40px 40px;
+     "></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent to-[#EDEEF5] pointer-events-none"></div>
+
+      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+        <!-- Animated Number Counters -->
+        <div
+          class="grid grid-cols-1 md:grid-cols-4 gap-16 lg:gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-300/50 mb-24">
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
+                <span class="counter" data-target="75">0</span><span class="text-brand-primary">+</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              Tier-1 Partners
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
+                <span class="counter" data-target="20">0</span><span class="text-brand-bright">+</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              Countries Live
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
+                <span class="counter" data-target="94">0</span><span class="text-brand-primary">%</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              lot sell-through
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <h3
+              class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-mint tracking-tighter mb-2 zero-text">
+              Zero
+            </h3>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-brand-mint uppercase font-bold mt-2">
+              Inventory Held
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: THE 3D ORBITAL ECOSYSTEM (WHY NORTHLADDER) -->
+    <section id="magnetic-core-section" class="relative w-full h-[300vh] bg-brand-bg">
+      <div class="sticky top-0 w-full h-screen overflow-hidden flex flex-col items-center justify-center">
+
+        <!-- Section Title (Locks to top) -->
+        <div id="magnetic-title"
+          class="absolute top-32 md:top-24 lg:top-32 left-1/2 -translate-x-1/2 text-center z-40 w-full px-4 pointer-events-none">
+          <p
+            class="font-sans text-[10px] md:text-[11px] font-semibold tracking-[0.25em] text-brand-charcoal uppercase mb-3 md:mb-4">
+            The
+            Advantage</p>
+          <h2
+            class="font-display font-light text-3xl md:text-4xl lg:text-5xl text-brand-obsidian tracking-tight leading-[1.1]">
+            Why partner with <span class="font-medium">NorthLadder?</span>
+          </h2>
+        </div>
+
+        <!-- Three.js Canvas Container -->
+        <canvas id="core-canvas" class="absolute inset-0 w-full h-full z-0 pointer-events-none"></canvas>
+
+        <!-- HTML Projected Orbit Cards -->
+        <div id="orbit-cards-container" class="absolute inset-0 w-full h-full z-10 pointer-events-none">
+
+          <!-- Card 0: Zero Risk -->
+          <!-- Upgraded to True Glassmorphism -->
+          <div id="orbit-card-0"
+            class="absolute top-0 left-0 w-[240px] md:w-[280px] lg:w-[320px] bg-gradient-to-br from-white/80 to-white/30 backdrop-blur-xl border border-white/80 rounded-3xl p-5 md:p-6 lg:p-8 shadow-[0_30px_60px_rgba(0,0,0,0.08),inset_0_2px_10px_rgba(255,255,255,1)] will-change-transform">
+            <div
+              class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-brand-mint/15 flex items-center justify-center mb-4 md:mb-5 text-brand-mint border border-brand-mint/20 shadow-sm">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                </path>
+              </svg>
+            </div>
+            <h3 class="font-display font-bold text-lg md:text-xl lg:text-2xl text-brand-obsidian mb-2 md:mb-3">Zero
+              Inventory Risk</h3>
+            <p class="font-sans text-[11px] md:text-xs lg:text-sm text-gray-600 leading-relaxed">We absorb the devices
+              directly into our global marketplace. You hold zero stock and take zero depreciation risk.</p>
+          </div>
+
+          <!-- Card 1: Global Yield -->
+          <div id="orbit-card-1"
+            class="absolute top-0 left-0 w-[240px] md:w-[280px] lg:w-[320px] bg-gradient-to-br from-white/80 to-white/30 backdrop-blur-xl border border-white/80 rounded-3xl p-5 md:p-6 lg:p-8 shadow-[0_30px_60px_rgba(0,0,0,0.08),inset_0_2px_10px_rgba(255,255,255,1)] will-change-transform">
+            <div
+              class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-brand-primary/10 flex items-center justify-center mb-4 md:mb-5 text-brand-primary border border-brand-primary/20 shadow-sm">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z">
+                </path>
+              </svg>
+            </div>
+            <h3 class="font-display font-bold text-lg md:text-xl lg:text-2xl text-brand-obsidian mb-2 md:mb-3">
+              Global Yield
+            </h3>
+            <p class="font-sans text-[11px] md:text-xs lg:text-sm text-gray-600 leading-relaxed">
+              Instantly connect to aggressive bidding algorithms from verified buyers across the EU, GCC, and Asia.
+            </p>
+          </div>
+
+          <!-- Card 2: AI Grading -->
+          <div id="orbit-card-2"
+            class="absolute top-0 left-0 w-[240px] md:w-[280px] lg:w-[320px] bg-gradient-to-br from-white/80 to-white/30 backdrop-blur-xl border border-white/80 rounded-3xl p-5 md:p-6 lg:p-8 shadow-[0_30px_60px_rgba(0,0,0,0.08),inset_0_2px_10px_rgba(255,255,255,1)] will-change-transform">
+            <div
+              class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-brand-bright/20 flex items-center justify-center mb-4 md:mb-5 text-brand-primary border border-brand-bright/30 shadow-sm">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z">
+                </path>
+              </svg>
+            </div>
+            <h3 class="font-display font-bold text-lg md:text-xl lg:text-2xl text-brand-obsidian mb-2 md:mb-3">Objective
+              AI Grading</h3>
+            <p class="font-sans text-[11px] md:text-xs lg:text-sm text-gray-600 leading-relaxed">Remove human bias.
+              Every device is analyzed by our proprietary engine, ensuring maximum trust and value extraction.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: THE KINETIC CARD STACK -->
+    <section id="card-stack-section" class="relative w-full bg-brand-bg pb-24">
+
+      <!-- Section Header -->
+      <div class="w-full text-center pt-24 pb-6 md:pb-12 px-6">
+        <p class="font-sans text-[10px] md:text-xs font-bold tracking-[0.2em] text-brand-mint uppercase mb-4">
+          Find Your Path
+        </p>
+        <h2
+          class="font-display font-light text-4xl md:text-5xl lg:text-6xl text-brand-obsidian tracking-tight leading-[1.1]">
+          Built for your specific
+          <br />
+          <span class="text-transparent bg-clip-text font-medium bg-gradient-to-r from-brand-primary to-brand-mint">trade-in
+            model</span>
+        </h2>
+      </div>
+
+      <!-- CARD 1: RETAILERS -->
+      <!-- FIXED: pt-[90px] on mobile ensures it perfectly clears the sticky header -->
+      <div
+        class="stack-card-wrapper sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden pt-[90px] md:pt-24 pb-6 md:pb-8 px-4 md:px-8">
+        <div
+          class="stack-card-inner relative w-full max-w-[1200px] h-full max-h-[800px] bg-white rounded-[2rem] md:rounded-[3rem] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.15)] border border-gray-100 flex flex-col lg:flex-row overflow-hidden transform origin-top transition-all">
+
+          <!-- Content Left -->
+          <!-- FIXED: Given 60% height on mobile (h-[60%]) and reduced padding (p-6) so it never cuts off -->
+          <div
+            class="w-full lg:w-[55%] h-[60%] lg:h-full p-6 sm:p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white z-10 relative overflow-y-auto lg:overflow-visible">
+            <div
+              class="hidden md:block inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/5 mb-4 lg:mb-6 w-fit shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+              <p class="font-sans text-[9px] font-bold tracking-[0.2em] text-emerald-700 uppercase">Vertical 01</p>
+            </div>
+            <h3
+              class="font-display font-medium text-2xl sm:text-3xl md:text-4xl text-brand-obsidian mb-3 lg:mb-4 shrink-0">
+              Retailers & e-commerce.</h3>
+            <p class="font-sans text-xs sm:text-sm md:text-base text-gray-500 leading-relaxed mb-6 lg:mb-8 shrink-0">
+              Trade-in attach rate, customer retention, maximum clearing price. Built to embed in your existing checkout
+              flow effortlessly.
+            </p>
+            <div class="flex flex-wrap gap-2 mb-6 lg:mb-8 shrink-0">
+              <span
+                class="px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-semibold bg-gray-50 border border-gray-200 text-gray-600">Trade-in
+                widget</span>
+              <span
+                class="px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-semibold bg-gray-50 border border-gray-200 text-gray-600">API
+                Integration</span>
+              <span
+                class="px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-semibold bg-gray-50 border border-gray-200 text-gray-600">Volume
+                pricing</span>
+            </div>
+            <a href="partners/retailers-and-ecommerce.html"
+              class="inline-flex items-center font-sans text-sm md:text-base font-semibold text-emerald-600 hover:text-emerald-800 transition-colors shrink-0 pb-2">
+              Explore solutions <svg class="w-4 h-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+          </div>
+
+          <!-- Micro-UI Right -->
+          <!-- FIXED: Uses flex-1 on mobile so it cleanly takes the remaining 40% of the card height -->
+          <div
+            class="w-full lg:w-[45%] flex-1 lg:h-full relative overflow-hidden bg-gradient-to-br from-emerald-50 to-emerald-100/50 flex items-center justify-center p-4 sm:p-6 md:p-12 border-t lg:border-t-0 lg:border-l border-gray-100">
+            <!-- Mock Widget (Scaled down on mobile max-w-[260px]) -->
+            <div
+              class="w-full max-w-[260px] md:max-w-xs bg-white/90 backdrop-blur-xl rounded-2xl shadow-[0_20px_40px_-10px_rgba(16,185,129,0.2)] border border-white p-5 md:p-6 transform rotate-2 hover:rotate-0 transition-transform duration-500">
+              <div class="flex items-center justify-between mb-4 md:mb-6">
+                <div
+                  class="w-10 h-10 md:w-12 md:h-12 bg-gray-100 rounded-full flex items-center justify-center text-lg md:text-xl">
+                  📱</div>
+                <div class="text-right">
+                  <div class="text-[8px] md:text-[9px] text-gray-400 font-bold tracking-widest mb-1">ESTIMATED VALUE
+                  </div>
+                  <div class="text-xl md:text-2xl font-display font-bold text-emerald-600">€ 450.00</div>
+                </div>
+              </div>
+              <div
+                class="w-full bg-emerald-500 text-white text-center py-3 md:py-3.5 rounded-xl font-bold text-xs md:text-sm shadow-md">
+                Apply to Cart</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2: TELCOS -->
+      <div
+        class="stack-card-wrapper sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden pt-[90px] md:pt-24 pb-6 md:pb-8 px-4 md:px-8">
+        <div
+          class="stack-card-inner relative w-full max-w-[1200px] h-full max-h-[800px] bg-white rounded-[2rem] md:rounded-[3rem] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.15)] border border-gray-100 flex flex-col lg:flex-row overflow-hidden transform origin-top transition-all">
+
+          <div
+            class="w-full lg:w-[55%] h-[60%] lg:h-full p-6 sm:p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white z-10 relative overflow-y-auto lg:overflow-visible">
+            <div
+              class="hidden md:block inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-sky-500/20 bg-sky-500/5 mb-4 lg:mb-6 w-fit shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-sky-600 animate-pulse"></span>
+              <p class="font-sans text-[9px] font-bold tracking-[0.2em] text-sky-700 uppercase">Vertical 02</p>
+            </div>
+            <h3
+              class="font-display font-medium text-2xl sm:text-3xl md:text-4xl text-brand-obsidian mb-3 lg:mb-4 shrink-0">
+              Telcos & operators.</h3>
+            <p class="font-sans text-xs sm:text-sm md:text-base text-gray-500 leading-relaxed mb-6 lg:mb-8 shrink-0">
+              Device upgrade programmes, customer lifecycle, residual value intelligence. Deep integration with your
+              internal workflow.
+            </p>
+            <div class="flex flex-wrap gap-2 mb-6 lg:mb-8 shrink-0">
+              <span
+                class="px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-semibold bg-gray-50 border border-gray-200 text-gray-600">Upgrade
+                programmes</span>
+              <span
+                class="px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-semibold bg-gray-50 border border-gray-200 text-gray-600">RV
+                Index</span>
+              <span
+                class="px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-semibold bg-gray-50 border border-gray-200 text-gray-600">CRM
+                hooks</span>
+            </div>
+            <a href="partners/telcos-and-operators.html"
+              class="inline-flex items-center font-sans text-sm md:text-base font-semibold text-sky-600 hover:text-sky-800 transition-colors shrink-0 pb-2">
+              Explore solutions <svg class="w-4 h-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+          </div>
+
+          <div
+            class="w-full lg:w-[45%] flex-1 lg:h-full relative overflow-hidden bg-gradient-to-br from-sky-50 to-sky-100/50 flex items-center justify-center p-4 sm:p-6 md:p-12 border-t lg:border-t-0 lg:border-l border-gray-100">
+            <!-- Mock Chart UI -->
+            <div
+              class="w-full max-w-[260px] md:max-w-xs bg-white/90 backdrop-blur-xl rounded-2xl shadow-[0_20px_40px_-10px_rgba(14,165,233,0.2)] border border-white p-5 md:p-6 transform -rotate-2 hover:rotate-0 transition-transform duration-500">
+              <div class="text-[8px] md:text-[9px] text-gray-400 font-bold tracking-widest mb-4 md:mb-6 uppercase">
+                Residual Value Forecast</div>
+              <div class="flex items-end gap-1.5 md:gap-2 h-20 md:h-24 mb-3 md:mb-4">
+                <div class="w-1/5 bg-sky-200 rounded-t-md h-[100%] hover:bg-sky-400 transition-colors"></div>
+                <div class="w-1/5 bg-sky-300 rounded-t-md h-[80%] hover:bg-sky-400 transition-colors"></div>
+                <div class="w-1/5 bg-sky-400 rounded-t-md h-[60%] hover:bg-sky-500 transition-colors"></div>
+                <div class="w-1/5 bg-sky-500 rounded-t-md h-[45%] hover:bg-sky-600 transition-colors"></div>
+                <div class="w-1/5 bg-sky-600 rounded-t-md h-[30%] hover:bg-sky-700 transition-colors"></div>
+              </div>
+              <div
+                class="flex justify-between text-[9px] md:text-[10px] font-bold text-gray-400 border-t border-gray-100 pt-3">
+                <span>Q1</span><span>Q2</span><span>Q3</span><span>Q4</span><span>Q1</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 3: OEMS -->
+      <div
+        class="stack-card-wrapper sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden pt-[90px] md:pt-24 pb-6 md:pb-8 px-4 md:px-8">
+        <div
+          class="stack-card-inner relative w-full max-w-[1200px] h-full max-h-[800px] bg-white rounded-[2rem] md:rounded-[3rem] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.15)] border border-gray-100 flex flex-col lg:flex-row overflow-hidden transform origin-top transition-all">
+
+          <div
+            class="w-full lg:w-[55%] h-[60%] lg:h-full p-6 sm:p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white z-10 relative overflow-y-auto lg:overflow-visible">
+            <div
+              class="hidden md:block inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-500/20 bg-amber-500/5 mb-4 lg:mb-6 w-fit shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse"></span>
+              <p class="font-sans text-[9px] font-bold tracking-[0.2em] text-amber-700 uppercase">Vertical 03</p>
+            </div>
+            <h3
+              class="font-display font-medium text-2xl sm:text-3xl md:text-4xl text-brand-obsidian mb-3 lg:mb-4 shrink-0">
+              OEMs & brands.</h3>
+            <p class="font-sans text-xs sm:text-sm md:text-base text-gray-500 leading-relaxed mb-6 lg:mb-8 shrink-0">
+              Buyback and takeback programmes, pricing intelligence across markets, cross-border buyer depth for your
+              devices.
+            </p>
+            <div class="flex flex-wrap gap-2 mb-6 lg:mb-8 shrink-0">
+              <span
+                class="px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-semibold bg-gray-50 border border-gray-200 text-gray-600">Brand
+                buyback</span>
+              <span
+                class="px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-semibold bg-gray-50 border border-gray-200 text-gray-600">Global
+                network</span>
+              <span
+                class="px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-semibold bg-gray-50 border border-gray-200 text-gray-600">Pricing
+                data</span>
+            </div>
+            <a href="partners/oems-and-brands.html"
+              class="inline-flex items-center font-sans text-sm md:text-base font-semibold text-amber-600 hover:text-amber-800 transition-colors shrink-0 pb-2">
+              Explore solutions <svg class="w-4 h-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+          </div>
+
+          <div
+            class="w-full lg:w-[45%] flex-1 lg:h-full relative overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100/50 flex items-center justify-center p-4 sm:p-6 md:p-12 border-t lg:border-t-0 lg:border-l border-gray-100">
+            <!-- Mock Network UI -->
+            <div
+              class="w-full max-w-[260px] md:max-w-xs bg-white/90 backdrop-blur-xl rounded-2xl shadow-[0_20px_40px_-10px_rgba(245,158,11,0.2)] border border-white p-5 md:p-6 transform rotate-2 hover:rotate-0 transition-transform duration-500">
+              <div class="text-[8px] md:text-[9px] text-gray-400 font-bold tracking-widest mb-4 md:mb-5 uppercase">
+                Active Buyer Network</div>
+              <div class="flex flex-col gap-2.5 md:gap-3">
+                <div class="flex items-center justify-between p-2 rounded-lg bg-amber-50 border border-amber-100">
+                  <span class="text-[10px] md:text-xs font-bold text-amber-800">🇪🇺 EU Region</span>
+                  <span class="text-[10px] md:text-xs font-mono font-bold text-amber-600">3,240</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded-lg bg-amber-50 border border-amber-100">
+                  <span class="text-[10px] md:text-xs font-bold text-amber-800">🇦🇪 GCC Region</span>
+                  <span class="text-[10px] md:text-xs font-mono font-bold text-amber-600">1,850</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded-lg bg-amber-50 border border-amber-100">
+                  <span class="text-[10px] md:text-xs font-bold text-amber-800">🌏 ASIA PACIFIC</span>
+                  <span class="text-[10px] md:text-xs font-mono font-bold text-amber-600">4,500+</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 4: LEASING & DAAS -->
+      <div
+        class="stack-card-wrapper sticky top-0 w-full h-screen flex items-center justify-center overflow-hidden pt-[90px] md:pt-24 pb-6 md:pb-8 px-4 md:px-8">
+        <div
+          class="stack-card-inner relative w-full max-w-[1200px] h-full max-h-[800px] bg-white rounded-[2rem] md:rounded-[3rem] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.15)] border border-gray-100 flex flex-col lg:flex-row overflow-hidden transform origin-top transition-all">
+
+          <div
+            class="w-full lg:w-[55%] h-[60%] lg:h-full p-6 sm:p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white z-10 relative overflow-y-auto lg:overflow-visible">
+            <div
+              class="hidden md:block inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-indigo-500/20 bg-indigo-500/5 mb-4 lg:mb-6 w-fit shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span>
+              <p class="font-sans text-[9px] font-bold tracking-[0.2em] text-indigo-700 uppercase">Vertical 04</p>
+            </div>
+            <h3
+              class="font-display font-medium text-2xl sm:text-3xl md:text-4xl text-brand-obsidian mb-3 lg:mb-4 shrink-0">
+              Leasing & DaaS.</h3>
+            <p class="font-sans text-xs sm:text-sm md:text-base text-gray-500 leading-relaxed mb-6 lg:mb-8 shrink-0">
+              End-of-lease device recovery, residual value forecasting, bulk clearing through our verified buyer
+              network.
+            </p>
+            <div class="flex flex-wrap gap-2 mb-6 lg:mb-8 shrink-0">
+              <span
+                class="px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-semibold bg-gray-50 border border-gray-200 text-gray-600">Bulk
+                recovery</span>
+              <span
+                class="px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-semibold bg-gray-50 border border-gray-200 text-gray-600">RV
+                forecasting</span>
+              <span
+                class="px-2.5 py-1.5 md:px-3 md:py-1.5 rounded-lg text-[10px] md:text-xs font-semibold bg-gray-50 border border-gray-200 text-gray-600">Volume
+                SLA</span>
+            </div>
+            <a href="partners/leasing-and-daas.html"
+              class="inline-flex items-center font-sans text-sm md:text-base font-semibold text-indigo-600 hover:text-indigo-800 transition-colors shrink-0 pb-2">
+              Explore solutions <svg class="w-4 h-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+          </div>
+
+          <div
+            class="w-full lg:w-[45%] flex-1 lg:h-full relative overflow-hidden bg-gradient-to-br from-indigo-50 to-indigo-100/50 flex items-center justify-center p-4 sm:p-6 md:p-12 border-t lg:border-t-0 lg:border-l border-gray-100">
+            <!-- Mock Processing UI -->
+            <div
+              class="w-full max-w-[260px] md:max-w-xs bg-white/90 backdrop-blur-xl rounded-2xl shadow-[0_20px_40px_-10px_rgba(99,102,241,0.2)] border border-white p-5 md:p-6 transform -rotate-2 hover:rotate-0 transition-transform duration-500">
+              <div class="text-[8px] md:text-[9px] text-gray-400 font-bold tracking-widest mb-4 md:mb-6 uppercase">Bulk
+                Upload Processing</div>
+              <div class="flex items-center justify-between mb-2 md:mb-3">
+                <span class="text-[10px] md:text-xs font-bold text-indigo-900">500 devices syncing...</span>
+                <span class="text-[10px] md:text-xs font-bold text-indigo-600">84%</span>
+              </div>
+              <div class="w-full h-1.5 md:h-2 bg-indigo-100 rounded-full overflow-hidden mb-3 md:mb-4">
+                <div class="w-[84%] h-full bg-indigo-500 rounded-full relative">
+                  <div class="absolute inset-0 bg-white/20 animate-[pulse_1s_ease-in-out_infinite]"></div>
+                </div>
+              </div>
+              <div class="text-[9px] md:text-[10px] text-gray-400 font-medium text-right">ETA: 45 seconds</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <section id="how-it-works-section" class="relative w-full py-32 bg-brand-bg overflow-hidden">
+
+      <!-- Three.js Canvas Container (For subtle light-theme particles or floating glass shapes) -->
+      <canvas id="three-bg-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-60"></canvas>
+
+      <!-- Soft Radial Gradient Glow to add volume to the light background -->
+      <div
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-primary/5 blur-[100px] rounded-full pointer-events-none z-0">
+      </div>
+
+      <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
+
+        <!-- Header -->
+        <div class="text-center md:text-left mb-20 lg:mb-32 max-w-3xl">
+          <p class="font-sans text-[10px] font-bold tracking-[0.2em] text-brand-primary uppercase mb-6">
+            How it works
+          </p>
+          <h2 class="font-display font-light text-4xl md:text-6xl text-brand-obsidian tracking-tight leading-[1.1]">
+            Partner to payout in <br class="hidden md:block" />
+            <span
+              class="font-medium text-transparent bg-clip-text bg-gradient-to-r from-brand-obsidian to-brand-primary">four
+              steps</span>
+          </h2>
+        </div>
+
+        <!-- The Timeline Track & Steps -->
+        <div class="relative grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-6">
+
+          <!-- Connecting Background Track -->
+          <div class="hidden md:block absolute top-6 left-6 right-6 h-[1px] bg-gray-200 -z-10"></div>
+
+          <!-- Animated Filling Line (Target this with GSAP ScrollTrigger to scaleX) -->
+          <div id="timeline-progress"
+            class="hidden md:block absolute top-6 left-6 right-6 h-[2px] bg-brand-primary origin-left scale-x-0 -z-10 shadow-[0_0_12px_rgba(var(--brand-primary-rgb),0.3)]">
+          </div>
+
+          <!-- Step 1: Connect -->
+          <div class="gsap-step-card group relative flex flex-col items-center md:items-start text-center md:text-left">
+            <div
+              class="w-12 h-12 rounded-full border border-gray-200/80 bg-white/70 backdrop-blur-md flex items-center justify-center mb-6 lg:mb-8 transition-all duration-500 ease-out group-hover:border-brand-primary/40 group-hover:bg-white group-hover:-translate-y-1 group-hover:shadow-[0_10px_30px_-10px_rgba(var(--brand-primary-rgb),0.2)]">
+              <span class="font-sans text-sm font-semibold text-brand-primary">1</span>
+            </div>
+            <h3 class="font-display text-xl font-medium text-brand-obsidian mb-3">Connect</h3>
+            <p class="font-sans text-sm md:text-base text-gray-500 font-light leading-relaxed">
+              API or portal onboarding. Partner programme activated in days.
+            </p>
+          </div>
+
+          <!-- Step 2: Grade (FIXED: Removed pt-16) -->
+          <div class="gsap-step-card group relative flex flex-col items-center md:items-start text-center md:text-left">
+            <div
+              class="w-12 h-12 rounded-full border border-gray-200/80 bg-white/70 backdrop-blur-md flex items-center justify-center mb-6 lg:mb-8 transition-all duration-500 ease-out group-hover:border-brand-primary/40 group-hover:bg-white group-hover:-translate-y-1 group-hover:shadow-[0_10px_30px_-10px_rgba(var(--brand-primary-rgb),0.2)]">
+              <span class="font-sans text-sm font-semibold text-brand-primary">2</span>
+            </div>
+            <h3 class="font-display text-xl font-medium text-brand-obsidian mb-3">Grade</h3>
+            <p class="font-sans text-sm md:text-base text-gray-500 font-light leading-relaxed">
+              AR video grading at point of collection. Objective. Dispute-resistant.
+            </p>
+          </div>
+
+          <!-- Step 3: Auction -->
+          <div class="gsap-step-card group relative flex flex-col items-center md:items-start text-center md:text-left">
+            <div
+              class="w-12 h-12 rounded-full border border-gray-200/80 bg-white/70 backdrop-blur-md flex items-center justify-center mb-6 lg:mb-8 transition-all duration-500 ease-out group-hover:border-brand-primary/40 group-hover:bg-white group-hover:-translate-y-1 group-hover:shadow-[0_10px_30px_-10px_rgba(var(--brand-primary-rgb),0.2)]">
+              <span class="font-sans text-sm font-semibold text-brand-primary">3</span>
+            </div>
+            <h3 class="font-display text-xl font-medium text-brand-obsidian mb-3">Auction</h3>
+            <p class="font-sans text-sm md:text-base text-gray-500 font-light leading-relaxed">
+              Every lot enters live open auction. Verified buyers across 20+ countries bid simultaneously.
+            </p>
+          </div>
+
+          <!-- Step 4: Settle (FIXED: Removed pt-16) -->
+          <div class="gsap-step-card group relative flex flex-col items-center md:items-start text-center md:text-left">
+            <div
+              class="w-12 h-12 rounded-full border border-gray-200/80 bg-white/70 backdrop-blur-md flex items-center justify-center mb-6 lg:mb-8 transition-all duration-500 ease-out group-hover:border-brand-primary/40 group-hover:bg-white group-hover:-translate-y-1 group-hover:shadow-[0_10px_30px_-10px_rgba(var(--brand-primary-rgb),0.2)]">
+              <span class="font-sans text-sm font-semibold text-brand-primary">4</span>
+            </div>
+            <h3 class="font-display text-xl font-medium text-brand-obsidian mb-3">Settle</h3>
+            <p class="font-sans text-sm md:text-base text-gray-500 font-light leading-relaxed">
+              Payment within 48h. Full reporting. No single-buyer spread or opaque margins.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Divider -->
+        <div class="w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent my-20"></div>
+
+        <!-- Trust Bar / Marquee Section -->
+        <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+          <p class="font-sans text-sm text-gray-500 font-medium">
+            Trusted by 75+ retailers, telcos, and OEMs globally
+          </p>
+
+          <!-- Glass Logos (Ready for CSS or GSAP Marquee animation) -->
+          <div class="flex flex-wrap items-center justify-center md:justify-end gap-3 md:gap-4">
+            <!-- Simulated Logo Chips with hover lifts -->
+            <div
+              class="px-5 py-2.5 rounded-lg border border-gray-200/60 bg-white/50 backdrop-blur-sm shadow-sm transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white cursor-default">
+              <span class="font-sans text-sm text-brand-obsidian font-semibold">MMS</span>
+            </div>
+            <div
+              class="px-5 py-2.5 rounded-lg border border-gray-200/60 bg-white/50 backdrop-blur-sm shadow-sm transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white cursor-default">
+              <span class="font-sans text-sm text-brand-obsidian font-semibold">Amazon</span>
+            </div>
+            <div
+              class="px-5 py-2.5 rounded-lg border border-gray-200/60 bg-white/50 backdrop-blur-sm shadow-sm transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white cursor-default">
+              <span class="font-sans text-sm text-brand-obsidian font-semibold">Vodafone</span>
+            </div>
+            <div
+              class="px-5 py-2.5 rounded-lg border border-gray-200/60 bg-white/50 backdrop-blur-sm shadow-sm transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white cursor-default">
+              <span class="font-sans text-sm text-brand-obsidian font-semibold">Vivo</span>
+            </div>
+            <div
+              class="px-5 py-2.5 rounded-lg border border-gray-200/60 bg-white/50 backdrop-blur-sm shadow-sm transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white cursor-default">
+              <span class="font-sans text-sm text-brand-obsidian font-semibold">Piceasoft</span>
+            </div>
+            <div
+              class="px-5 py-2.5 rounded-lg border border-gray-200/60 bg-white/50 backdrop-blur-sm shadow-sm transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white cursor-default">
+              <span class="font-sans text-sm text-brand-obsidian font-semibold">Swapo</span>
+            </div>
+          </div>
+
+          <a href="#case-studies"
+            class="group inline-flex items-center gap-2 font-sans font-semibold text-brand-primary hover:text-brand-obsidian transition-colors text-sm">
+            <span>View all case studies</span>
+            <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none"
+              viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </a>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer id="main-footer" class="relative z-30 bg-white overflow-hidden pt-32 pb-16">
+    <!-- Subtle top ambient separator & glow for depth -->
+    <div
+      class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-primary/15 to-transparent">
+    </div>
+    <div
+      class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand-primary/[0.02] blur-[120px] pointer-events-none">
+    </div>
+
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-8 mb-24">
+        <!-- Brand & Mission Column -->
+        <div class="col-span-1 md:col-span-5 pr-0 lg:pr-12">
+          <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+            class="h-6 w-auto brightness-0 mb-8 opacity-90" />
+          <p class="font-sans text-[13px] text-gray-500 font-light leading-[1.9] mb-10 max-w-sm">
+            Democratization Of Trade-ins. Powering the world's most advanced
+            circularity infrastructure for Grade-A inventory with absolute
+            neutrality.
+          </p>
+
+          <!-- Premium Language Pill with Hover State -->
+          <div class="inline-flex items-center relative group">
+            <div
+              class="absolute inset-0 bg-gray-50 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            </div>
+            <div
+              class="relative flex items-center bg-white border border-gray-100/80 rounded-full px-5 py-2.5 hover:border-gray-200 hover:shadow-[0_10px_20px_-10px_rgba(0,0,0,0.05)] transition-all duration-300">
+              <svg class="w-4 h-4 text-gray-400 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9">
+                </path>
+              </svg>
+              <select
+                class="bg-transparent text-[11px] font-sans font-medium tracking-wide text-brand-obsidian focus:outline-none pr-7 appearance-none cursor-pointer w-full select-arrow">
+                <option>English (Global)</option>
+                <option>العربية (Arabic)</option>
+                <option>Deutsch (German)</option>
+                <option>Español (Spanish)</option>
+                <option>Français (French)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ecosystem Links -->
+        <div class="col-span-1 md:col-span-2 md:col-start-7">
+          <h4 class="font-sans text-[9px] uppercase tracking-[0.25em] font-bold text-gray-400 mb-8">
+            Ecosystem
+          </h4>
+          <ul class="space-y-5 font-sans text-[13px] font-light text-gray-500">
+            <li>
+              <a href="#partners"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">For
+                Partners</a>
+            </li>
+            <li>
+              <a href="#buyers"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">For
+                Buyers</a>
+            </li>
+            <li>
+              <a href="#neutral-marketplace"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Neutral
+                Marketplace</a>
+            </li>
+            <li>
+              <a href="#insights"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Data
+                Insights</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Enterprise Links -->
+        <div class="col-span-1 md:col-span-2">
+          <h4 class="font-sans text-[9px] uppercase tracking-[0.25em] font-bold text-gray-400 mb-8">
+            Enterprise
+          </h4>
+          <ul class="space-y-5 font-sans text-[13px] font-light text-gray-500">
+            <li>
+              <a href="#about"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Inside
+                NorthLadder</a>
+            </li>
+            <li>
+              <a href="#careers"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Global
+                Careers</a>
+            </li>
+            <li>
+              <a href="#newsroom"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">News
+                & Media</a>
+            </li>
+            <li>
+              <a href="#contact"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Contact
+                Relations</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Refined Bottom Bar -->
+      <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-100/80">
+        <p class="font-sans text-[11px] font-medium tracking-wide text-gray-400">
+          © 2026 NorthLadder. All rights reserved.
+        </p>
+        <div class="flex gap-8 mt-6 md:mt-0">
+          <a href="#"
+            class="text-gray-400 hover:text-brand-obsidian transition-colors text-[11px] tracking-wide font-sans font-medium">Privacy
+            Policy</a>
+          <a href="#"
+            class="text-gray-400 hover:text-brand-obsidian transition-colors text-[11px] tracking-wide font-sans font-medium">Terms
+            of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP ANIMATION LOGIC -->
+  <script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // --- SECTION 1: PERSPECTIVE GRID TILT ---
+      const heroTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#partner-hero-wrapper",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1, // Buttery smooth linking to scroll wheel
+        }
+      });
+
+      heroTimeline
+        // 1. Tilt the 2D Grid backward 75 degrees into a 3D floor plane and push it down
+        .to("#hero-grid", {
+          rotationX: 75,
+          y: "30vh",
+          scale: 1.5,
+          opacity: 0.4,
+          ease: "none"
+        }, 0)
+
+        // 2. Scale the massive typography down and "lock" it to the top of the viewport
+        .to("#hero-text-content", {
+          scale: 0.65,
+          y: "-25vh",
+          opacity: 0.7,
+          ease: "power2.inOut"
+        }, 0);
+
+      // --- CURSOR LOGIC ---
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (!prefersReducedMotion && window.matchMedia("(pointer: fine)").matches) {
+        const glow = document.getElementById("cursor-glow");
+        let mx = window.innerWidth / 2,
+          my = window.innerHeight / 2;
+        let gx = mx,
+          gy = my;
+        window.addEventListener("mousemove", (e) => {
+          mx = e.clientX;
+          my = e.clientY;
+        });
+        gsap.ticker.add(() => {
+          gx += (mx - gx) * 0.08;
+          gy += (my - gy) * 0.08;
+          gsap.set(glow, { x: gx, y: gy });
+        });
+      }
+
+      const statBlocks = gsap.utils.toArray(".stat-block");
+      if (statBlocks.length > 0) {
+        gsap.fromTo(
+          statBlocks,
+          { y: 50, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.2,
+            stagger: 0.2,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: "#proof-strip",
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
+          },
+        );
+
+        const counters = document.querySelectorAll(".counter");
+        counters.forEach((counter) => {
+          const target = parseInt(counter.getAttribute("data-target"));
+          ScrollTrigger.create({
+            trigger: counter,
+            start: "top 85%",
+            onEnter: () => {
+              gsap.to(counter, {
+                innerHTML: target,
+                duration: 2.5,
+                ease: "power2.out",
+                snap: { innerHTML: 1 },
+                onUpdate: function () {
+                  counter.innerHTML = Math.round(this.targets()[0].innerHTML);
+                },
+              });
+            },
+            once: true,
+          });
+        });
+
+        gsap.fromTo(
+          ".zero-text",
+          { opacity: 0, scale: 0.9, filter: "blur(10px)" },
+          {
+            opacity: 1,
+            scale: 1,
+            filter: "blur(0px)",
+            duration: 1.5,
+            delay: 0.4,
+            ease: "power2.out",
+            scrollTrigger: { trigger: "#proof-strip", start: "top 80%" },
+          },
+        );
+
+        gsap.fromTo(
+          ".marquee-fade",
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.5,
+            delay: 0.6,
+            ease: "power3.out",
+            scrollTrigger: { trigger: "#proof-strip", start: "top 75%" },
+          },
+        );
+      }
+
+      // --- SECTION 2: THREE.JS 3D ORBITAL ENGINE (UPGRADED) ---
+      const canvas = document.getElementById("core-canvas");
+      if (canvas && typeof THREE !== "undefined") {
+
+        // 1. Scene Setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 25;
+
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // 2. The High-Tech Core Group
+        const coreGroup = new THREE.Group();
+        scene.add(coreGroup);
+
+        // A. Inner Crystal (Deep Brand Purple)
+        const geoCrystal = new THREE.OctahedronGeometry(1.8, 0);
+        const matCrystal = new THREE.MeshStandardMaterial({
+          color: 0x4E008E,
+          emissive: 0x2a004f,
+          roughness: 0.2,
+          metalness: 0.8,
+          flatShading: true
+        });
+        const crystal = new THREE.Mesh(geoCrystal, matCrystal);
+        coreGroup.add(crystal);
+
+        // B. Outer Protective Glass Casing
+        const geoCasing = new THREE.IcosahedronGeometry(2.8, 2);
+        const matCasing = new THREE.MeshPhysicalMaterial({
+          color: 0xffffff,
+          transmission: 0.95, // Glass transparency
+          opacity: 1,
+          metalness: 0.1,
+          roughness: 0.1,
+          ior: 1.5,
+          thickness: 1.0,
+          transparent: true,
+          side: THREE.DoubleSide
+        });
+        const casing = new THREE.Mesh(geoCasing, matCasing);
+        coreGroup.add(casing);
+
+        // C. Gyroscope Rings (Brand Accents)
+        const geoRing1 = new THREE.TorusGeometry(4.0, 0.03, 16, 100);
+        const matRing1 = new THREE.MeshBasicMaterial({ color: 0x48B48D }); // Mint Ring
+        const ring1 = new THREE.Mesh(geoRing1, matRing1);
+        ring1.rotation.x = Math.PI / 2;
+        coreGroup.add(ring1);
+
+        const geoRing2 = new THREE.TorusGeometry(4.5, 0.02, 16, 100);
+        const matRing2 = new THREE.MeshBasicMaterial({ color: 0xB599FA }); // Bright Purple Ring
+        const ring2 = new THREE.Mesh(geoRing2, matRing2);
+        ring2.rotation.y = Math.PI / 3;
+        coreGroup.add(ring2);
+
+        // D. Orbital Track for the Cards
+        const trackGeo = new THREE.TorusGeometry(8, 0.015, 16, 100);
+        const trackMat = new THREE.MeshBasicMaterial({ color: 0x0A0A0B, transparent: true, opacity: 0.15 });
+        const orbitRing = new THREE.Mesh(trackGeo, trackMat);
+        orbitRing.rotation.x = Math.PI / 2;
+        coreGroup.add(orbitRing);
+
+        // 3. Lighting (Crucial for the 3D materials to look good)
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+        directionalLight.position.set(5, 10, 7);
+        scene.add(directionalLight);
+
+        const pointLight1 = new THREE.PointLight(0xB599FA, 4, 50); // Purple glow
+        pointLight1.position.set(-5, -5, 5);
+        scene.add(pointLight1);
+
+        // 4. HTML Card Anchors (Pivot Points in 3D Space)
+        const isMobile = window.innerWidth < 768;
+        const orbitRadius = isMobile ? 4.5 : (window.innerWidth < 1024 ? 6.5 : 8);
+        const cardPivots = [];
+
+        for (let i = 0; i < 3; i++) {
+          const pivot = new THREE.Object3D();
+          const angle = (i / 3) * Math.PI * 2;
+          pivot.position.set(Math.cos(angle) * orbitRadius, 0, Math.sin(angle) * orbitRadius);
+          coreGroup.add(pivot);
+          cardPivots.push(pivot);
+        }
+
+        // Tilt the entire system for a cinematic perspective
+        coreGroup.rotation.x = 0.25;
+        coreGroup.rotation.z = -0.05;
+
+        // Shift the core group down on mobile to prevent overlapping with the title
+        coreGroup.position.y = isMobile ? -2.5 : 0;
+
+        // 5. GSAP Scroll Scrubbing (The user controls the rotation)
+        let scrollRotation = 0;
+        gsap.to({ val: 0 }, {
+          val: 1,
+          scrollTrigger: {
+            trigger: "#magnetic-core-section",
+            start: "top top",
+            end: "+=200%",
+            scrub: 1,
+            onUpdate: (self) => {
+              scrollRotation = self.progress * Math.PI * 2.5;
+            }
+          }
+        });
+
+        const mapRange = (value, inMin, inMax, outMin, outMax) => {
+          return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+        };
+
+        // 6. The Render Loop
+        const clock = new THREE.Clock();
+
+        function animate() {
+          requestAnimationFrame(animate);
+          const time = clock.getElapsedTime();
+
+          // Independent animations for the gyroscope components
+          coreGroup.rotation.y = scrollRotation + (time * 0.05); // Entire system spins
+          crystal.rotation.x = time * 0.4;
+          crystal.rotation.y = time * 0.3;
+          casing.rotation.y = time * -0.1; // Glass spins opposite direction
+          ring1.rotation.x = (Math.PI / 2) + Math.sin(time * 0.5) * 0.2; // Ring wobble
+          ring2.rotation.y = (Math.PI / 3) + Math.cos(time * 0.3) * 0.3;
+
+          // Map 3D anchors to HTML DOM elements
+          cardPivots.forEach((pivot, index) => {
+            const card = document.getElementById(`orbit-card-${index}`);
+            if (card) {
+              const vector = new THREE.Vector3();
+              pivot.getWorldPosition(vector);
+              vector.project(camera);
+
+              const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+              const y = (-(vector.y * 0.5) + 0.5) * window.innerHeight;
+
+              const worldPos = new THREE.Vector3();
+              pivot.getWorldPosition(worldPos);
+              const depth = worldPos.z;
+
+              // Depth logic (scale, blur, opacity based on Z position)
+              const maxScale = isMobile ? 0.8 : 1.05;
+              const minScale = isMobile ? 0.45 : 0.65;
+              const scale = Math.max(minScale, Math.min(maxScale, mapRange(depth, -orbitRadius, orbitRadius, minScale, maxScale)));
+              const opacity = Math.max(0, Math.min(1, mapRange(depth, -orbitRadius, orbitRadius, 0.1, 1)));
+              const blur = Math.max(0, Math.min(8, mapRange(depth, -orbitRadius, orbitRadius, 8, 0)));
+              const zIndex = depth > 0 ? 30 : 5;
+
+              card.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, 0) scale(${scale})`;
+              card.style.opacity = opacity;
+              card.style.filter = `blur(${blur}px)`;
+              card.style.zIndex = zIndex;
+            }
+          });
+
+          renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // 7. Handle Resize
+        // 7. Handle Resize
+        window.addEventListener('resize', () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+
+          // Re-calculate mobile overlap shift on resize
+          const mobile = window.innerWidth < 768;
+          coreGroup.position.y = mobile ? -2.5 : 0;
+        });
+      }
+
+      // --- SECTION 3: KINETIC CARD STACKING ---
+      const stackWrappers = gsap.utils.toArray(".stack-card-wrapper");
+      const stackInners = gsap.utils.toArray(".stack-card-inner");
+
+      if (stackWrappers.length > 0) {
+        stackWrappers.forEach((wrapper, i) => {
+          // We don't need to animate the very last card because nothing covers it
+          if (i < stackWrappers.length - 1) {
+
+            gsap.to(stackInners[i], {
+              scale: 0.9,          // Physically shrinks the card into the background
+              opacity: 0.4,        // Dims it out so the new card takes focus
+              y: "-5vh",           // Subtly pushes it up
+              ease: "none",
+              scrollTrigger: {
+                trigger: stackWrappers[i + 1], // Triggered by the NEXT card entering the viewport
+                start: "top bottom",           // Start when the next card's top hits the bottom of the screen
+                end: "top top",                // End when the next card locks into the top of the screen
+                scrub: true                    // Tie perfectly to the scroll wheel
+              }
+            });
+
+          }
+        });
+      }
+
+      // Navbar Starts Here...
+      window.addEventListener("scroll", () => {
+        const nav = document.getElementById("main-nav");
+        if (window.scrollY > 20) {
+          // Scrolled state: Translucent (keeps apple-blur-light), Oval, Floating
+          nav.classList.remove("w-full");
+          nav.classList.add(
+            "w-[90%]",
+            "max-w-[1400px]",
+            "top-2",
+            "rounded-full",
+            "shadow-sm",
+            "border",
+            "border-white/40",
+          );
+        } else {
+          // Top state: Full width
+          nav.classList.add("w-full");
+          nav.classList.remove(
+            "w-[90%]",
+            "max-w-[1400px]",
+            "top-2",
+            "rounded-full",
+            "shadow-sm",
+            "border",
+            "border-white/40",
+          );
+        }
+      });
+
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileBackBtn = document.getElementById('mobile-back-btn');
+      const submenus = document.querySelectorAll('.mobile-submenu');
+      const level1Btns = document.querySelectorAll('.mobile-nav-item[data-target]');
+
+      if (mobileBtn && mobileMenu) {
+        // Toggle the entire mobile menu
+        mobileBtn.addEventListener('click', () => {
+          mobileBtn.classList.toggle('menu-open');
+          mobileMenu.classList.toggle('active');
+          document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+
+          // Reset drilldown state when closing
+          if (!mobileMenu.classList.contains('active')) {
+            setTimeout(() => {
+              mobileMenu.classList.remove('submenu-active');
+              submenus.forEach(sub => sub.classList.add('hidden', 'active'));
+            }, 400); // Wait for menu to fade out
+          }
+        });
+
+        // Drill down to submenu
+        level1Btns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('data-target');
+
+            // Hide all submenus first
+            submenus.forEach(sub => {
+              sub.classList.add('hidden');
+              sub.classList.remove('active');
+            });
+
+            // Show targeted submenu
+            const targetSubmenu = document.getElementById(targetId);
+            if (targetSubmenu) {
+              targetSubmenu.classList.remove('hidden');
+              // Tiny delay to allow display:block to apply before adding active class for CSS transitions
+              requestAnimationFrame(() => {
+                targetSubmenu.classList.add('active');
+                mobileMenu.classList.add('submenu-active');
+              });
+            }
+          });
+        });
+
+        // Go back to main menu
+        if (mobileBackBtn) {
+          mobileBackBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('submenu-active');
+            // Remove active class from submenus after transition completes
+            setTimeout(() => {
+              submenus.forEach(sub => {
+                sub.classList.add('hidden');
+                sub.classList.remove('active');
+              });
+            }, 500);
+          });
+        }
+      }
+      // Navbar Ends Here...
+
+      initHowItWorksAnimations();
+    });
+
+    function initHowItWorksAnimations() {
+      // ==========================================
+      // 1. GSAP SCROLLTRIGGER TIMELINE
+      // ==========================================
+
+      if (typeof gsap === "undefined" || typeof ScrollTrigger === "undefined") {
+        console.error("GSAP or ScrollTrigger is not loaded.");
+        return;
+      }
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#how-it-works-section",
+          start: "top 65%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      // Draw the glowing connecting line
+      tl.to("#timeline-progress", {
+        scaleX: 1,
+        duration: 1.5,
+        ease: "power2.inOut",
+      });
+
+      // INSTEAD OF y: 50, USE x: -40 TO MATCH THE HORIZONTAL FLOW
+      tl.fromTo(
+        ".gsap-step-card",
+        {
+          x: -40, // <--- Start slightly to the left
+          opacity: 0,
+        },
+        {
+          x: 0,   // <--- Slide perfectly into place
+          opacity: 1,
+          duration: 1.2,
+          stagger: 0.25,
+          ease: "power3.out",
+        },
+        "-=1.2" // Starts while the line is still drawing
+      );
+
+      // Pop in the Trusted Logos at the bottom
+      tl.fromTo(
+        ".flex-wrap > div",
+        {
+          opacity: 0,
+          scale: 0.95,
+        },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "back.out(1.2)",
+        },
+        "-=0.8"
+      );
+
+      // ==========================================
+      // 2. THREE.JS BACKGROUND PARTICLES
+      // ==========================================
+
+      if (typeof THREE === "undefined") {
+        console.error("Three.js is not loaded.");
+        return;
+      }
+
+      const canvas = document.getElementById("three-bg-canvas");
+
+      if (!canvas) {
+        console.warn("#three-bg-canvas not found.");
+        return;
+      }
+
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+
+      // Scene
+      const scene = new THREE.Scene();
+
+      // Camera
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        width / height,
+        0.1,
+        1000
+      );
+
+      camera.position.z = 5;
+
+      // Renderer
+      const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        alpha: true,
+        antialias: true,
+      });
+
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(
+        Math.min(window.devicePixelRatio || 1, 2)
+      );
+
+      // ==========================================
+      // CREATE PARTICLES
+      // ==========================================
+
+      const particlesGeometry = new THREE.BufferGeometry();
+
+      const particlesCount = 400;
+      const posArray = new Float32Array(particlesCount * 3);
+
+      for (let i = 0; i < particlesCount * 3; i++) {
+        posArray[i] = (Math.random() - 0.5) * 15;
+      }
+
+      particlesGeometry.setAttribute(
+        "position",
+        new THREE.BufferAttribute(posArray, 3)
+      );
+
+      // Particle material
+      const particlesMaterial = new THREE.PointsMaterial({
+        size: 0.02,
+        color: 0x000000,
+        transparent: true,
+        opacity: 0.4,
+        // blending: THREE.AdditiveBlending,
+        depthWrite: false,
+      });
+
+      // Particle mesh
+      const particlesMesh = new THREE.Points(
+        particlesGeometry,
+        particlesMaterial
+      );
+
+      scene.add(particlesMesh);
+
+      // ==========================================
+      // ANIMATION LOOP
+      // ==========================================
+
+      let animationFrameId = null;
+      let isRunning = true;
+
+      const clock = new THREE.Clock();
+
+      function animate() {
+        if (!isRunning) return;
+
+        animationFrameId = requestAnimationFrame(animate);
+
+        const elapsedTime = clock.getElapsedTime();
+
+        // Slow rotation
+        particlesMesh.rotation.y = elapsedTime * 0.02;
+        particlesMesh.rotation.x = elapsedTime * 0.01;
+
+        // Subtle floating
+        particlesMesh.position.y =
+          Math.sin(elapsedTime * 0.5) * 0.1;
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+      // ==========================================
+      // RESIZE
+      // ==========================================
+
+      function handleResize() {
+        const newWidth = canvas.clientWidth;
+        const newHeight = canvas.clientHeight;
+
+        if (!newWidth || !newHeight) return;
+
+        camera.aspect = newWidth / newHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(newWidth, newHeight);
+
+        renderer.setPixelRatio(
+          Math.min(window.devicePixelRatio || 1, 2)
+        );
+      }
+
+      window.addEventListener("resize", handleResize);
+
+      // ==========================================
+      // OPTIONAL CLEANUP
+      // ==========================================
+      //
+      // Because this is vanilla JS, return a cleanup
+      // function so you can manually destroy it later.
+      //
+
+      return function cleanupHowItWorksAnimations() {
+        isRunning = false;
+
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+        }
+
+        window.removeEventListener("resize", handleResize);
+
+        if (tl.scrollTrigger) {
+          tl.scrollTrigger.kill();
+        }
+
+        tl.kill();
+
+        scene.remove(particlesMesh);
+
+        particlesGeometry.dispose();
+        particlesMaterial.dispose();
+        renderer.dispose();
+      };
+    }
+
+  </script>
+</body>
+
+</html>

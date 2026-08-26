@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For Telcos & Operators | NorthLadder</title>
+
+  <!-- Brand Approved Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- GSAP Core & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <!-- Three.js Core -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: "#EDEEF5",
+              obsidian: "#0A0A0B",
+              charcoal: "#2D2D32",
+              primary: "#4E008E",
+              bright: "#B599FA",
+              mint: "#48B48D",
+            },
+          },
+          fontFamily: {
+            sans: ["Poppins", "sans-serif"],
+            display: ["Montserrat", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    body {
+      background-color: #EDEEF5;
+      color: #0A0A0B;
+      overflow-x: hidden;
+    }
+
+    /* Subtle Film Grain */
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.035;
+      mix-blend-mode: multiply;
+    }
+
+    /* Three.js Canvas constraints */
+    #topography-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      will-change: transform, filter, opacity;
+    }
+
+    /* Premium Apple-Style Navbar Dropdown Animations */
+    .nav-group {
+      position: static;
+    }
+
+    /* Critical: allows menu to span full width of header */
+    .mega-menu {
+      position: absolute;
+      left: 0;
+      top: 100%;
+      width: 100%;
+      background: rgba(237, 238, 245, 0.95);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.05);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+      cursor: default;
+    }
+
+    .nav-group:hover .mega-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Staggered items inside the menu */
+    .mega-item {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-group:hover .mega-item {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .nav-group:hover .col-1 .mega-item:nth-child(1) {
+      transition-delay: 0.04s;
+    }
+
+    .nav-group:hover .col-1 .mega-item:nth-child(2) {
+      transition-delay: 0.08s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(1) {
+      transition-delay: 0.12s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(2) {
+      transition-delay: 0.16s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(3) {
+      transition-delay: 0.20s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(4) {
+      transition-delay: 0.24s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(5) {
+      transition-delay: 0.28s;
+    }
+
+    /* Mobile Apple-style Navigation */
+    #mobile-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #EDEEF5;
+      z-index: 40;
+      padding-top: 85px;
+      padding-inline: 24px;
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0.4s, opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+
+    #mobile-menu.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .mobile-nav-item {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #mobile-menu.active .mobile-nav-item {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(1) {
+      transition-delay: 0.10s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(2) {
+      transition-delay: 0.14s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(3) {
+      transition-delay: 0.18s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(4) {
+      transition-delay: 0.22s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(5) {
+      transition-delay: 0.26s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(6) {
+      transition-delay: 0.30s;
+    }
+
+    .apple-blur-light {
+      background: rgba(237, 238, 245, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    /* Hamburger Icon Animation */
+    .menu-line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform-origin: center;
+      transition:
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.2s ease;
+    }
+
+    .line-1 {
+      transform: translate(-50%, -6px);
+    }
+
+    .line-2 {
+      transform: translate(-50%, 0);
+    }
+
+    .line-3 {
+      transform: translate(-50%, 6px);
+    }
+
+    .menu-open .line-1 {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .menu-open .line-2 {
+      opacity: 0;
+    }
+
+    .menu-open .line-3 {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    /* Mobile Drilldown Enhancements */
+    #mobile-menu {
+      overflow-x: hidden;
+    }
+
+    .submenu-active #mobile-menu-slider {
+      transform: translateX(-100%);
+    }
+
+    .submenu-active #mobile-back-header {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .mobile-submenu a,
+    .mobile-submenu p {
+      opacity: 0;
+      transform: translateX(20px);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .submenu-active .mobile-submenu.active a,
+    .submenu-active .mobile-submenu.active p {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(1) {
+      transition-delay: 0.10s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(2) {
+      transition-delay: 0.14s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(3) {
+      transition-delay: 0.18s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(4) {
+      transition-delay: 0.22s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(5) {
+      transition-delay: 0.26s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(6) {
+      transition-delay: 0.30s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(7) {
+      transition-delay: 0.34s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(8) {
+      transition-delay: 0.38s;
+    }
+
+    .mobile-submenu a {
+      position: relative;
+      background-image: none !important;
+      padding-left: 0 !important;
+    }
+
+    .mobile-submenu a svg {
+      display: none !important;
+    }
+
+    #cursor-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 480px;
+      height: 480px;
+      margin-left: -240px;
+      margin-top: -240px;
+      background: radial-gradient(circle,
+          rgba(181, 153, 250, 0.16) 0%,
+          rgba(78, 0, 142, 0.05) 45%,
+          transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      will-change: transform;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Grain texture -->
+  <svg class="grain" xmlns="http://www.w3.org/2000/svg">
+    <filter id="noiseFilter">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"></feTurbulence>
+      <feColorMatrix type="saturate" values="0"></feColorMatrix>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#noiseFilter)"></rect>
+  </svg>
+  <div id="cursor-glow"></div>
+
+  <!-- NAVBAR -->
+  <header id="main-nav"
+    class="fixed top-0 left-1/2 -translate-x-1/2 w-full z-50 apple-blur-light transition-all duration-500">
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+      <div class="flex items-center justify-between h-[72px]">
+        <a href="../home.html" class="flex items-center gap-3 cursor-pointer">
+          <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+            class="h-6 w-auto brightness-0" />
+        </a>
+
+        <nav class="hidden md:flex space-x-8 lg:space-x-10 h-full">
+          <!-- 1. For Partners -->
+          <div class="nav-group h-full flex items-center">
+            <a href="../partner-hub.html"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              For Partners
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <!-- Apple-style Primary Column -->
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Explore</p>
+                  <a href="../partner-hub.html"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-3">Partner
+                    Hub</a>
+                </div>
+                <!-- Apple-style Secondary Column -->
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Solutions</p>
+                  <a href="#retailers"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Retailers</a>
+                  <a href="#"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Telcos & Operators</a>
+                  <a href="#oems"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    OEMs & Brands</a>
+                  <a href="#ecommerce"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Ecommerce</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. For Buyers -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#buyers"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              For Buyers
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Explore</p>
+                  <a href="../buyer-hub.html"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-mint transition-colors mb-3">Buyer
+                    Hub</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Resources</p>
+                  <a href="../buyers/how-auction-work.html"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">How
+                    Auctions Work</a>
+                  <a href="#register"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Register
+                    as Buyer</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Neutral Marketplace -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#neutral-marketplace"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Neutral Marketplace
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Infrastructure</p>
+                  <a href="#platform"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">The
+                    Platform</a>
+                  <a href="#ai-grading"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">AI
+                    Grading</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Intelligence -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#insights"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Insights
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Data</p>
+                  <a href="#rv-index"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">RV
+                    Index</a>
+                  <a href="#market-reports"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">Market
+                    Reports</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Editorial</p>
+                  <a href="#leaders"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">60
+                    Seconds With Circularity Leaders</a>
+                  <a href="#blogs"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Blogs</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Company -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#company"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Company
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    About</p>
+                  <a href="#inside"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">Inside
+                    NorthLadder</a>
+                  <a href="#builders"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">The
+                    Builders</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Discover</p>
+                  <a href="#stories"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Customer
+                    Stories</a>
+                  <a href="#newsroom"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Newsroom</a>
+                  <a href="#join"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Join
+                    The Team</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Language Toggle (Navbar) -->
+        <div class="relative group hidden md:block">
+          <button
+            class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418">
+              </path>
+            </svg>
+            EN
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+
+          <!-- Dropdown -->
+          <div
+            class="absolute right-0 mt-4 w-32 bg-white/90 backdrop-blur-xl border border-gray-100 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden translate-y-2 group-hover:translate-y-0">
+            <div class="p-1.5 space-y-0.5">
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-brand-obsidian bg-gray-50 rounded-lg">English</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">العربية
+                (AR)</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Deutsch</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Español</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Français</a>
+            </div>
+          </div>
+        </div>
+        <div class="items-center space-x-8">
+          <button id="mobile-menu-btn" class="md:hidden flex justify-center items-center w-8 h-8 z-50 relative"
+            aria-label="Toggle menu">
+            <span class="menu-line line-1 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+            <span class="menu-line line-2 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+            <span class="menu-line line-3 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+          </button>
+          <div class="flex justify-center items-center space-x-8">
+            <a href="#login"
+              class="hidden md:flex text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">Log
+              in</a>
+            <a href="#contact"
+              class="hidden md:flex text-[13px] font-sans font-medium text-white bg-brand-obsidian hover:bg-brand-primary px-6 py-2.5 rounded-full transition-all duration-300 shadow-lg shadow-black/10">
+              Get Started
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE APPLE-STYLE FULLSCREEN MENU -->
+  <nav id="mobile-menu" class="md:hidden">
+    <!-- Menu Slider Container -->
+    <div id="mobile-menu-slider"
+      class="relative w-full h-[calc(100%-80px)] flex transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] px-6">
+
+      <!-- LEVEL 1: MAIN MENU -->
+      <div id="mobile-level-1" class="w-full flex-shrink-0 flex flex-col space-y-7 pt-4">
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-partners">
+          For Partners
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-buyers">
+          For Buyers
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-marketplace">
+          Neutral Marketplace
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-intelligence">
+          Insights
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-company">
+          Company
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+
+        <div class="mobile-nav-item pt-8 border-t border-gray-300/50 mt-4 flex flex-col space-y-4">
+          <a href="#login" class="text-lg font-sans font-medium text-brand-charcoal">Log in</a>
+          <a href="#contact" class="text-lg font-sans font-medium text-brand-primary">Get Started</a>
+        </div>
+      </div>
+
+      <!-- LEVEL 2: SUBMENUS -->
+      <div id="mobile-level-2" class="absolute top-0 left-full w-full h-full pb-24 overflow-y-auto px-6 pt-4">
+
+        <!-- Submenu: Partners -->
+        <div id="submenu-partners" class="mobile-submenu hidden flex-col space-y-6">
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mb-2">Explore</p>
+          <a href="../partner-hub.html"
+            class="text-xl font-display font-semibold text-brand-obsidian block mb-4">Partner
+            Hub</a>
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mt-6 mb-2">Solutions</p>
+          <a href="#retailers"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For Retailers</a>
+          <a href="#"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For
+            Telcos & Operators</a>
+          <a href="#oems" class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For
+            OEMs & Brands</a>
+          <a href="#ecommerce"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For Ecommerce</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- SECTION 1: THE GLASS TOPOGRAPHY HERO -->
+    <section id="telco-hero-wrapper" class="relative w-full h-[150vh] bg-brand-bg">
+
+      <div class="sticky top-0 w-full h-screen overflow-hidden flex flex-col items-center justify-center">
+
+        <canvas id="topography-canvas"></canvas>
+
+        <div id="hero-text-content"
+          class="relative z-10 text-center flex flex-col items-center px-6 mt-16 max-w-5xl mx-auto pointer-events-none">
+          <h1
+            class="hero-stagger font-display font-light text-4xl md:text-5xl lg:text-6xl !leading-[1.2] tracking-tight text-brand-obsidian mb-6 drop-shadow-sm pointer-events-auto">
+            Scale device upgrades <br />
+            <span
+              class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-mint drop-shadow-md">with
+              zero balance sheet risk.</span>
+          </h1>
+
+          <p
+            class="hero-stagger font-sans text-sm md:text-lg lg:text-xl text-gray-500 font-light max-w-2xl leading-relaxed mb-10 pointer-events-auto">
+            Power your 5G adoption campaigns. We provide the front-end integrations and back-end grading required to
+            guarantee aggressive residual values for your subscribers.
+          </p>
+
+          <div
+            class="hero-stagger flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mt-6 md:mt-10 w-full px-4"
+            style="animation-delay: 0.7s;">
+
+            <button
+              class="group relative inline-flex items-center justify-center gap-3 px-6 py-3.5 md:px-8 md:py-3.5 bg-brand-obsidian text-white rounded-full overflow-hidden transition-all duration-500 ease-out hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] w-full sm:w-auto">
+              <div
+                class="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              </div>
+              <span class="relative font-sans text-sm md:text-sm font-medium tracking-wide">Book a Telco Demo</span>
+              <svg class="relative w-4 h-4 transition-transform duration-500 ease-out group-hover:translate-x-1"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </button>
+
+            <a href="#portal"
+              class="group relative inline-flex items-center justify-center gap-3 px-6 py-3.5 md:px-8 md:py-3.5 bg-brand-bg/50 backdrop-blur-md border border-brand-obsidian/10 text-brand-obsidian rounded-full transition-all duration-500 ease-out hover:-translate-y-1 hover:bg-white hover:border-brand-obsidian/20 hover:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] w-full sm:w-auto">
+              <svg class="w-5 h-5 mr-2 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+              </svg>
+              <span class="font-sans text-sm md:text-sm font-medium tracking-wide">Download Telco Overview</span>
+            </a>
+          </div>
+
+          <div class="hero-stagger relative z-30 flex flex-col items-center mt-8 md:mt-16"
+            style="animation-delay: 0.9s;">
+            <div class="flex flex-wrap justify-center gap-2 md:gap-3 max-w-[95%] md:max-w-2xl">
+              <div
+                class="!opacity-100 group px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-gray-200/60 bg-white/60 backdrop-blur-md transition-all duration-300 ease-out hover:border-brand-primary/30 hover:bg-white hover:-translate-y-0.5 hover:shadow-sm cursor-default">
+                <span
+                  class="font-sans text-[10px] md:text-xs font-medium text-gray-500 group-hover:text-brand-obsidian transition-colors duration-300">
+                  Higher grade upgrade rates</span>
+              </div>
+
+              <div
+                class="!opacity-100 group px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-gray-200/60 bg-white/60 backdrop-blur-md transition-all duration-300 ease-out hover:border-brand-primary/30 hover:bg-white hover:-translate-y-0.5 hover:shadow-sm cursor-default">
+                <span
+                  class="font-sans text-[10px] md:text-xs font-medium text-gray-500 group-hover:text-brand-obsidian transition-colors duration-300">
+                  True residual values</span>
+              </div>
+
+              <div
+                class="!opacity-100 group px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-gray-200/60 bg-white/60 backdrop-blur-md transition-all duration-300 ease-out hover:border-brand-primary/30 hover:bg-white hover:-translate-y-0.5 hover:shadow-sm cursor-default">
+                <span
+                  class="font-sans text-[10px] md:text-xs font-medium text-gray-500 group-hover:text-brand-obsidian transition-colors duration-300">
+                  Integrates with your existing flow</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-brand-bg to-transparent z-20 pointer-events-none">
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: ANIMATED NUMBER METRICS -->
+    <section id="proof-strip"
+      class="relative w-full py-24 lg:py-32 bg-brand-bg overflow-hidden border-t border-gray-200/50 min-h-[]">
+      <!-- Subtle Background Mesh -->
+      <div class="absolute inset-0 w-full h-full pointer-events-none opacity-20" style="
+      background-image: radial-gradient(
+       rgba(10, 10, 11, 0.1) 1px,
+       transparent 1px
+      );
+      background-size: 40px 40px;
+     "></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent to-[#EDEEF5] pointer-events-none"></div>
+
+      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+        <!-- Animated Number Counters -->
+        <div
+          class="grid grid-cols-1 md:grid-cols-3 gap-16 lg:gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-300/50 mb-24">
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
+                <span class="text-brand-primary">+</span><span class="counter" data-target="18">0</span><span
+                  class="text-brand-primary">%</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              Upgrade attach rates
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
+                <span class="text-brand-bright">&lt;</span><span class="counter" data-target="48">0</span><span
+                  class="text-brand-bright">h</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              Settlement to partner
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
+                <span class="counter" data-target="40">0</span><span class="text-brand-primary">%</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              Fewer grading disputes
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="lens-section"
+      class="relative w-full min-h-screen bg-brand-bg overflow-hidden flex flex-col items-center justify-center pt-28 pb-16 md:pb-28">
+
+      <!-- Title Container -->
+      <div
+        class="relative z-40 w-full px-4 md:px-6 text-center shrink-0 mb-10 lg:mb-16 max-w-4xl mx-auto pointer-events-none">
+        <p class="font-sans text-[10px] md:text-xs font-bold tracking-[0.2em] text-brand-primary uppercase mb-3">The
+          Problem. Solved.</p>
+        <h2
+          class="font-display font-light text-3xl md:text-5xl lg:text-6xl text-brand-obsidian tracking-tight leading-[1.1] mb-4">
+          From <span class="font-bold text-gray-400 italic line-through">Chaos</span> to <span
+            class="font-bold text-brand-primary">Clarity.</span>
+        </h2>
+        <p class="font-sans text-sm md:text-base lg:text-lg text-gray-500 font-light leading-relaxed px-4 md:px-0">
+          Most telco trade-in programmes underperform because of how they're structured, not how they're marketed.
+        </p>
+      </div>
+
+      <!-- The Cards Stage -->
+      <!-- Removed min-heights so the vertically stacked cards push the container's height naturally on mobile -->
+      <div class="relative w-full max-w-7xl mx-auto px-4 md:px-6 z-20 flex items-center justify-center">
+
+        <!-- LAYER 1: THE OLD WAY (Relative container dictates the height) -->
+        <div
+          class="relative w-full flex flex-col md:flex-row items-stretch justify-center gap-6 lg:gap-8 z-0 pointer-events-none">
+
+          <!-- Fragmented Card 1 -->
+          <div
+            class="w-full md:w-1/3 bg-white/80 backdrop-blur-md border border-gray-300 rounded-2xl md:rounded-3xl p-6 lg:p-8 transform -rotate-[2deg] md:-rotate-[4deg] md:-translate-x-4 shadow-sm">
+            <h4 class="font-sans text-[10px] md:text-xs font-bold tracking-widest text-gray-500 uppercase mb-3 md:mb-4">
+              Common Problem</h4>
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <p class="font-sans text-xs md:text-sm text-gray-600 font-medium leading-relaxed">Single buyer sets the
+                price — hidden margin baked in, not discoverable.</p>
+            </div>
+          </div>
+
+          <!-- Fragmented Card 2 -->
+          <div
+            class="w-full md:w-1/3 bg-white/80 backdrop-blur-md border border-gray-300 rounded-2xl md:rounded-3xl p-6 lg:p-8 transform rotate-[1.5deg] md:rotate-[3deg] shadow-sm">
+            <h4 class="font-sans text-[10px] md:text-xs font-bold tracking-widest text-gray-500 uppercase mb-3 md:mb-4">
+              Common Problem</h4>
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <p class="font-sans text-xs md:text-sm text-gray-600 font-medium leading-relaxed">Photo-based grading
+                creates ongoing customer disputes post-return.</p>
+            </div>
+          </div>
+
+          <!-- Fragmented Card 3 -->
+          <div
+            class="w-full md:w-1/3 bg-white/80 backdrop-blur-md border border-gray-300 rounded-2xl md:rounded-3xl p-6 lg:p-8 transform -rotate-[1deg] md:-rotate-[3deg] md:translate-x-4 shadow-sm">
+            <h4 class="font-sans text-[10px] md:text-xs font-bold tracking-widest text-gray-500 uppercase mb-3 md:mb-4">
+              Common Problem</h4>
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              <p class="font-sans text-xs md:text-sm text-gray-600 font-medium leading-relaxed">Partner takes settlement
+                risk on slow-moving inventory. No pricing intelligence.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- LAYER 2: THE NEW WAY (Absolute Overlay) -->
+        <!-- Fixed: Changed from bg-brand-bg/95 to 100% solid bg-brand-bg to flawlessly hide Layer 1 corners -->
+        <div id="resolved-layer"
+          class="absolute inset-0 flex flex-col md:flex-row items-stretch justify-center gap-6 lg:gap-8 z-10 bg-brand-bg px-0"
+          style="clip-path: inset(0 100% 0 0);">
+
+          <!-- Resolved Card 1 -->
+          <div
+            class="w-full md:w-1/3 bg-[#E6F7ED] border border-[#B3E5C7] rounded-2xl md:rounded-3xl p-6 lg:p-8 shadow-[0_20px_40px_-10px_rgba(52,168,83,0.15)] transition-transform hover:-translate-y-1">
+            <h4
+              class="font-sans text-[10px] md:text-xs font-bold tracking-widest text-[#2B7A4B] uppercase mb-3 md:mb-4">
+              NorthLadder Model</h4>
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-[#34A853] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <p class="font-sans text-xs md:text-sm text-[#1A4D2E] font-medium leading-relaxed">Open auction — verified
+                buyers across EU, GCC, Asia bid simultaneously. Real market price.</p>
+            </div>
+          </div>
+
+          <!-- Resolved Card 2 -->
+          <div
+            class="w-full md:w-1/3 bg-[#E6F7ED] border border-[#B3E5C7] rounded-2xl md:rounded-3xl p-6 lg:p-8 shadow-[0_20px_40px_-10px_rgba(52,168,83,0.15)] transition-transform hover:-translate-y-1">
+            <h4
+              class="font-sans text-[10px] md:text-xs font-bold tracking-widest text-[#2B7A4B] uppercase mb-3 md:mb-4">
+              NorthLadder Model</h4>
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-[#34A853] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <p class="font-sans text-xs md:text-sm text-[#1A4D2E] font-medium leading-relaxed">AR video grading per
+                device. Objective record. 40% fewer dispute claims.</p>
+            </div>
+          </div>
+
+          <!-- Resolved Card 3 -->
+          <div
+            class="w-full md:w-1/3 bg-[#E6F7ED] border border-[#B3E5C7] rounded-2xl md:rounded-3xl p-6 lg:p-8 shadow-[0_20px_40px_-10px_rgba(52,168,83,0.15)] transition-transform hover:-translate-y-1">
+            <h4
+              class="font-sans text-[10px] md:text-xs font-bold tracking-widest text-[#2B7A4B] uppercase mb-3 md:mb-4">
+              NorthLadder Model</h4>
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-[#34A853] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <p class="font-sans text-xs md:text-sm text-[#1A4D2E] font-medium leading-relaxed">Residual Value Index —
+                live auction data. 94% lot sell-through. Settlement in 48h.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- LAYER 3: THE PHYSICAL GLASS LENS -->
+        <!-- Fixed: Automatically switches to a horizontal scanner bar on Mobile, and a vertical scanner bar on Desktop -->
+        <div id="glass-lens"
+          class="absolute z-30 flex items-center justify-center pointer-events-none -translate-x-1/2 -translate-y-1/2 w-[110%] h-[30px] md:w-[30px] md:h-[120%]">
+          <div
+            class="absolute inset-0 bg-white/20 backdrop-blur-md border border-white/60 shadow-[0_0_40px_rgba(255,255,255,0.8)] rounded-full md:rounded-none">
+          </div>
+          <div class="absolute w-full h-[2px] md:w-[2px] md:h-full bg-brand-mint shadow-[0_0_15px_#48B48D]"></div>
+          <div class="absolute w-16 h-[4px] md:w-[4px] md:h-16 bg-white rounded-full shadow-[0_0_20px_white]"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 4: INTEGRATION OPTIONS (BENTO BOX) -->
+    <section id="integration-section"
+      class="relative w-full py-24 lg:py-32 bg-brand-bg overflow-hidden border-t border-gray-200/50">
+
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-12 relative z-10">
+
+        <!-- Section Header -->
+        <div class="mb-12 md:mb-16 pointer-events-none">
+          <p class="font-sans text-[10px] md:text-xs font-bold tracking-[0.2em] text-brand-primary uppercase mb-3">
+            Integration Options</p>
+          <h2 class="font-display font-medium text-3xl md:text-5xl text-brand-obsidian tracking-tight leading-[1.1]">
+            Fits your existing upgrade journey
+          </h2>
+        </div>
+
+        <!-- Bento Box Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+
+          <!-- BENTO CARD 1: REST API (Spans 2 columns on desktop) -->
+          <div
+            class="bento-wrapper col-span-1 md:col-span-2 relative group p-[2px] rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-500">
+            <!-- Racing Border Gradient -->
+            <div
+              class="absolute inset-[-100%] bg-[conic-gradient(from_0deg,transparent_0%,transparent_70%,rgba(72,180,141,1)_100%)] animate-[spin_3s_linear_infinite] opacity-0 group-hover:opacity-100 transition-opacity duration-500 origin-center pointer-events-none">
+            </div>
+
+            <!-- Inner Content -->
+            <div
+              class="relative w-full h-full bg-white rounded-[calc(1.5rem-2px)] p-8 lg:p-12 z-10 flex flex-col md:flex-row items-center gap-8 lg:gap-16">
+
+              <!-- Left Text Content -->
+              <div class="w-full md:w-1/2 flex flex-col">
+                <div
+                  class="w-12 h-12 rounded-xl bg-brand-bg border border-gray-200 flex items-center justify-center mb-6 text-brand-primary">
+                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                </div>
+                <h3 class="font-display font-bold text-2xl lg:text-3xl text-brand-obsidian mb-4">REST API</h3>
+                <p class="font-sans text-sm lg:text-base text-gray-500 leading-relaxed mb-8">
+                  Full API integration into your upgrade flow, app, or store POS. Webhook callbacks for auction results.
+                </p>
+                <a href="#api-docs"
+                  class="inline-flex items-center font-sans text-sm font-semibold text-brand-primary hover:text-brand-mint transition-colors">
+                  API docs
+                  <svg class="w-4 h-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              </div>
+
+              <!-- Right Terminal Window -->
+              <div
+                class="w-full md:w-1/2 bg-[#121214] rounded-2xl overflow-hidden border border-gray-800 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)]">
+                <!-- Mac Window Controls -->
+                <div class="h-10 bg-[#1E1E20] border-b border-gray-800 flex items-center px-4 gap-2">
+                  <div class="w-3 h-3 rounded-full bg-[#FF5F56]"></div>
+                  <div class="w-3 h-3 rounded-full bg-[#FFBD2E]"></div>
+                  <div class="w-3 h-3 rounded-full bg-[#27C93F]"></div>
+                </div>
+                <!-- Terminal Content -->
+                <div class="p-6 h-[220px] overflow-hidden relative">
+                  <pre
+                    class="font-mono text-xs md:text-sm leading-relaxed text-gray-400"><code id="terminal-typewriter"></code><span id="terminal-cursor" class="inline-block w-2 h-4 bg-brand-mint ml-1 align-middle animate-pulse"></span></pre>
+                  <!-- Subtle glow over terminal -->
+                  <div
+                    class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(72,180,141,0.05)_0%,transparent_60%)] pointer-events-none">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BENTO CARD 2: PARTNER PORTAL -->
+          <div
+            class="bento-wrapper col-span-1 relative group p-[2px] rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-500">
+            <!-- Racing Border Gradient -->
+            <div
+              class="absolute inset-[-100%] bg-[conic-gradient(from_0deg,transparent_0%,transparent_70%,rgba(181,153,250,1)_100%)] animate-[spin_3s_linear_infinite] opacity-0 group-hover:opacity-100 transition-opacity duration-500 origin-center pointer-events-none">
+            </div>
+
+            <div
+              class="relative w-full h-full bg-white rounded-[calc(1.5rem-2px)] p-8 lg:p-10 z-10 flex flex-col h-full">
+              <div
+                class="w-12 h-12 rounded-xl bg-brand-bg border border-gray-200 flex items-center justify-center mb-6 text-brand-primary">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h3 class="font-display font-bold text-2xl text-brand-obsidian mb-4">Partner portal</h3>
+              <p class="font-sans text-sm text-gray-500 leading-relaxed mb-8 flex-grow">
+                No-code access. Upload lots, track auctions, view pricing intelligence, download reports.
+              </p>
+              <a href="#portal-demo"
+                class="inline-flex items-center font-sans text-sm font-semibold text-brand-primary hover:text-brand-bright transition-colors mt-auto">
+                View portal demo
+                <svg class="w-4 h-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- BENTO CARD 3: MANAGED SERVICE -->
+          <div
+            class="bento-wrapper col-span-1 relative group p-[2px] rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-500">
+            <!-- Racing Border Gradient -->
+            <div
+              class="absolute inset-[-100%] bg-[conic-gradient(from_0deg,transparent_0%,transparent_70%,rgba(78,0,142,1)_100%)] animate-[spin_3s_linear_infinite] opacity-0 group-hover:opacity-100 transition-opacity duration-500 origin-center pointer-events-none">
+            </div>
+
+            <div
+              class="relative w-full h-full bg-white rounded-[calc(1.5rem-2px)] p-8 lg:p-10 z-10 flex flex-col h-full">
+              <div
+                class="w-12 h-12 rounded-xl bg-brand-bg border border-gray-200 flex items-center justify-center mb-6 text-brand-primary">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 class="font-display font-bold text-2xl text-brand-obsidian mb-4">Managed service</h3>
+              <p class="font-sans text-sm text-gray-500 leading-relaxed mb-8 flex-grow">
+                NorthLadder handles grading, logistics coordination, buyer communications. You receive payment.
+              </p>
+              <a href="#partnerships"
+                class="inline-flex items-center font-sans text-sm font-semibold text-brand-primary hover:text-brand-primary/70 transition-colors mt-auto">
+                Talk to partnerships
+                <svg class="w-4 h-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: RESIDUAL VALUE INDEX (THE LIVING MARKET) -->
+    <section id="rv-index-section"
+      class="relative w-full py-24 lg:py-32 bg-brand-bg overflow-hidden border-t border-gray-200/50">
+
+      <!-- Subtle background ambient glow for the chart -->
+      <div
+        class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[40vw] bg-[radial-gradient(circle_at_center,rgba(72,180,141,0.08)_0%,transparent_60%)] pointer-events-none z-0">
+      </div>
+
+      <div class="max-w-[1200px] mx-auto px-6 lg:px-12 relative z-10">
+
+        <!-- Section Header -->
+        <div class="text-center mb-12 md:mb-16 pointer-events-none">
+          <p class="font-sans text-[10px] md:text-xs font-bold tracking-[0.2em] text-brand-mint uppercase mb-3">The
+            Living Market</p>
+          <h2
+            class="font-display font-light text-3xl md:text-5xl text-brand-obsidian tracking-tight leading-[1.1] mb-6">
+            Set your upgrade <span class="font-medium">pricing</span>
+          </h2>
+          <p class="font-sans text-sm md:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed">
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Repudiandae quibusdam aspernatur ipsum tempore
+            officiis repellendus dolore cum, id itaque sequi, tempora soluta ab consectetur laborum, deserunt sed omnis!
+            Natus, eaque!
+          </p>
+        </div>
+
+        <!-- The Frosted Glass Chart Container -->
+        <div
+          class="relative w-full aspect-[4/3] md:aspect-[21/9] bg-white/60 backdrop-blur-2xl border border-white rounded-3xl shadow-[0_20px_50px_-10px_rgba(0,0,0,0.05)] p-5 md:p-8 lg:p-10 flex flex-col justify-between overflow-hidden group">
+
+          <!-- Chart Headers (Responsive Flexbox groups the text as requested) -->
+          <div
+            class="relative z-20 w-full flex flex-col sm:flex-row justify-between items-start sm:items-start gap-4 pointer-events-none">
+
+            <!-- Left Side Labels -->
+            <div class="flex flex-col gap-1">
+              <span class="font-sans text-[10px] md:text-xs font-semibold text-gray-500">Sample — EU residual value
+                trend</span>
+              <span class="font-sans text-xs md:text-sm font-bold text-brand-obsidian">IPhone 15 Pro · Grade A · EU
+                avg</span>
+            </div>
+
+            <!-- Right Side Labels -->
+            <div class="flex flex-col items-start sm:items-end gap-1.5">
+              <span
+                class="font-sans text-[9px] md:text-[10px] font-semibold text-gray-500 bg-white/80 backdrop-blur-md border border-gray-200 px-3 py-1 rounded-full shadow-sm w-fit">Partner
+                access only</span>
+              <span class="font-sans text-xs md:text-sm font-bold text-brand-primary">+8% in 6 weeks</span>
+            </div>
+
+          </div>
+
+          <!-- Background Grid Lines -->
+          <div
+            class="absolute inset-0 flex flex-col justify-between py-24 md:py-16 px-6 md:px-10 pointer-events-none opacity-20 z-0">
+            <div class="w-full h-px bg-brand-charcoal border-b border-dashed border-gray-400"></div>
+            <div class="w-full h-px bg-brand-charcoal border-b border-dashed border-gray-400"></div>
+            <div class="w-full h-px bg-brand-charcoal border-b border-dashed border-gray-400"></div>
+            <div class="w-full h-px bg-brand-charcoal border-b border-dashed border-gray-400"></div>
+          </div>
+
+          <!-- Pure SVG Hardware-Accelerated Chart (Using Clip-Path Fix) -->
+          <svg class="absolute inset-0 w-full h-full z-10" viewBox="0 0 1020 300" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#48B48D" stop-opacity="0.3" />
+                <stop offset="100%" stop-color="#48B48D" stop-opacity="0" />
+              </linearGradient>
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+
+              <!-- Clip Path acts as a mask we can animate horizontally -->
+              <clipPath id="chart-clip">
+                <rect id="rv-clip-rect" x="0" y="0" width="0" height="300" />
+              </clipPath>
+            </defs>
+
+            <!-- Both Fill and Line are grouped inside the Clip Path -->
+            <g clip-path="url(#chart-clip)">
+              <path
+                d="M 0 260 C 150 260, 200 180, 350 200 C 500 220, 600 100, 750 120 C 850 130, 950 40, 1000 40 L 1000 300 L 0 300 Z"
+                fill="url(#chartGradient)" />
+              <path d="M 0 260 C 150 260, 200 180, 350 200 C 500 220, 600 100, 750 120 C 850 130, 950 40, 1000 40"
+                fill="none" stroke="#48B48D" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke"
+                filter="url(#glow)" />
+            </g>
+
+            <!-- Leading Edge Pulse Dot -->
+            <g id="rv-dot" class="opacity-0" transform="translate(1000, 40)">
+              <circle cx="0" cy="0" r="14" fill="#48B48D" opacity="0.3"
+                class="animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]" vector-effect="non-scaling-stroke" />
+              <circle cx="0" cy="0" r="6" fill="#4E008E" stroke="#ffffff" stroke-width="2"
+                vector-effect="non-scaling-stroke" />
+            </g>
+          </svg>
+
+          <!-- X-Axis Labels -->
+          <div
+            class="relative z-20 w-full flex justify-between text-[9px] md:text-xs font-sans font-bold text-gray-400 uppercase tracking-widest mt-auto">
+            <span>Q1</span>
+            <span>Q2</span>
+            <span>Q3</span>
+            <span class="text-brand-mint">Live (Q4)</span>
+          </div>
+        </div>
+
+        <!-- The CTAs (Fade in after chart completes) -->
+        <div
+          class="rv-ctas flex flex-col sm:flex-row items-center justify-center gap-4 mt-10 md:mt-12 w-full opacity-0 translate-y-4">
+          <a href="#request-rv"
+            class="w-full sm:w-auto inline-flex items-center justify-center font-sans font-semibold text-white bg-brand-obsidian px-8 py-3.5 md:py-4 rounded-full hover:bg-brand-mint transition-all duration-300 shadow-xl hover:-translate-y-1">
+            Request RV Access
+          </a>
+          <a href="#download-sample"
+            class="w-full sm:w-auto inline-flex items-center justify-center font-sans font-semibold text-brand-obsidian bg-white border border-gray-200 px-8 py-3.5 md:py-4 rounded-full hover:bg-gray-50 transition-all duration-300 shadow-sm hover:-translate-y-1">
+            <svg class="w-4 h-4 md:w-5 md:h-5 mr-2 text-brand-primary" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            Download Sample
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 6: PARTNER CASE STUDY (CINEMATIC REVEAL) -->
+    <!-- Dark, immersive section to break up the light theme -->
+    <section id="case-study-section"
+      class="relative w-full py-24 md:py-32 min-h-screen overflow-hidden flex items-center justify-center bg-black">
+
+      <!-- Parallax Background Image -->
+      <div id="case-study-bg"
+        class="absolute top-[-15%] left-0 w-full h-[130%] bg-[url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2940&auto=format&fit=crop')] bg-cover bg-center opacity-30 z-0 pointer-events-none">
+      </div>
+
+      <!-- Dark gradient overlay & heavy blur to create physical depth -->
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/90 backdrop-blur-md z-10 pointer-events-none">
+      </div>
+
+      <div class="relative z-20 w-full max-w-[1200px] mx-auto px-4 md:px-6 lg:px-12">
+
+        <!-- Section Header -->
+        <p
+          class="font-sans text-[10px] md:text-xs font-bold tracking-[0.3em] text-brand-bright uppercase mb-6 md:mb-8 ml-2">
+          Partner Case Study</p>
+
+        <!-- Main Glass Container -->
+        <div
+          class="w-full bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[2rem] p-6 md:p-10 lg:p-14 shadow-[0_30px_80px_rgba(0,0,0,0.5)] relative overflow-hidden group">
+
+          <!-- Inner Ambient Glow (Tracks corner) -->
+          <div
+            class="absolute top-0 right-0 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-brand-primary/20 rounded-full blur-[80px] md:blur-[100px] pointer-events-none translate-x-1/2 -translate-y-1/2 opacity-50 group-hover:opacity-100 transition-opacity duration-700">
+          </div>
+
+          <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+
+            <!-- Left: Text Content -->
+            <div class="col-span-1 lg:col-span-7 flex flex-col items-start text-left">
+              <div
+                class="font-sans text-[10px] md:text-xs font-semibold tracking-widest text-gray-400 uppercase mb-6 flex items-center gap-2 md:gap-3">
+                <span>Telco / Operator</span>
+                <span class="w-1 h-1 rounded-full bg-gray-500"></span>
+                <span>EU</span>
+                <span class="w-1 h-1 rounded-full bg-gray-500"></span>
+                <span>Anonymised</span>
+              </div>
+
+              <h3
+                class="font-display font-light text-2xl md:text-3xl lg:text-4xl text-white tracking-tight leading-[1.3] mb-8">
+                "We moved our trade-in programme to NorthLadder and saw upgrade attach rate improve by <span
+                  class="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-brand-bright to-white drop-shadow-md">22%
+                  in the first quarter.</span>"
+              </h3>
+
+              <p
+                class="font-sans text-xs md:text-sm lg:text-base text-gray-400 font-light leading-relaxed mb-10 max-w-xl">
+                Head of Device Lifecycle, European Mobile Operator.<br class="hidden md:block mt-2" />
+                <span class="text-gray-200 font-medium">Highlights:</span> faster settlement, fewer customer disputes,
+                and pricing intelligence that informed upgrade programme design.
+              </p>
+
+              <a href="#full-case-study"
+                class="group/btn relative inline-flex items-center justify-center font-sans text-sm font-medium text-white border border-white/20 bg-white/5 px-6 md:px-8 py-3.5 rounded-full hover:bg-white hover:text-brand-obsidian transition-all duration-300 w-full sm:w-auto">
+                Read full case study
+                <svg class="w-4 h-4 ml-2 transition-transform duration-300 group-hover/btn:translate-x-1" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+            </div>
+
+            <!-- Right: Metric Cards -->
+            <div class="col-span-1 lg:col-span-5 flex flex-col gap-4 w-full">
+
+              <!-- Metric 1 -->
+              <div
+                class="case-metric-card bg-white/5 border border-white/10 rounded-2xl md:rounded-3xl p-6 md:p-8 flex flex-col items-center justify-center text-center shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] hover:bg-white/10 hover:border-white/20 transition-all duration-500">
+                <h4
+                  class="font-display font-light text-5xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 mb-2">
+                  +22%</h4>
+                <p class="font-sans text-[10px] md:text-xs font-semibold tracking-widest text-gray-400 uppercase">
+                  Upgrade attach rate</p>
+              </div>
+
+              <!-- Metric 2 -->
+              <div
+                class="case-metric-card bg-white/5 border border-white/10 rounded-2xl md:rounded-3xl p-6 md:p-8 flex flex-col items-center justify-center text-center shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] hover:bg-white/10 hover:border-white/20 transition-all duration-500">
+                <h4
+                  class="font-display font-light text-5xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 mb-2">
+                  40%</h4>
+                <p class="font-sans text-[10px] md:text-xs font-semibold tracking-widest text-gray-400 uppercase">Fewer
+                  disputes</p>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: LUXURY CTA STRIP -->
+    <!-- Continuing the dark luxury feel before hitting the white footer -->
+    <section class="relative w-full py-24 md:py-32 bg-brand-obsidian overflow-hidden">
+
+      <!-- Deep ambient atmospheric glows -->
+      <div
+        class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(78,0,142,0.25)_0%,transparent_70%)] pointer-events-none rounded-full">
+      </div>
+      <div
+        class="absolute bottom-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(circle_at_center,rgba(72,180,141,0.1)_0%,transparent_60%)] pointer-events-none rounded-full">
+      </div>
+
+      <!-- Top separator line -->
+      <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent">
+      </div>
+
+      <div class="relative z-10 max-w-[1000px] mx-auto px-6 text-center flex flex-col items-center">
+
+        <h2
+          class="font-display font-light text-3xl md:text-5xl lg:text-6xl text-white tracking-tight leading-[1.1] mb-6">
+          Ready to talk about your <br class="hidden md:block" /> <span class="font-medium">upgrade programme?</span>
+        </h2>
+
+        <p class="font-sans text-sm md:text-lg text-gray-400 font-light leading-relaxed mb-10 md:mb-12 max-w-2xl">
+          Our telco partnerships team speaks your language. Integration, auction yields, and supply chain logistics—all
+          solved.
+        </p>
+
+        <!-- Glowing CTA Button -->
+        <div class="relative group">
+          <div
+            class="absolute inset-0 bg-brand-mint rounded-full blur-md opacity-40 group-hover:opacity-80 transition-opacity duration-500">
+          </div>
+          <a href="#demo"
+            class="relative inline-flex items-center justify-center font-sans font-semibold text-brand-obsidian bg-brand-mint px-10 py-4 rounded-full hover:bg-white transition-all duration-300 transform group-hover:-translate-y-1">
+            Book a telco demo
+          </a>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer id="main-footer" class="relative z-30 bg-white overflow-hidden pt-32 pb-16">
+    <!-- Subtle top ambient separator & glow for depth -->
+    <div
+      class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-primary/15 to-transparent">
+    </div>
+    <div
+      class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand-primary/[0.02] blur-[120px] pointer-events-none">
+    </div>
+
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-8 mb-24">
+        <!-- Brand & Mission Column -->
+        <div class="col-span-1 md:col-span-5 pr-0 lg:pr-12">
+          <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+            class="h-6 w-auto brightness-0 mb-8 opacity-90" />
+          <p class="font-sans text-[13px] text-gray-500 font-light leading-[1.9] mb-10 max-w-sm">
+            Democratization Of Trade-ins. Powering the world's most advanced
+            circularity infrastructure for Grade-A inventory with absolute
+            neutrality.
+          </p>
+
+          <!-- Premium Language Pill with Hover State -->
+          <div class="inline-flex items-center relative group">
+            <div
+              class="absolute inset-0 bg-gray-50 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            </div>
+            <div
+              class="relative flex items-center bg-white border border-gray-100/80 rounded-full px-5 py-2.5 hover:border-gray-200 hover:shadow-[0_10px_20px_-10px_rgba(0,0,0,0.05)] transition-all duration-300">
+              <svg class="w-4 h-4 text-gray-400 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9">
+                </path>
+              </svg>
+              <select
+                class="bg-transparent text-[11px] font-sans font-medium tracking-wide text-brand-obsidian focus:outline-none pr-7 appearance-none cursor-pointer w-full select-arrow">
+                <option>English (Global)</option>
+                <option>العربية (Arabic)</option>
+                <option>Deutsch (German)</option>
+                <option>Español (Spanish)</option>
+                <option>Français (French)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ecosystem Links -->
+        <div class="col-span-1 md:col-span-2 md:col-start-7">
+          <h4 class="font-sans text-[9px] uppercase tracking-[0.25em] font-bold text-gray-400 mb-8">
+            Ecosystem
+          </h4>
+          <ul class="space-y-5 font-sans text-[13px] font-light text-gray-500">
+            <li>
+              <a href="#partners"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">For
+                Partners</a>
+            </li>
+            <li>
+              <a href="#buyers"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">For
+                Buyers</a>
+            </li>
+            <li>
+              <a href="#neutral-marketplace"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Neutral
+                Marketplace</a>
+            </li>
+            <li>
+              <a href="#insights"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Data
+                Insights</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Enterprise Links -->
+        <div class="col-span-1 md:col-span-2">
+          <h4 class="font-sans text-[9px] uppercase tracking-[0.25em] font-bold text-gray-400 mb-8">
+            Enterprise
+          </h4>
+          <ul class="space-y-5 font-sans text-[13px] font-light text-gray-500">
+            <li>
+              <a href="#about"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Inside
+                NorthLadder</a>
+            </li>
+            <li>
+              <a href="#careers"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Global
+                Careers</a>
+            </li>
+            <li>
+              <a href="#newsroom"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">News
+                & Media</a>
+            </li>
+            <li>
+              <a href="#contact"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Contact
+                Relations</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Refined Bottom Bar -->
+      <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-100/80">
+        <p class="font-sans text-[11px] font-medium tracking-wide text-gray-400">
+          © 2026 NorthLadder. All rights reserved.
+        </p>
+        <div class="flex gap-8 mt-6 md:mt-0">
+          <a href="#"
+            class="text-gray-400 hover:text-brand-obsidian transition-colors text-[11px] tracking-wide font-sans font-medium">Privacy
+            Policy</a>
+          <a href="#"
+            class="text-gray-400 hover:text-brand-obsidian transition-colors text-[11px] tracking-wide font-sans font-medium">Terms
+            of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ANIMATION & 3D LOGIC -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // --- 1. THREE.JS GLASS TOPOGRAPHY ENGINE ---
+      const canvas = document.getElementById("topography-canvas");
+      let scene, camera, renderer, plane, clock, pointLightMint, pointLightPurple;
+
+      if (canvas && typeof THREE !== 'undefined') {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color('#EDEEF5');
+        scene.fog = new THREE.Fog('#EDEEF5', 10, 45);
+
+        camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+        renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const glassMaterial = new THREE.MeshPhysicalMaterial({
+          color: 0xffffff,
+          metalness: 0.1,
+          roughness: 0.25,
+          transmission: 0.9,
+          ior: 1.6,
+          thickness: 2.0,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.1,
+          side: THREE.DoubleSide
+        });
+
+        const geometry = new THREE.PlaneGeometry(60, 40, 90, 60);
+        plane = new THREE.Mesh(geometry, glassMaterial);
+
+        plane.rotation.x = -Math.PI / 2;
+        plane.position.y = -3;
+        scene.add(plane);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        dirLight.position.set(10, 20, 10);
+        scene.add(dirLight);
+
+        pointLightMint = new THREE.PointLight(0x48B48D, 8, 30);
+        pointLightMint.position.set(-5, -6, 5);
+        scene.add(pointLightMint);
+
+        pointLightPurple = new THREE.PointLight(0x4E008E, 12, 35);
+        pointLightPurple.position.set(8, -5, -5);
+        scene.add(pointLightPurple);
+
+        clock = new THREE.Clock();
+
+        function animateThree() {
+          requestAnimationFrame(animateThree);
+          const time = clock.getElapsedTime();
+
+          const positions = plane.geometry.attributes.position;
+          const v = new THREE.Vector3();
+
+          for (let i = 0; i < positions.count; i++) {
+            v.fromBufferAttribute(positions, i);
+            v.z = Math.sin(v.x * 0.2 + time * 0.4) * 1.5 +
+              Math.cos(v.y * 0.2 + time * 0.3) * 1.5;
+            positions.setZ(i, v.z);
+          }
+
+          positions.needsUpdate = true;
+          plane.geometry.computeVertexNormals();
+
+          pointLightMint.position.x = Math.sin(time * 0.2) * 15;
+          pointLightMint.position.z = Math.cos(time * 0.2) * 10;
+          pointLightPurple.position.x = Math.cos(time * 0.15) * -15;
+          pointLightPurple.position.z = Math.sin(time * 0.15) * 15;
+
+          renderer.render(scene, camera);
+        }
+        animateThree();
+
+        window.addEventListener('resize', () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+      }
+
+      // --- 2. THE CINEMATIC DRONE SHOT ENTRANCE ---
+      const initialY = window.innerWidth < 768 ? 2 : 5;
+      const initialZ = window.innerWidth < 768 ? 25 : 18;
+
+      if (camera) {
+        gsap.set(camera.position, { x: 0, y: -1, z: initialZ + 10 });
+        gsap.set(camera.rotation, { x: 0.2 });
+
+        const entranceTl = gsap.timeline({ delay: 0.1 });
+
+        entranceTl.to(camera.position, {
+          y: initialY,
+          z: initialZ,
+          duration: 2.5,
+          ease: "power3.out"
+        }, 0)
+          .to(camera.rotation, {
+            x: -0.15,
+            duration: 2.5,
+            ease: "power3.out"
+          }, 0)
+          .from(".hero-stagger", {
+            y: 40,
+            opacity: 0,
+            duration: 1.2,
+            stagger: 0.15,
+            ease: "power3.out"
+          }, 0.5);
+
+        // --- 3. THE PLUNGE (SCROLL PHYSICS) ---
+        const telcoHeroTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: "#telco-hero-wrapper",
+            start: "top top",
+            end: "bottom top",
+            scrub: 1
+          }
+        });
+
+        telcoHeroTl
+          .to("#hero-text-content", {
+            scale: 1.4,
+            opacity: 0,
+            filter: "blur(20px)",
+            ease: "power1.in"
+          }, 0)
+          .to(camera.position, {
+            y: -2.5,
+            z: 5,
+            ease: "power2.inOut"
+          }, 0)
+          .to(camera.rotation, {
+            x: -0.8,
+            ease: "power2.inOut"
+          }, 0)
+          .to(canvas, {
+            opacity: 0,
+            ease: "power2.in"
+          }, 0.4);
+      }
+
+      // --- 4. SECTION 2 ANIMATED NUMBERS ---
+      const statBlocks = gsap.utils.toArray(".stat-block");
+      if (statBlocks.length > 0) {
+        gsap.fromTo(
+          statBlocks,
+          { y: 50, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.2,
+            stagger: 0.2,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: "#proof-strip",
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+
+        const counters = document.querySelectorAll(".counter");
+        counters.forEach((counter) => {
+          const target = parseInt(counter.getAttribute("data-target"));
+          ScrollTrigger.create({
+            trigger: counter,
+            start: "top 85%",
+            onEnter: () => {
+              gsap.to(counter, {
+                innerHTML: target,
+                duration: 2.5,
+                ease: "power2.out",
+                snap: { innerHTML: 1 },
+                onUpdate: function () {
+                  counter.innerHTML = Math.round(this.targets()[0].innerHTML);
+                },
+              });
+            },
+            once: true,
+          });
+        });
+      }
+
+      // --- 5. SECTION 3 THE GLASS LENS (PROBLEM VS SOLUTION) ---
+      const lensSection = document.getElementById("lens-section");
+
+      if (lensSection) {
+        const lens = document.getElementById("glass-lens");
+        const resolvedLayer = document.getElementById("resolved-layer");
+
+        let mmLens = gsap.matchMedia();
+
+        mmLens.add("(min-width: 768px)", () => {
+          // DESKTOP: Sweep Left to Right
+          const tlLens = gsap.timeline({
+            scrollTrigger: {
+              trigger: lensSection,
+              start: "top top",
+              end: "+=200%",
+              pin: true,
+              scrub: 1
+            }
+          });
+
+          tlLens.fromTo(lens,
+            { left: "0%", top: "50%" },
+            { left: "100%", top: "50%", ease: "none" }, 0
+          );
+
+          tlLens.fromTo(resolvedLayer,
+            { clipPath: "inset(0 100% 0 0)" }, // Right side clipped
+            { clipPath: "inset(0 0% 0 0)", ease: "none" }, 0
+          );
+        });
+
+        mmLens.add("(max-width: 767px)", () => {
+          // MOBILE: Sweep Top to Bottom (like a photocopier moving down the stack)
+          const tlLens = gsap.timeline({
+            scrollTrigger: {
+              trigger: lensSection,
+              start: "top top",
+              end: "+=150%",
+              pin: true,
+              scrub: 1
+            }
+          });
+
+          tlLens.fromTo(lens,
+            { top: "0%", left: "50%" },
+            { top: "100%", left: "50%", ease: "none" }, 0
+          );
+
+          tlLens.fromTo(resolvedLayer,
+            { clipPath: "inset(0 0 100% 0)" }, // Bottom side fully clipped initially
+            { clipPath: "inset(0 0 0% 0)", ease: "none" }, 0
+          );
+        });
+      }
+
+      // --- 6. SECTION 4 BENTO BOX ENTRANCE & TERMINAL TYPEWRITER ---
+      const bentoWrappers = gsap.utils.toArray(".bento-wrapper");
+      if (bentoWrappers.length > 0) {
+        // Entrance animation
+        gsap.fromTo(bentoWrappers,
+          { y: 60, opacity: 0 },
+          {
+            y: 0, opacity: 1,
+            duration: 1,
+            stagger: 0.15,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: "#integration-section",
+              start: "top 75%",
+            }
+          }
+        );
+
+        // Terminal Typewriter Logic
+        const terminalOutput = document.getElementById("terminal-typewriter");
+
+        // Use HTML spans with inline styles inside the JS string to give it color syntax highlighting
+        const codeLines = [
+          "<span style='color: #48B48D;'>></span> Initializing secure webhook...",
+          "<span style='color: #48B48D;'>></span> Connection established.",
+          "<span style='color: #48B48D;'>></span> Awaiting auction result...",
+          "",
+          "<span style='color: #B599FA;'>{</span>",
+          "  <span style='color: #FF5F56;'>\"event\"</span>: <span style='color: #F1FA8C;'>\"auction_closed\"</span>,",
+          "  <span style='color: #FF5F56;'>\"device_id\"</span>: <span style='color: #F1FA8C;'>\"NL-8842X\"</span>,",
+          "  <span style='color: #FF5F56;'>\"winning_bid\"</span>: <span style='color: #BD93F9;'>640.00</span>,",
+          "  <span style='color: #FF5F56;'>\"currency\"</span>: <span style='color: #F1FA8C;'>\"USD\"</span>",
+          "<span style='color: #B599FA;'>}</span>",
+          "",
+          "<span style='color: #48B48D;'>></span> Pushing payload to partner POS...",
+          "<span style='color: #48B48D;'>></span> 200 OK"
+        ];
+
+        let currentLine = 0;
+        let currentChar = 0;
+        let isTyping = false;
+
+        function typeCode() {
+          if (currentLine < codeLines.length) {
+            let lineText = codeLines[currentLine];
+
+            // To prevent typing out HTML tags character by character, we inject lines all at once
+            // Real typewriter effects parse HTML, but for performance, we drop full lines with slight delays
+            terminalOutput.innerHTML += lineText + "\n";
+            currentLine++;
+
+            // Random delay between lines to simulate network/processing speeds
+            let delay = Math.random() * 400 + 100;
+            if (lineText === "") delay = 100; // Fast for empty lines
+            if (currentLine === 11) delay = 1200; // Pause before "Pushing payload"
+
+            setTimeout(typeCode, delay);
+          } else {
+            // Reset and loop after 5 seconds
+            setTimeout(() => {
+              terminalOutput.innerHTML = "";
+              currentLine = 0;
+              typeCode();
+            }, 5000);
+          }
+        }
+
+        // Start typing when the section comes into view
+        ScrollTrigger.create({
+          trigger: "#integration-section",
+          start: "top 70%",
+          onEnter: () => {
+            if (!isTyping) {
+              isTyping = true;
+              // Brief delay before terminal starts
+              setTimeout(typeCode, 800);
+            }
+          },
+          once: true
+        });
+      }
+
+      // --- 7. SECTION 5 RESIDUAL VALUE INDEX (CHART ANIMATION) ---
+      const rvSection = document.getElementById("rv-index-section");
+
+      if (rvSection) {
+        // We now target the clip-path rectangle instead of the SVG line
+        const rvClipRect = document.getElementById("rv-clip-rect");
+        const rvDot = document.getElementById("rv-dot");
+
+        const tlChart = gsap.timeline({
+          scrollTrigger: {
+            trigger: rvSection,
+            start: "top 60%",
+          }
+        });
+
+        tlChart
+          // 1. Reveal the chart by expanding the SVG clip-path width
+          .to(rvClipRect, {
+            attr: { width: 1020 }, // Expands to reveal the full 1020px viewBox
+            duration: 2,
+            ease: "power2.inOut"
+          })
+          // 2. Pop the glowing pulse point at the leading edge
+          .to(rvDot, {
+            opacity: 1,
+            scale: 1,
+            duration: 0.6,
+            ease: "back.out(2)"
+          }, "-=0.2")
+          // 3. Cascade the CTAs up into view
+          .to(".rv-ctas", {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power3.out"
+          }, "-=0.4");
+      }
+
+      // --- 8. SECTION 6 CASE STUDY PARALLAX & ENTRANCE ---
+      const caseStudySection = document.getElementById("case-study-section");
+      const caseStudyBg = document.getElementById("case-study-bg");
+
+      if (caseStudySection && caseStudyBg) {
+        // Background Parallax
+        gsap.to(caseStudyBg, {
+          yPercent: 30,
+          ease: "none",
+          scrollTrigger: {
+            trigger: caseStudySection,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true
+          }
+        });
+
+        // Staggered Entrance for the Metric Cards
+        const caseMetrics = gsap.utils.toArray(".case-metric-card");
+        if (caseMetrics.length > 0) {
+          gsap.fromTo(caseMetrics,
+            { opacity: 0, y: 30, scale: 0.95 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.8,
+              stagger: 0.15,
+              ease: "back.out(1.2)",
+              scrollTrigger: {
+                trigger: caseStudySection,
+                start: "top 60%", // Triggers slightly before the section is fully centered
+              }
+            }
+          );
+        }
+      }
+
+      // Navbar Starts Here...
+      window.addEventListener("scroll", () => {
+        const nav = document.getElementById("main-nav");
+        if (window.scrollY > 20) {
+          // Scrolled state: Translucent (keeps apple-blur-light), Oval, Floating
+          nav.classList.remove("w-full");
+          nav.classList.add(
+            "w-[90%]",
+            "max-w-[1400px]",
+            "top-2",
+            "rounded-full",
+            "shadow-sm",
+            "border",
+            "border-white/40",
+          );
+        } else {
+          // Top state: Full width
+          nav.classList.add("w-full");
+          nav.classList.remove(
+            "w-[90%]",
+            "max-w-[1400px]",
+            "top-2",
+            "rounded-full",
+            "shadow-sm",
+            "border",
+            "border-white/40",
+          );
+        }
+      });
+
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileBackBtn = document.getElementById('mobile-back-btn');
+      const submenus = document.querySelectorAll('.mobile-submenu');
+      const level1Btns = document.querySelectorAll('.mobile-nav-item[data-target]');
+
+      if (mobileBtn && mobileMenu) {
+        // Toggle the entire mobile menu
+        mobileBtn.addEventListener('click', () => {
+          mobileBtn.classList.toggle('menu-open');
+          mobileMenu.classList.toggle('active');
+          document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+
+          // Reset drilldown state when closing
+          if (!mobileMenu.classList.contains('active')) {
+            setTimeout(() => {
+              mobileMenu.classList.remove('submenu-active');
+              submenus.forEach(sub => sub.classList.add('hidden', 'active'));
+            }, 400); // Wait for menu to fade out
+          }
+        });
+
+        // Drill down to submenu
+        level1Btns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('data-target');
+
+            // Hide all submenus first
+            submenus.forEach(sub => {
+              sub.classList.add('hidden');
+              sub.classList.remove('active');
+            });
+
+            // Show targeted submenu
+            const targetSubmenu = document.getElementById(targetId);
+            if (targetSubmenu) {
+              targetSubmenu.classList.remove('hidden');
+              // Tiny delay to allow display:block to apply before adding active class for CSS transitions
+              requestAnimationFrame(() => {
+                targetSubmenu.classList.add('active');
+                mobileMenu.classList.add('submenu-active');
+              });
+            }
+          });
+        });
+
+        // Go back to main menu
+        if (mobileBackBtn) {
+          mobileBackBtn.addEventListener('click', () => {
+            mobileMenu.classList.remove('submenu-active');
+            // Remove active class from submenus after transition completes
+            setTimeout(() => {
+              submenus.forEach(sub => {
+                sub.classList.add('hidden');
+                sub.classList.remove('active');
+              });
+            }, 500);
+          });
+        }
+      }
+      // Navbar Ends Here...
+    });
+  </script>
+</body>
+
+</html>

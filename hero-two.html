@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NorthLadder | Infrastructure Behind Modern Trade-in</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- GSAP & ScrollTrigger -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <style>
+    :root {
+      --stage-color: 96, 165, 250;
+      --stage-color-solid: #60a5fa;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    canvas {
+      display: block;
+      vertical-align: top;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    body {
+      background: #030303;
+    }
+
+    /* ============ Scale Grid Background ============ */
+    .scale-grid-bg {
+      background-color: #050505;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='120' viewBox='0 0 60 120'%3E%3Crect x='15' y='25' width='30' height='70' rx='4' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3C/svg%3E");
+      background-size: 60px 120px;
+      background-position: center center;
+    }
+
+    /* ============ Reduced Motion Override ============ */
+    @media (prefers-reduced-motion: reduce) {
+      #hero {
+        height: 100vh !important;
+        position: relative !important;
+      }
+
+      #layer-final {
+        opacity: 1 !important;
+        background: #050505 !important;
+      }
+
+      #layer-act1-text,
+      #layer-transition-black,
+      #layer-act2,
+      #layer-scale-bg,
+      #layer-scale-text {
+        display: none !important;
+      }
+    }
+
+    /* ============ Typography ============ */
+    .kicker {
+      font-size: clamp(0.68rem, 1.6vw, 0.8rem);
+      font-weight: 600;
+      letter-spacing: 0.32em;
+      color: #9ca3af;
+      text-transform: uppercase;
+      margin-bottom: 1.1rem;
+      opacity: 0.85;
+    }
+
+    .title {
+      font-size: clamp(2rem, 4vw, 4.5rem);
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      color: #ffffff;
+      line-height: 1.06;
+      text-shadow: 0 8px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    .support {
+      font-size: clamp(0.8rem, 1.6vw, 0.95rem);
+      color: #cbd5e1;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-top: 1.6rem;
+    }
+
+    .story-beat {
+      max-width: 520px;
+      will-change: transform, opacity, filter;
+    }
+
+    /* ============ Diagnostic History ============ */
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      opacity: 0;
+      animation: fadeIn 0.4s forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    .history-item::after {
+      content: '';
+      display: block;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .history-item.verified {
+      color: #ffffff;
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+    }
+
+    .history-item.verified::after {
+      content: '';
+      border: none;
+      background: var(--stage-color-solid);
+      box-shadow: 0 0 8px 1px var(--stage-color-solid);
+    }
+
+    /* ============ Premium Glass Phone ============ */
+    #diagnostic-assembly-3d {
+      perspective: 1400px;
+    }
+
+    #diagnostic-tilt-wrapper {
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .premium-glass-phone {
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: linear-gradient(155deg, #0d0d10 0%, #050506 45%, #08080a 100%);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.85),
+        0 40px 90px -20px rgba(0, 0, 0, 0.9),
+        0 0 70px rgba(var(--stage-color), 0.08),
+        inset 0 1px 1px rgba(255, 255, 255, 0.14),
+        inset 0 0 40px rgba(255, 255, 255, 0.035);
+      transition: box-shadow 0.6s ease;
+    }
+
+    /* Glass sheen sweep across the chassis */
+    .phone-sheen {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.07) 45%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0.07) 55%, transparent 70%);
+      background-size: 260% 260%;
+      background-position: 100% 0%;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    /* Edge rim light */
+    .phone-rim {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+
+    #diag-internal-glow {
+      position: absolute;
+      inset: 8%;
+      border-radius: 2.4rem;
+      background: radial-gradient(circle at 50% 40%, rgba(var(--stage-color), 0.22), transparent 70%);
+      opacity: 0;
+      filter: blur(6px);
+      pointer-events: none;
+      transition: background 0.5s ease;
+    }
+
+    #phone-ground-glow {
+      position: absolute;
+      bottom: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 260px;
+      height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(var(--stage-color), 0.35), transparent 72%);
+      filter: blur(14px);
+      opacity: 0;
+      pointer-events: none;
+      transition: background 0.5s ease;
+    }
+
+    #stage-ambient-wash {
+      position: absolute;
+      inset: -20%;
+      background: radial-gradient(ellipse at center, rgba(var(--stage-color), 0.10), transparent 60%);
+      opacity: 0;
+      pointer-events: none;
+      filter: blur(30px);
+      transition: background 0.7s ease;
+    }
+
+    /* ============ Scan Beam ============ */
+    #beam-glow-wide {
+      background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.05), transparent);
+      filter: blur(22px);
+      height: 220px;
+    }
+
+    #beam-glow-color {
+      background: linear-gradient(to bottom, transparent, rgba(var(--stage-color), 0.45), transparent);
+      filter: blur(10px);
+      height: 90px;
+      mix-blend-mode: screen;
+      transition: background 0.4s ease;
+    }
+
+    #scan-beam-core {
+      background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.9) 20%, #ffffff 50%, rgba(255, 255, 255, 0.9) 80%, transparent);
+      box-shadow:
+        0 0 12px 2px rgba(255, 255, 255, 0.9),
+        0 0 40px 8px rgba(var(--stage-color), 0.55),
+        0 0 90px 20px rgba(var(--stage-color), 0.2);
+    }
+
+    #beam-fine-lines {
+      background-image: repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 3px);
+    }
+
+    #burst-flash {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.9), rgba(var(--stage-color), 0.25) 40%, transparent 70%);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 60;
+      mix-blend-mode: screen;
+    }
+
+    /* ============ Infra connective lines ============ */
+    #infra-lines-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .infra-line-path {
+      stroke: rgba(255, 255, 255, 0.14);
+      stroke-width: 1;
+      fill: none;
+    }
+
+    .infra-node {
+      backdrop-filter: blur(6px);
+    }
+
+    /* ============ Cinematic Navbar ============ */
+    .nav-dropdown {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(12px) scale(0.98);
+      transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s ease;
+      transform-origin: top left;
+    }
+
+    .nav-item:hover .nav-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Dynamic Glass Scrolled State */
+    .nav-scrolled {
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-bottom-color: rgba(255, 255, 255, 0.06);
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+  </style>
+</head>
+
+<body class="bg-black text-white selection:bg-blue-900 overflow-x-hidden">
+
+  <!-- Debug Panel -->
+  <div id="debug-panel"
+    class="hidden fixed top-4 right-4 z-50 bg-black/90 border border-gray-700 text-[10px] uppercase tracking-widest text-mono p-4 rounded text-gray-400 pointer-events-none backdrop-blur-md">
+    <div class="mb-2 pb-2 border-b border-gray-800 text-white font-bold">NorthLadder Engine</div>
+    <div class="flex justify-between gap-4"><span>Master:</span> <span id="debug-master">0%</span></div>
+    <div class="flex justify-between gap-4"><span>Act:</span> <span id="debug-act" class="text-blue-400">1</span></div>
+    <div class="flex justify-between gap-4"><span>Frame:</span> <span id="debug-frame">0 / 137</span></div>
+    <div class="flex justify-between gap-4"><span>Loaded:</span> <span id="debug-loaded">0 / 138</span></div>
+    <div class="flex justify-between gap-4 mt-2 border-t border-gray-800 pt-2"><span>Scan:</span> <span
+        id="debug-scan">0%</span></div>
+    <div class="flex justify-between gap-4"><span>Stage:</span> <span id="debug-stage">NONE</span></div>
+  </div>
+
+  <!-- Global burst flash overlay -->
+  <div id="burst-flash"></div>
+  <!-- ==========================================
+       CINEMATIC NAVBAR
+       ========================================== -->
+  <nav id="cinematic-nav"
+    class="fixed top-0 left-0 w-full z-[100] transition-all duration-500 py-0 border-b border-transparent">
+    <div class="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
+
+      <!-- Logo -->
+      <a href="#" class="relative z-10 flex items-center">
+        <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+          class="h-5 md:h-6 w-auto brightness-0 invert opacity-90 hover:opacity-100 transition-opacity duration-300" />
+      </a>
+
+      <!-- Desktop Menu -->
+      <ul class="hidden lg:flex items-center gap-8">
+
+        <!-- For Buyers (Dropdown) -->
+        <li class="nav-item group relative py-4 cursor-pointer">
+          <span
+            class="text-[10px] md:text-xs font-semibold tracking-widest uppercase text-white menu-scrolled group-hover:text-white transition-colors duration-300 flex items-center gap-1.5">
+            For Buyers
+            <svg
+              class="w-3 h-3 opacity-50 group-hover:opacity-100 transition-transform duration-300 group-hover:rotate-180"
+              fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </span>
+
+          <!-- Cinematic Mega Menu -->
+          <div class="nav-dropdown absolute top-[calc(100%-10px)] left-0 w-[500px] z-50">
+            <div
+              class="relative bg-[#050505]/80 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 shadow-[0_30px_60px_rgba(0,0,0,0.6)] overflow-hidden">
+
+              <!-- Subtle internal glass sheen -->
+              <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
+
+              <div class="relative z-10 grid grid-cols-2 gap-8">
+                <!-- Column 1: Partner Hub -->
+                <div>
+                  <a href="#"
+                    class="block p-5 -m-5 rounded-xl hover:bg-white/5 transition-colors duration-300 border border-transparent hover:border-white/5 group/hub">
+                    <div class="text-[9px] tracking-[0.2em] text-blue-400 mb-2 uppercase font-semibold">Platform</div>
+                    <div class="text-white text-sm font-medium mb-2 group-hover/hub:text-blue-300 transition-colors">
+                      Partner Hub</div>
+                    <div class="text-xs text-gray-400 font-light leading-relaxed">The central command for your global
+                      trade-in operations.</div>
+                  </a>
+                </div>
+
+                <!-- Column 2: Solutions -->
+                <div>
+                  <div class="text-[9px] tracking-[0.2em] text-gray-500 mb-4 uppercase font-semibold">Solutions</div>
+                  <ul class="flex flex-col gap-3.5">
+                    <li><a href="#"
+                        class="text-xs tracking-wide text-gray-300 hover:text-white hover:translate-x-1.5 inline-block transition-all duration-300">For
+                        Retailers</a></li>
+                    <li><a href="#"
+                        class="text-xs tracking-wide text-gray-300 hover:text-white hover:translate-x-1.5 inline-block transition-all duration-300">For
+                        Telcos & Operators</a></li>
+                    <li><a href="#"
+                        class="text-xs tracking-wide text-gray-300 hover:text-white hover:translate-x-1.5 inline-block transition-all duration-300">For
+                        OEMs & Brands</a></li>
+                    <li><a href="#"
+                        class="text-xs tracking-wide text-gray-300 hover:text-white hover:translate-x-1.5 inline-block transition-all duration-300">For
+                        Ecommerce</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- Standard Links -->
+        <li><a href="#"
+            class="text-[10px] md:text-xs font-semibold tracking-widest uppercase text-white menu-scrolled hover:text-white transition-colors duration-300">For
+            Partners</a></li>
+        <li><a href="#"
+            class="text-[10px] md:text-xs font-semibold tracking-widest uppercase text-white menu-scrolled hover:text-white transition-colors duration-300">Neutral
+            Marketplace</a></li>
+        <li><a href="#"
+            class="text-[10px] md:text-xs font-semibold tracking-widest uppercase text-white menu-scrolled hover:text-white transition-colors duration-300">Insights</a>
+        </li>
+        <li><a href="#"
+            class="text-[10px] md:text-xs font-semibold tracking-widest uppercase text-white menu-scrolled hover:text-white transition-colors duration-300">Company</a>
+        </li>
+      </ul>
+
+      <!-- Right Actions -->
+      <div class="flex items-center gap-6 z-10">
+        <!-- Language Icon -->
+        <button class="text-gray-400 hover:text-white transition-colors duration-300">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9">
+            </path>
+          </svg>
+        </button>
+        <!-- Premium CTA -->
+        <a href="#"
+          class="hidden md:inline-flex items-center justify-center px-7 py-3 text-[10px] font-bold tracking-widest uppercase text-black bg-white rounded-full hover:bg-gray-200 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+          Get Started
+        </a>
+      </div>
+
+    </div>
+  </nav>
+  <main>
+    <!-- Master Pinned Hero -->
+    <section id="hero" class="relative w-full h-screen overflow-hidden bg-[#030303]">
+
+      <!-- ==========================================
+           ACT 1: THE SIMPLE EXPERIENCE (CANVAS)
+           ========================================== -->
+      <div id="layer-canvas" class="absolute inset-0 w-full h-full z-0" style="will-change: transform, filter;">
+        <canvas id="hero-canvas" class="block w-full h-full" aria-hidden="true"></canvas>
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/60 pointer-events-none">
+        </div>
+      </div>
+
+      <!-- ACT 1: NARRATIVE BEATS -->
+      <div id="layer-act1-text" class="absolute inset-0 z-10 pointer-events-none">
+
+        <div id="beat-1" class="story-beat absolute top-[40%] right-[10%] text-right opacity-0">
+          <p class="kicker">The Customer Experience</p>
+          <h2 class="title">Trade-in looks simple.</h2>
+        </div>
+
+        <div id="beat-2" class="story-beat absolute top-[45%] left-[10%] text-left opacity-0">
+          <p class="kicker">Behind the Scenes</p>
+          <h2 class="title">Running it isn't.</h2>
+        </div>
+
+        <div id="beat-3" class="story-beat absolute top-[60%] right-[12%] text-right opacity-0">
+          <p class="kicker">Every Device</p>
+          <h2 class="title">Needs to be<br>understood.</h2>
+          <p class="support flex justify-end">Condition. Hardware. Value.</p>
+        </div>
+
+        <div id="beat-4" class="story-beat absolute top-[60%] left-[10%] text-left opacity-0">
+          <p class="kicker">At Scale</p>
+          <h2 class="title mb-6">Every device tells a story.</h2>
+          <div class="flex gap-6 support">
+            <span id="beat-4-assess" class="opacity-0">Assess.</span>
+            <span id="beat-4-value" class="opacity-0">Value.</span>
+            <span id="beat-4-move" class="opacity-0">Move.</span>
+          </div>
+        </div>
+
+        <div id="beat-5" class="story-beat absolute top-[50%] right-[10%] text-right opacity-0">
+          <p class="kicker">The Challenge</p>
+          <h2 class="title">One device is easy.<br><span class="text-gray-400">Millions aren't.</span></h2>
+        </div>
+
+        <div id="beat-6" class="story-beat absolute top-[45%] left-[10%] text-left opacity-0">
+          <p class="kicker">One Platform</p>
+          <h2 class="title">Behind every seamless<br>trade-in experience.</h2>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           TRANSITION LAYER — cinematic dive
+           ========================================== -->
+      <div id="layer-transition-black" class="absolute inset-0 z-20 bg-[#030303] opacity-0 pointer-events-none"></div>
+      <!-- ==========================================
+           ACT 2: INSIDE THE ENGINE (DIAGNOSTICS)
+           ========================================== -->
+      <div id="layer-act2" class="absolute inset-0 z-30 flex items-center justify-center pointer-events-none opacity-0">
+
+        <div id="stage-ambient-wash"></div>
+
+        <!-- Diagnostic History (Left) -->
+        <div id="diagnostic-history"
+          class="absolute left-8 md:left-24 top-1/2 -translate-y-1/2 flex flex-col gap-6 z-40 w-64 opacity-0 transition-opacity duration-500">
+          <div
+            class="text-[10px] md:text-xs tracking-[0.3em] uppercase font-semibold opacity-0 transition-opacity duration-300"
+            id="current-scan-label" style="color: var(--stage-color-solid);">SCANNING...</div>
+          <ul id="history-list" class="text-xs md:text-sm font-mono tracking-widest text-gray-500 flex flex-col gap-3">
+          </ul>
+        </div>
+
+        <!-- Central Diagnostic Assembly -->
+        <div id="diagnostic-assembly-3d" class="relative flex items-center justify-center">
+          <div id="diagnostic-tilt-wrapper" class="relative flex items-center justify-center">
+
+            <!-- Radial Scanners -->
+            <div id="diag-radial-1"
+              class="absolute w-[400px] h-[400px] rounded-full border opacity-0 transition-transform"
+              style="border-color: rgba(var(--stage-color), 0.25);"></div>
+            <div id="diag-radial-2"
+              class="absolute w-[500px] h-[500px] rounded-full border border-dashed opacity-0 transition-transform"
+              style="border-color: rgba(var(--stage-color), 0.18);"></div>
+
+            <!-- Ground contact glow -->
+            <div id="phone-ground-glow"></div>
+
+            <!-- The Premium Device -->
+            <div id="diagnostic-phone"
+              class="relative w-[260px] h-[540px] md:w-[280px] md:h-[580px] rounded-[3rem] overflow-hidden flex flex-col items-center justify-center z-20 premium-glass-phone">
+
+              <div id="diag-internal-glow"></div>
+              <div class="phone-sheen absolute inset-0 rounded-[3rem]" id="phone-sheen"></div>
+              <div class="phone-rim rounded-[3rem]"></div>
+
+              <div id="diag-outline" class="absolute inset-2 border-2 rounded-[2.5rem] transition-colors duration-500"
+                style="border-color: rgba(var(--stage-color), 0);"></div>
+
+              <div id="diag-camera"
+                class="absolute top-6 left-1/2 -translate-x-1/2 w-20 h-8 border border-white/0 rounded-full flex items-center justify-center transition-all duration-300">
+                <div class="w-2 h-2 bg-blue-400/0 rounded-full transition-colors"></div>
+              </div>
+
+              <div id="diag-battery"
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-32 border border-green-500/0 rounded-lg flex items-center justify-center transition-all">
+                <div id="diag-battery-core" class="w-full h-0 bg-green-500/0 mt-auto transition-all"></div>
+              </div>
+
+              <!-- Sophisticated Scan Beam -->
+              <div id="scan-beam-container" class="absolute inset-0 overflow-hidden rounded-[3rem] z-30">
+                <div id="beam-fine-lines" class="absolute inset-0 opacity-0"></div>
+                <div id="beam-glow-wide" class="absolute left-0 right-0 opacity-0 -translate-y-full"></div>
+                <div id="beam-glow-color" class="absolute left-0 right-0 opacity-0 -translate-y-full"></div>
+                <div id="scan-beam" class="absolute left-0 right-0 h-[2px] opacity-0 -translate-y-full">
+                  <div id="scan-beam-core" class="absolute inset-0"></div>
+                  <div class="absolute bottom-full left-0 right-0 h-[140px]"
+                    style="background: linear-gradient(to top, rgba(255,255,255,0.1), transparent);"></div>
+                </div>
+              </div>
+
+              <!-- Assessment Result -->
+              <div id="assessment-result"
+                class="absolute inset-0 flex flex-col items-center justify-center opacity-0 bg-black/90 backdrop-blur-xl z-50 rounded-[3rem] scale-90 transition-transform">
+                <div class="text-7xl font-light text-white mb-6">A</div>
+                <div class="text-[10px] tracking-[0.3em] text-white uppercase text-center leading-loose">
+                  Excellent<br>Condition</div>
+              </div>
+            </div>
+
+            <!-- Corner Detection Brackets -->
+            <div id="bracket-tl"
+              class="absolute -top-4 -left-4 w-8 h-8 border-t-2 border-l-2 border-white/50 opacity-0 transition-all">
+            </div>
+            <div id="bracket-tr"
+              class="absolute -top-4 -right-4 w-8 h-8 border-t-2 border-r-2 border-white/50 opacity-0 transition-all">
+            </div>
+            <div id="bracket-bl"
+              class="absolute -bottom-4 -left-4 w-8 h-8 border-b-2 border-l-2 border-white/50 opacity-0 transition-all">
+            </div>
+            <div id="bracket-br"
+              class="absolute -bottom-4 -right-4 w-8 h-8 border-b-2 border-r-2 border-white/50 opacity-0 transition-all">
+            </div>
+          </div>
+        </div>
+
+        <!-- Particle Field Canvas -->
+        <canvas id="particle-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-15"></canvas>
+      </div>
+
+      <!-- ==========================================
+           ACT 3: SCALE
+           ========================================== -->
+      <div id="layer-scale-bg"
+        class="absolute inset-0 z-25 opacity-0 pointer-events-none scale-grid-bg transition-opacity duration-[1000ms]">
+      </div>
+
+      <div id="layer-scale-text"
+        class="absolute inset-0 z-35 flex flex-col items-center justify-center pointer-events-none text-center px-6">
+
+        <svg id="infra-lines-svg">
+          <g id="infra-lines-group"></g>
+        </svg>
+
+        <div id="scale-text-1" class="absolute opacity-0">
+          <p class="text-xs md:text-sm font-semibold tracking-[0.3em] text-gray-500 uppercase mb-6">At Scale</p>
+          <h2 class="text-5xl md:text-7xl font-bold tracking-tight text-white mb-4">One device is easy.</h2>
+          <h2 class="text-5xl md:text-7xl font-bold tracking-tight text-gray-600">Millions aren't.</h2>
+        </div>
+
+        <div id="scale-text-2" class="absolute opacity-0 mt-48">
+          <h3 class="text-2xl md:text-3xl font-light text-white drop-shadow-lg">That's where NorthLadder comes in.</h3>
+        </div>
+
+        <div
+          class="infra-node absolute top-[20%] left-[10%] md:left-[20%] opacity-0 border border-white/10 bg-white/5 backdrop-blur-sm px-6 py-3 rounded-full text-xs tracking-widest uppercase text-gray-300">
+          Assess</div>
+        <div
+          class="infra-node absolute top-[30%] right-[10%] md:right-[20%] opacity-0 border border-white/10 bg-white/5 backdrop-blur-sm px-6 py-3 rounded-full text-xs tracking-widest uppercase text-gray-300">
+          Value</div>
+        <div
+          class="infra-node absolute bottom-[35%] left-[5%] md:left-[25%] opacity-0 border border-white/10 bg-white/5 backdrop-blur-sm px-6 py-3 rounded-full text-xs tracking-widest uppercase text-gray-300">
+          Auction</div>
+        <div
+          class="infra-node absolute bottom-[25%] right-[5%] md:right-[25%] opacity-0 border border-white/10 bg-white/5 backdrop-blur-sm px-6 py-3 rounded-full text-xs tracking-widest uppercase text-gray-300">
+          Logistics</div>
+        <div
+          class="infra-node absolute top-[10%] right-[30%] md:right-[40%] opacity-0 border border-white/10 bg-white/5 backdrop-blur-sm px-6 py-3 rounded-full text-xs tracking-widest uppercase text-gray-300">
+          Data Security</div>
+        <div
+          class="infra-node absolute bottom-[15%] left-[30%] md:left-[40%] opacity-0 border border-white/10 bg-white/5 backdrop-blur-sm px-6 py-3 rounded-full text-xs tracking-widest uppercase text-gray-300">
+          Optimize</div>
+      </div>
+
+      <!-- ==========================================
+           ACT 4: THE REVEAL
+           ========================================== -->
+      <div id="layer-final"
+        class="absolute inset-0 z-40 flex flex-col items-center justify-center pointer-events-none text-center px-6 opacity-0 bg-[#050505]">
+        <p class="text-xs md:text-sm font-semibold tracking-[0.4em] text-gray-500 uppercase mb-8">NorthLadder</p>
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white mb-10 max-w-5xl leading-[1.05]">
+          The infrastructure<br>behind modern trade-in.
+        </h1>
+        <p class="text-lg md:text-2xl font-light text-gray-400 max-w-2xl leading-relaxed">
+          Powering smarter trade-in programs<br>for the world's leading brands.
+        </p>
+      </div>
+
+      <!-- Loading Indicator -->
+      <div id="loading-indicator"
+        class="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 text-[10px] text-gray-500 uppercase tracking-widest transition-opacity duration-500 font-mono">
+        Initializing Engine...
+      </div>
+    </section>
+
+    <!-- Post-Hero Section -->
+    <section
+      class="relative w-full min-h-screen bg-white text-black py-32 px-6 md:px-12 lg:px-24 z-50 flex items-center">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-4xl md:text-6xl font-bold tracking-tight mb-8">Ready for true scale?</h2>
+        <p class="text-xl text-gray-600 mb-12 font-light">
+          The cinematic sequence has concluded. The infrastructure is ready.
+        </p>
+        <a href="#contact"
+          class="inline-flex items-center justify-center px-10 py-5 text-sm font-semibold tracking-widest uppercase text-white bg-black rounded-full hover:bg-gray-800 transition-colors duration-300">
+          Build your program
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /**
+     * NorthLadder B2B Cinematic Story Engine — v2 (Technology Film Grade)
+     */
+
+    // --- 1. CONFIGURATION ---
+    const CONFIG = {
+      FRAME_PATH: "./hero-frames/",
+      FRAMES_PER_SECOND: 23,
+      TOTAL_SECONDS: 6,
+      DEBUG: false,
+      SCROLL_DISTANCE: "+=16000",
+    };
+    CONFIG.TOTAL_FRAMES = CONFIG.FRAMES_PER_SECOND * CONFIG.TOTAL_SECONDS;
+
+    const NARRATIVE_CONFIG = {
+      "beat-1": { dir: "right" }, "beat-2": { dir: "left" }, "beat-3": { dir: "right" },
+      "beat-4": { dir: "left" }, "beat-5": { dir: "right" }, "beat-6": { dir: "left" }
+    };
+
+    // Stage definitions with a signature color per diagnostic phase
+    const SCAN_STAGES = [
+      { id: "detect", label: "DEVICE DETECTED", start: 0.0, end: 0.10, color: "156, 163, 175" },
+      { id: "hardware", label: "SCANNING HARDWARE", start: 0.10, end: 0.30, color: "96, 165, 250" },
+      { id: "display", label: "CHECKING DISPLAY", start: 0.30, end: 0.45, color: "192, 132, 252" },
+      { id: "camera", label: "CHECKING CAMERA", start: 0.45, end: 0.60, color: "251, 191, 36" },
+      { id: "battery", label: "CHECKING BATTERY", start: 0.60, end: 0.75, color: "52, 211, 153" },
+      { id: "connectivity", label: "CHECKING CONNECTIVITY", start: 0.75, end: 0.85, color: "129, 140, 248" },
+      { id: "condition", label: "ANALYSING CONDITION", start: 0.85, end: 0.98, color: "255, 255, 255" },
+      { id: "complete", label: "ASSESSMENT COMPLETE", start: 0.98, end: 1.00, color: "255, 255, 255" }
+    ];
+
+    // --- 2. STATE ---
+    const frameCache = new Array(CONFIG.TOTAL_FRAMES);
+    let currentRenderedFrame = -1;
+    let loadedFramesCount = 0;
+    let isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let lastStageId = null;
+
+    const canvas = document.getElementById("hero-canvas");
+    const ctx = canvas.getContext("2d");
+    const loadingIndicator = document.getElementById("loading-indicator");
+    const debugPanel = document.getElementById("debug-panel");
+    const rootEl = document.documentElement;
+    const burstFlash = document.getElementById("burst-flash");
+    const diagnosticPhone = document.getElementById("diagnostic-phone");
+    const particleCanvasEl = document.getElementById("particle-canvas");
+    const tiltWrapper = document.getElementById("diagnostic-tilt-wrapper");
+
+    if (CONFIG.DEBUG) debugPanel.classList.remove("hidden");
+
+    // --- 3. URL GENERATOR ---
+    function getFrameUrl(index) {
+      const second = Math.floor(index / CONFIG.FRAMES_PER_SECOND);
+      const frame = index % CONFIG.FRAMES_PER_SECOND;
+      const formattedSecond = String(second).padStart(2, "0");
+      return `${CONFIG.FRAME_PATH}frame_0:${formattedSecond}_${frame}f.jpeg`;
+    }
+
+    // --- 4. ASSET PRELOADER ---
+    async function initializePreloader() {
+      await loadFrame(0);
+      renderFrame(0);
+      gsap.to(loadingIndicator, { opacity: 0, duration: 0.5 });
+
+      if (!isReducedMotion) {
+        initMasterTimeline();
+      } else {
+        loadFrame(CONFIG.TOTAL_FRAMES - 1).then(() => renderFrame(CONFIG.TOTAL_FRAMES - 1));
+      }
+
+      await loadFrameBatch(1, 10);
+      await loadFrameBatch(11, 30);
+      loadFrameBatch(31, CONFIG.TOTAL_FRAMES - 1);
+    }
+
+    function loadFrame(index) {
+      return new Promise((resolve) => {
+        if (frameCache[index]) return resolve();
+        const img = new Image();
+        img.onload = () => {
+          frameCache[index] = img;
+          loadedFramesCount++;
+          if (CONFIG.DEBUG) document.getElementById("debug-loaded").textContent = `${loadedFramesCount} / 138`;
+          resolve();
+        };
+        img.onerror = () => { resolve(); };
+        img.src = getFrameUrl(index);
+      });
+    }
+
+    function loadFrameBatch(start, end) {
+      const promises = [];
+      for (let i = start; i <= end; i++) promises.push(loadFrame(i));
+      return Promise.all(promises);
+    }
+
+    // --- 5. CANVAS ENGINE ---
+    function setupCanvas() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = `${rect.width}px`;
+      canvas.style.height = `${rect.height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const tempFrame = currentRenderedFrame;
+      currentRenderedFrame = -1;
+      renderFrame(tempFrame !== -1 ? tempFrame : 0);
+      setupParticleCanvas();
+      buildInfraLines();
+    }
+
+    function setupParticleCanvas() {
+      const rect = particleCanvasEl.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      particleCanvasEl.width = rect.width * dpr;
+      particleCanvasEl.height = rect.height * dpr;
+      particleCanvasEl.getContext("2d").setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    let resizeTimeout;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        setupCanvas();
+        if (typeof ScrollTrigger !== "undefined") ScrollTrigger.refresh();
+      }, 150);
+    });
+
+    function renderFrame(index) {
+      if (index === currentRenderedFrame) return;
+      let img = frameCache[index];
+      if (!img) {
+        for (let i = index; i >= 0; i--) { if (frameCache[i]) { img = frameCache[i]; break; } }
+      }
+      if (!img) return;
+
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const scale = Math.max(rect.width / img.width, rect.height / img.height);
+      const drawWidth = img.width * scale;
+      const drawHeight = img.height * scale;
+      const dx = (rect.width - drawWidth) / 2;
+      const dy = 0; // Align exactly to the top, pushing all crop overflow to the bottom
+
+      ctx.clearRect(0, 0, rect.width, rect.height);
+      ctx.drawImage(img, dx, dy, drawWidth, drawHeight);
+      currentRenderedFrame = index;
+      if (CONFIG.DEBUG) document.getElementById("debug-frame").textContent = `${index} / 137`;
+    }
+
+    // --- 6. PARTICLE FIELD (cinematic energy system) ---
+    class ParticleField {
+      constructor() {
+        this.ambient = [];
+        this.bursts = [];
+        this.count = 100;
+        for (let i = 0; i < this.count; i++) {
+          this.ambient.push({
+            angle: Math.random() * Math.PI * 2,
+            radius: 70 + Math.random() * 230,
+            speed: 0.2 + Math.random() * 0.5,
+            size: 0.5 + Math.random() * 1.8,
+            wobble: Math.random() * Math.PI * 2,
+            wobbleSpeed: 0.4 + Math.random() * 1.4,
+            depth: 0.25 + Math.random() * 0.85,
+            vertical: 0.55 + Math.random() * 0.3
+          });
+        }
+      }
+
+      spawnBurst(cx, cy, colorRGB, count) {
+        for (let i = 0; i < count; i++) {
+          const a = Math.random() * Math.PI * 2;
+          const speed = 1.5 + Math.random() * 7;
+          this.bursts.push({
+            x: cx, y: cy,
+            vx: Math.cos(a) * speed, vy: Math.sin(a) * speed,
+            life: 1, decay: 0.01 + Math.random() * 0.022,
+            size: 1 + Math.random() * 2.6,
+            color: colorRGB
+          });
+        }
+      }
+
+      render(ctx, w, h, progress, colorRGB, beamPixelY, cx, cy) {
+        ctx.clearRect(0, 0, w, h);
+        if (progress < 0.005 || progress > 0.995) return;
+        ctx.globalCompositeOperation = "lighter";
+
+        this.ambient.forEach(p => {
+          p.angle += p.speed * 0.008;
+          p.wobble += p.wobbleSpeed * 0.02;
+          const r = p.radius + Math.sin(p.wobble) * 16;
+          let x = cx + Math.cos(p.angle) * r;
+          let y = cy + Math.sin(p.angle) * r * p.vertical + Math.sin(p.wobble * 1.3) * 10;
+
+          if (beamPixelY !== null) {
+            const dy = beamPixelY - y;
+            if (Math.abs(dy) < 70) y += dy * 0.05;
+          }
+
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(${colorRGB}, ${0.35 + p.depth * 0.35})`;
+          ctx.shadowBlur = 6 * p.depth;
+          ctx.shadowColor = `rgba(${colorRGB}, 0.6)`;
+          ctx.arc(x, y, p.size * (0.6 + p.depth * 0.6), 0, Math.PI * 2);
+          ctx.fill();
+        });
+        ctx.shadowBlur = 0;
+
+        for (let i = this.bursts.length - 1; i >= 0; i--) {
+          const b = this.bursts[i];
+          b.x += b.vx; b.y += b.vy;
+          b.vx *= 0.955; b.vy *= 0.955;
+          b.life -= b.decay;
+          if (b.life <= 0) { this.bursts.splice(i, 1); continue; }
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(${b.color}, ${b.life})`;
+          ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalCompositeOperation = "source-over";
+      }
+    }
+    const particleField = new ParticleField();
+
+    // --- 7. MASTER CINEMATIC TIMELINE ---
+    function initMasterTimeline() {
+      gsap.registerPlugin(ScrollTrigger);
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#hero",
+          start: "top top",
+          end: CONFIG.SCROLL_DISTANCE,
+          pin: true,
+          scrub: 0.5,
+          onUpdate: (self) => {
+            const p = self.progress;
+            let scanProgress = 0;
+            if (p > 0.62 && p <= 0.82) {
+              scanProgress = (p - 0.62) / 0.20;
+            } else if (p > 0.82) {
+              scanProgress = 1;
+            }
+            renderScanEngine(scanProgress);
+
+            if (CONFIG.DEBUG) {
+              document.getElementById("debug-master").textContent = `${Math.round(p * 100)}%`;
+              document.getElementById("debug-scan").textContent = `${Math.round(scanProgress * 100)}%`;
+              let act = 1;
+              if (p > 0.55) act = "Transition";
+              if (p > 0.62) act = 2;
+              if (p > 0.82) act = 3;
+              if (p > 0.92) act = 4;
+              document.getElementById("debug-act").textContent = act;
+            }
+          }
+        }
+      });
+
+      const addCinematicBeat = (id, start, duration) => {
+        const dir = NARRATIVE_CONFIG[id.replace('#', '')]?.dir || "center";
+        const xOffset = dir === "left" ? -30 : (dir === "right" ? 30 : 0);
+
+        tl.fromTo(id,
+          { opacity: 0, x: xOffset, scale: 0.965, filter: "blur(10px)" },
+          { opacity: 1, x: 0, scale: 1, filter: "blur(0px)", duration: 1.2, ease: "power3.out" },
+          start
+        );
+        tl.to(id,
+          { opacity: 0, x: xOffset * -0.6, scale: 1.01, filter: "blur(6px)", duration: 1, ease: "power2.in" },
+          start + duration - 1
+        );
+      };
+
+      // ==========================================
+      // ACT 1: CANVAS SEQUENCE (0 - 55%) — slow cinematic push-in
+      // ==========================================
+      const playhead = { frame: 0 };
+      tl.to(playhead, {
+        frame: CONFIG.TOTAL_FRAMES - 1,
+        ease: "none",
+        duration: 55,
+        onUpdate: () => renderFrame(Math.round(playhead.frame))
+      }, 0);
+
+      tl.fromTo("#layer-canvas", { scale: 1, filter: "brightness(1)" },
+        { scale: 1.06, filter: "brightness(1.04)", duration: 55, ease: "none" }, 0);
+
+      addCinematicBeat("#beat-1", 2, 6);
+      addCinematicBeat("#beat-2", 10, 6);
+      addCinematicBeat("#beat-3", 18, 6);
+      addCinematicBeat("#beat-5", 26, 6);
+      addCinematicBeat("#beat-6", 34, 6);
+
+      tl.fromTo("#beat-4", { opacity: 0, x: -30, scale: 0.965, filter: "blur(10px)" },
+        { opacity: 1, x: 0, scale: 1, filter: "blur(0px)", duration: 1.2, ease: "power3.out" }, 42);
+      tl.fromTo("#beat-4-assess", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 43);
+      tl.fromTo("#beat-4-value", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 44);
+      tl.fromTo("#beat-4-move", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 45);
+      tl.to("#beat-4", { opacity: 0, x: 20, duration: 1, ease: "power2.in" }, 52);
+
+      // ==========================================
+      // TRANSITION — cinematic dive into the engine
+      // ==========================================
+      // Canvas layer pushes deeper & blurs as we fall through the aperture
+      tl.to("#layer-canvas", { scale: 1.35, filter: "brightness(0.4) blur(6px)", duration: 6, ease: "power2.in" }, 54);
+
+      tl.to("#layer-transition-black", { opacity: 1, duration: 2, ease: "none" }, 59.5);
+
+      tl.to("#layer-act2", { opacity: 1, duration: 2 }, 60.4);
+
+      tl.fromTo("#diagnostic-phone",
+        { scale: 0.72, opacity: 0, y: 60, filter: "blur(14px)" },
+        { scale: 1, opacity: 1, y: 0, filter: "blur(0px)", duration: 3, ease: "power3.out" },
+        60.4
+      );
+      tl.fromTo("#stage-ambient-wash", { opacity: 0 }, { opacity: 1, duration: 3 }, 60.6);
+
+      // ==========================================
+      // ACT 3: SCALE (Tightly compressed timings)
+      // ==========================================
+      // Phone shrinks away quickly
+      tl.to("#diagnostic-phone", { scale: 0.12, opacity: 0, y: -60, filter: "blur(10px)", duration: 2, ease: "power2.inOut" }, 82);
+      tl.to("#stage-ambient-wash, #phone-ground-glow", { opacity: 0, duration: 1 }, 82);
+
+      // FIX: Properly hide the diagnostic history container
+      tl.to("#diagnostic-history", { opacity: 0, duration: 1 }, 82);
+
+      // Immediately fade in the grid and scale texts
+      tl.fromTo("#layer-scale-bg",
+        { opacity: 0, scale: 1.25, filter: "blur(6px)" },
+        { opacity: 0.6, scale: 1, filter: "blur(0px)", duration: 2, ease: "power2.out" },
+        82.5
+      );
+
+      tl.fromTo("#scale-text-1", { opacity: 0, y: 24, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.5 }, 83);
+      tl.fromTo("#scale-text-2", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1.5 }, 84);
+
+      // Infrastructure nodes & svg lines pop in faster
+      tl.fromTo(".infra-node",
+        { opacity: 0, scale: 0.5, y: 20 },
+        { opacity: 1, scale: 1, y: 0, duration: 1, stagger: 0.1, ease: "back.out(1.2)" },
+        85
+      );
+      tl.fromTo(".infra-line-path",
+        { strokeDashoffset: 300, opacity: 0 },
+        { strokeDashoffset: 0, opacity: 1, duration: 1.5, stagger: 0.05, ease: "power2.out" },
+        85.5
+      );
+
+      // ==========================================
+      // ACT 4: THE REVEAL — Expansive pull-back
+      // ==========================================
+      // Clean up Act 3 quickly instead of dragging it out
+      tl.to("#layer-scale-bg, #layer-act1-text, #layer-act2, #layer-scale-text", { opacity: 0, duration: 2 }, 89);
+      tl.to(".infra-node, .infra-line-path", { opacity: 0, duration: 1 }, 89);
+
+      // Bring in the final text instantly as the old layer fades out
+      tl.fromTo("#layer-final",
+        { opacity: 0, scale: 1.08, filter: "blur(8px)" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 2.5, ease: "power3.out" },
+        90
+      );
+    }
+
+    // --- 8. INFRA CONNECTIVE LINES ---
+    function buildInfraLines() {
+      const svg = document.getElementById("infra-lines-svg");
+      const group = document.getElementById("infra-lines-group");
+      const container = document.getElementById("layer-scale-text");
+      if (!svg || !container) return;
+      const rect = container.getBoundingClientRect();
+      svg.setAttribute("width", rect.width);
+      svg.setAttribute("height", rect.height);
+      svg.setAttribute("viewBox", `0 0 ${rect.width} ${rect.height}`);
+      group.innerHTML = "";
+
+      const nodes = Array.from(document.querySelectorAll(".infra-node"));
+      if (nodes.length < 2) return;
+      const centers = nodes.map(n => {
+        const r = n.getBoundingClientRect();
+        return { x: r.left - rect.left + r.width / 2, y: r.top - rect.top + r.height / 2 };
+      });
+
+      // connect each node to its nearest two neighbours for a network feel
+      centers.forEach((c1, i) => {
+        const dists = centers
+          .map((c2, j) => ({ j, d: Math.hypot(c1.x - c2.x, c1.y - c2.y) }))
+          .filter(o => o.j !== i)
+          .sort((a, b) => a.d - b.d)
+          .slice(0, 2);
+        dists.forEach(({ j }) => {
+          const c2 = centers[j];
+          const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          const midX = (c1.x + c2.x) / 2;
+          const midY = (c1.y + c2.y) / 2 - 40;
+          path.setAttribute("d", `M ${c1.x} ${c1.y} Q ${midX} ${midY} ${c2.x} ${c2.y}`);
+          path.setAttribute("class", "infra-line-path");
+          path.setAttribute("stroke-dasharray", "300");
+          group.appendChild(path);
+        });
+      });
+    }
+
+    // --- 9. DIAGNOSTIC RENDER ENGINE ---
+    function renderScanEngine(progress) {
+      if (progress === 0 && document.getElementById("layer-act2").style.opacity === "0") return;
+
+      let activeStage = SCAN_STAGES[0];
+      let localProgress = 0;
+      for (let i = 0; i < SCAN_STAGES.length; i++) {
+        if (progress <= SCAN_STAGES[i].end) {
+          activeStage = SCAN_STAGES[i];
+          const range = activeStage.end - activeStage.start;
+          localProgress = range > 0 ? (progress - activeStage.start) / range : 1;
+          break;
+        }
+      }
+
+      if (CONFIG.DEBUG) document.getElementById("debug-stage").textContent = activeStage.label;
+
+      // Update global stage color (drives beam, glows, rings, particles)
+      rootEl.style.setProperty("--stage-color", activeStage.color);
+      rootEl.style.setProperty("--stage-color-solid", `rgb(${activeStage.color})`);
+
+      // Trigger a burst + flash whenever the stage changes
+      if (activeStage.id !== lastStageId && progress > 0.005) {
+        const phoneRect = diagnosticPhone.getBoundingClientRect();
+        const canvasRect = particleCanvasEl.getBoundingClientRect();
+        const cx = phoneRect.left - canvasRect.left + phoneRect.width / 2;
+        const cy = phoneRect.top - canvasRect.top + phoneRect.height / 2;
+        const isComplete = activeStage.id === "complete";
+        particleField.spawnBurst(cx, cy, activeStage.color, isComplete ? 90 : 26);
+
+        gsap.killTweensOf(burstFlash);
+        gsap.fromTo(burstFlash,
+          { opacity: isComplete ? 0.55 : 0.16 },
+          { opacity: 0, duration: isComplete ? 1.1 : 0.5, ease: "power2.out" }
+        );
+        lastStageId = activeStage.id;
+      }
+
+      // History & label
+      const currentLabel = document.getElementById("current-scan-label");
+      const historyList = document.getElementById("history-list");
+      const historyContainer = document.getElementById("diagnostic-history");
+
+      // Hide both the label and the entire list when scan is complete or before it starts
+      const isScanningActive = progress > 0.02 && progress < 0.98;
+      currentLabel.style.opacity = isScanningActive ? '1' : '0';
+      if (historyContainer) {
+        historyContainer.style.opacity = isScanningActive ? '1' : '0';
+      }
+      currentLabel.innerText = activeStage.label;
+
+      let historyHTML = '';
+      SCAN_STAGES.forEach(stage => {
+        if (stage.id === "detect" || stage.id === "condition" || stage.id === "complete") return;
+        const isVerified = progress >= stage.end;
+        const isVisible = progress > stage.start;
+        if (isVisible) {
+          historyHTML += `<li class="history-item ${isVerified ? 'verified' : ''}">${stage.label.replace('CHECKING ', '').replace('SCANNING ', '')}</li>`;
+        }
+      });
+      // Only trigger a DOM update and restart CSS animations if the stage actually changed
+      if (historyList.innerHTML !== historyHTML) {
+        historyList.innerHTML = historyHTML;
+      }
+
+      // Beam sweep — 3 passes across the window
+      const beamYPercent = ((progress * 3) % 1) * 200 - 50;
+      const beamActive = activeStage.id !== "detect" && activeStage.id !== "complete";
+      const beam = document.getElementById("scan-beam");
+      beam.style.transform = `translateY(${beamYPercent}%)`;
+      beam.style.opacity = beamActive ? '1' : '0';
+      document.getElementById("beam-glow-wide").style.transform = `translateY(${beamYPercent}%)`;
+      document.getElementById("beam-glow-wide").style.opacity = beamActive ? '0.8' : '0';
+      document.getElementById("beam-glow-color").style.transform = `translateY(${beamYPercent}%)`;
+      document.getElementById("beam-glow-color").style.opacity = beamActive ? '1' : '0';
+      document.getElementById("beam-fine-lines").style.opacity = beamActive ? '0.5' : '0';
+
+      // Ambient environment reacting to the active stage
+      document.getElementById("stage-ambient-wash").style.opacity = progress > 0.01 && progress < 0.98 ? '1' : '0';
+      document.getElementById("phone-ground-glow").style.opacity = progress > 0.01 && progress < 0.98 ? '1' : '0';
+      document.getElementById("diag-internal-glow").style.opacity = beamActive ? String(0.4 + localProgress * 0.35) : '0.12';
+
+      // Sheen sweep tied to local progress within the whole scan window
+      document.getElementById("phone-sheen").style.backgroundPosition = `${100 - progress * 220}% 0%`;
+
+      // Subtle camera-like tilt of the whole assembly
+      const tiltY = Math.sin(progress * Math.PI * 2) * 3.2;
+      const tiltX = (localProgress - 0.5) * 2.4;
+      tiltWrapper.style.transform = `rotateY(${tiltY}deg) rotateX(${tiltX}deg)`;
+
+      // Corner Brackets lock in
+      const bracketDist = activeStage.id === "detect" ? 20 - (localProgress * 20) : 0;
+      const bracketOp = progress > 0.01 && progress < 0.98 ? '1' : '0';
+      document.getElementById("bracket-tl").style.transform = `translate(-${bracketDist}px, -${bracketDist}px)`;
+      document.getElementById("bracket-tr").style.transform = `translate(${bracketDist}px, -${bracketDist}px)`;
+      document.getElementById("bracket-bl").style.transform = `translate(-${bracketDist}px, ${bracketDist}px)`;
+      document.getElementById("bracket-br").style.transform = `translate(${bracketDist}px, ${bracketDist}px)`;
+      ['tl', 'tr', 'bl', 'br'].forEach(pos => document.getElementById(`bracket-${pos}`).style.opacity = bracketOp);
+
+      // Hardware/Condition Outline
+      const isOutline = activeStage.id === "hardware" || activeStage.id === "condition";
+      document.getElementById("diag-outline").style.borderColor = isOutline ? `rgba(${activeStage.color}, 0.45)` : `rgba(${activeStage.color}, 0)`;
+
+      // Camera Marker
+      const isCamera = activeStage.id === "camera" || activeStage.id === "condition";
+      document.getElementById("diag-camera").style.borderColor = isCamera ? "rgba(255, 255, 255, 0.5)" : "rgba(255, 255, 255, 0)";
+      document.getElementById("diag-camera").firstElementChild.style.backgroundColor = isCamera ? `rgba(${activeStage.color}, 1)` : `rgba(${activeStage.color}, 0)`;
+
+      // Battery Pulse
+      const isBattery = activeStage.id === "battery" || activeStage.id === "condition";
+      document.getElementById("diag-battery").style.borderColor = isBattery ? "rgba(52, 211, 153, 0.35)" : "rgba(52, 211, 153, 0)";
+      document.getElementById("diag-battery-core").style.height = isBattery ? `${localProgress * 100}%` : "0%";
+      document.getElementById("diag-battery-core").style.backgroundColor = isBattery ? "rgba(52, 211, 153, 0.25)" : "transparent";
+
+      // Radial Scanners
+      const rad1 = document.getElementById("diag-radial-1");
+      const rad2 = document.getElementById("diag-radial-2");
+      const isConn = activeStage.id === "connectivity" || activeStage.id === "condition";
+      const radScale = 0.5 + (localProgress * 0.5);
+      rad1.style.opacity = isConn ? '1' : '0';
+      rad1.style.transform = `scale(${radScale})`;
+      rad2.style.opacity = isConn ? '1' : '0';
+      rad2.style.transform = `scale(${radScale + 0.2}) rotate(${progress * 90}deg)`;
+
+      // Final Assessment payoff
+      const resultUI = document.getElementById("assessment-result");
+      const isComplete = activeStage.id === "complete";
+      resultUI.style.opacity = isComplete ? '1' : '0';
+      resultUI.style.transform = isComplete ? `scale(1)` : `scale(0.9)`;
+
+      // Particle field render
+      const pctx = particleCanvasEl.getContext("2d");
+      const phoneRect = diagnosticPhone.getBoundingClientRect();
+      const canvasRect = particleCanvasEl.getBoundingClientRect();
+      const cx = phoneRect.left - canvasRect.left + phoneRect.width / 2;
+      const cy = phoneRect.top - canvasRect.top + phoneRect.height / 2;
+      const beamPixelY = beamActive
+        ? (phoneRect.top - canvasRect.top) + (beamYPercent / 100) * phoneRect.height
+        : null;
+      particleField.render(pctx, canvasRect.width, canvasRect.height, progress, activeStage.color, beamPixelY, cx, cy);
+    }
+
+    // --- BOOT ---
+    document.addEventListener("DOMContentLoaded", () => {
+      setupCanvas();
+      initializePreloader();
+
+      // --- 10. NAVBAR SCROLL LISTENER ---
+      const nav = document.getElementById('cinematic-nav');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 20) {
+          nav.classList.add('nav-scrolled');
+        } else {
+          nav.classList.remove('nav-scrolled');
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

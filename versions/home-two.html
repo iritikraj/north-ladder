@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorthLadder</title>
+
+  <!-- Typography: Inter (Standard for Fintech/Stripe style) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Inter"', 'sans-serif'],
+          },
+          colors: {
+            // Stripe-inspired color palette
+            primary: "#635BFF", // Blurple
+            primaryHover: "#0A2540",
+            slateDark: "#0A2540",
+            slateText: "#425466",
+            bgLight: "#F6F9FC",
+            cyanAccent: "#00D4FF",
+          },
+          boxShadow: {
+            // Crisp, deep shadows typical of Stripe
+            'stripe': '0 50px 100px -20px rgba(50,50,93,0.15), 0 30px 60px -30px rgba(0,0,0,0.15)',
+            'stripe-sm': '0 13px 27px -5px rgba(50,50,93,0.15), 0 8px 16px -8px rgba(0,0,0,0.15)',
+            'stripe-inner': 'inset 0 2px 4px 0 rgba(2, 6, 23, 0.04)',
+          }
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body {
+      background-color: #FFFFFF;
+      color: #425466;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: #0A2540;
+      letter-spacing: -0.02em;
+    }
+
+    /* Classic Stripe Slanted Background */
+    .slant-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #F6F9FC;
+      transform: skewY(-6deg);
+      transform-origin: top left;
+      z-index: -1;
+    }
+
+    /* Hide scrollbar for clean UI in code blocks */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+
+<body class="relative">
+
+  <!-- ========================================= -->
+  <!-- STICKY NAVBAR                             -->
+  <!-- ========================================= -->
+  <header class="sticky top-0 w-full bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
+    <div class="max-w-[1080px] mx-auto px-6 h-20 flex items-center justify-between">
+
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2">
+        <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+          class="h-6 w-auto brightness-0" />
+      </a>
+
+      <!-- Desktop Nav -->
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-6 font-medium text-[15px]">
+
+        <!-- Partners Dropdown -->
+        <div class="relative nav-dropdown-container">
+          <button
+            class="nav-dropdown-btn flex items-center gap-1.5 text-slateText hover:text-primary transition-colors py-6">
+            Partners
+            <svg class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200 pointer-events-none" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+
+          <!-- Dropdown Menu -->
+          <div
+            class="nav-dropdown-menu absolute top-[70px] left-1/2 -translate-x-1/2 w-[280px] bg-white border border-gray-100 rounded-xl shadow-stripe-sm opacity-0 invisible transform translate-y-2 transition-all duration-200 z-50">
+            <div class="p-2 flex flex-col gap-1">
+              <a href="#retailers" class="p-3 rounded-lg hover:bg-bgLight text-slateDark transition-colors group">
+                <span class="block font-semibold mb-0.5 group-hover:text-primary transition-colors">Retailers</span>
+                <span class="block text-xs text-slateText font-normal leading-relaxed">Offload inventory instantly with
+                  zero risk</span>
+              </a>
+              <a href="#telcos" class="p-3 rounded-lg hover:bg-bgLight text-slateDark transition-colors group">
+                <span class="block font-semibold mb-0.5 group-hover:text-primary transition-colors">Telcos &
+                  Operators</span>
+                <span class="block text-xs text-slateText font-normal leading-relaxed">Scale your trade-in programs
+                  globally</span>
+              </a>
+              <a href="#oems" class="p-3 rounded-lg hover:bg-bgLight text-slateDark transition-colors group">
+                <span class="block font-semibold mb-0.5 group-hover:text-primary transition-colors">OEMs & Brands</span>
+                <span class="block text-xs text-slateText font-normal leading-relaxed">Direct circularity integration
+                  API</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buyers Dropdown -->
+        <div class="relative nav-dropdown-container">
+          <button
+            class="nav-dropdown-btn flex items-center gap-1.5 text-slateText hover:text-primary transition-colors py-6">
+            Buyers
+            <svg class="w-3.5 h-3.5 text-gray-400 transition-transform duration-200 pointer-events-none" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+
+          <!-- Dropdown Menu -->
+          <div
+            class="nav-dropdown-menu absolute top-[70px] left-1/2 -translate-x-1/2 w-[280px] bg-white border border-gray-100 rounded-xl shadow-stripe-sm opacity-0 invisible transform translate-y-2 transition-all duration-200 z-50">
+            <div class="p-2 flex flex-col gap-1">
+              <a href="#buyer-hub" class="p-3 rounded-lg hover:bg-bgLight text-slateDark transition-colors group">
+                <span class="block font-semibold mb-0.5 group-hover:text-primary transition-colors">Buyer Hub</span>
+                <span class="block text-xs text-slateText font-normal leading-relaxed">Access global Grade-A
+                  inventory</span>
+              </a>
+              <a href="#auctions" class="p-3 rounded-lg hover:bg-bgLight text-slateDark transition-colors group">
+                <span class="block font-semibold mb-0.5 group-hover:text-primary transition-colors">How Auctions
+                  Work</span>
+                <span class="block text-xs text-slateText font-normal leading-relaxed">Inside our real-time bidding
+                  engine</span>
+              </a>
+              <div class="h-[1px] bg-gray-100 my-1 mx-3"></div>
+              <a href="#register"
+                class="px-3 py-2 mt-1 text-sm text-primary font-semibold hover:bg-bgLight rounded-lg transition-colors flex items-center gap-1">
+                Register as a buyer <span aria-hidden="true">&rarr;</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Standard Links -->
+        <a href="#marketplace" class="text-slateText hover:text-primary transition-colors py-6 pl-2">Marketplace</a>
+        <a href="#intelligence" class="text-slateText hover:text-primary transition-colors py-6">Intelligence</a>
+        <a href="#company" class="text-slateText hover:text-primary transition-colors py-6">Company</a>
+      </nav>
+
+      <!-- Desktop CTA & Language -->
+      <div class="hidden md:flex items-center gap-4">
+
+        <!-- Language Dropdown (Unique Translation Icon) -->
+        <div class="relative nav-dropdown-container pr-4 mr-1 border-r border-gray-200">
+          <button
+            class="nav-dropdown-btn flex items-center gap-1.5 text-slateText hover:text-primary transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802">
+              </path>
+            </svg>
+            <span class="text-sm font-semibold uppercase">EN</span>
+          </button>
+
+          <!-- Language Dropdown Menu -->
+          <div
+            class="nav-dropdown-menu absolute top-[40px] right-2 w-[140px] bg-white border border-gray-100 rounded-xl shadow-stripe-sm opacity-0 invisible transform translate-y-2 transition-all duration-200 z-50">
+            <div class="p-2 flex flex-col gap-1 text-[13px] font-medium text-slateText">
+              <a href="#" class="p-2 hover:bg-bgLight hover:text-primary rounded-lg transition-colors">English (EN)</a>
+              <a href="#" class="p-2 hover:bg-bgLight hover:text-primary rounded-lg transition-colors">العربية (AR)</a>
+              <a href="#" class="p-2 hover:bg-bgLight hover:text-primary rounded-lg transition-colors">Deutsch (DE)</a>
+            </div>
+          </div>
+        </div>
+
+        <a href="#login" class="text-[15px] font-medium text-slateText hover:text-slateDark transition-colors">Sign
+          in</a>
+        <a href="#contact"
+          class="bg-primary text-white text-[15px] font-semibold px-5 py-2 rounded-full hover:bg-primaryHover transition-colors">
+          Contact sales
+        </a>
+      </div>
+
+      <!-- Mobile Hamburger -->
+      <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')"
+        class="md:hidden text-slateDark p-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Menu (Static Toggle) -->
+    <div id="mobile-menu"
+      class="hidden md:hidden bg-white border-b border-gray-100 px-6 py-4 absolute w-full left-0 top-20 shadow-stripe-sm">
+      <div class="flex flex-col gap-4 font-medium text-[15px]">
+        <a href="#partners" class="text-slateText">Partners</a>
+        <a href="#buyers" class="text-slateText">Buyers</a>
+        <a href="#marketplace" class="text-slateText">Marketplace</a>
+        <a href="#intelligence" class="text-slateText">Intelligence</a>
+        <a href="#company" class="text-slateText">Company</a>
+        <hr class="border-gray-100 my-2" />
+        <a href="#login" class="text-slateText">Sign in</a>
+        <a href="#contact" class="text-primary font-semibold">Contact sales &rarr;</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================= -->
+  <!-- HERO SECTION                              -->
+  <!-- ========================================= -->
+  <section class="relative pt-24 pb-32 overflow-hidden">
+    <!-- Slanted Background Element -->
+    <div class="slant-bg"></div>
+
+    <div class="max-w-[1080px] mx-auto px-6 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+      <!-- Hero Copy -->
+      <div>
+        <div
+          class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-primary text-xs font-semibold tracking-wide mb-6">
+          NorthLadder
+        </div>
+        <h1 class="text-3xl lg:text-5xl font-extrabold leading-[1.1] mb-6">
+          Democratization
+          <br />
+          <span class="text-primary">Of Trade-ins</span>
+        </h1>
+        <p class="text-lg text-slateText leading-relaxed mb-10 max-w-lg">
+          Connect millions of Grade-A devices directly to vetted B2B buyers through our real-time, neutral auction
+          infrastructure. Eliminate intermediaries and maximize yield.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="#start"
+            class="bg-primary text-white text-base font-semibold px-6 py-3 rounded-full hover:bg-primaryHover transition-colors text-center shadow-md">
+            Start building
+          </a>
+          <a href="#contact"
+            class="bg-white border border-gray-200 text-slateDark text-base font-semibold px-6 py-3 rounded-full hover:border-gray-300 transition-colors text-center shadow-sm">
+            Contact sales
+          </a>
+        </div>
+      </div>
+
+      <!-- Static Dashboard UI Graphic -->
+      <div class="relative w-full h-[450px] bg-white rounded-xl shadow-stripe border border-gray-100 p-6 flex flex-col">
+        <!-- Browser Bar -->
+        <div class="flex gap-2 mb-6 pb-4 border-b border-gray-100">
+          <div class="w-3 h-3 rounded-full bg-red-400"></div>
+          <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+          <div class="w-3 h-3 rounded-full bg-green-400"></div>
+        </div>
+
+        <h3 class="text-sm font-bold text-slateDark uppercase tracking-wider mb-4">Live Auction Activity</h3>
+
+        <!-- Bidding rows -->
+        <div class="flex-1 space-y-4">
+          <div class="flex justify-between items-center bg-bgLight p-4 rounded-lg border border-gray-100">
+            <div>
+              <p class="text-xs text-gray-500 font-mono mb-1">ID: NL-892-A</p>
+              <p class="text-sm font-semibold text-slateDark">Apple iPhone 14 Pro</p>
+            </div>
+            <div class="text-right">
+              <p class="text-xs text-gray-500 mb-1">Winning Bid</p>
+              <p class="text-lg font-bold text-primary">€685.00</p>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center bg-white p-4 rounded-lg border border-gray-100">
+            <div>
+              <p class="text-xs text-gray-500 font-mono mb-1">ID: NL-442-B</p>
+              <p class="text-sm font-semibold text-slateDark">Samsung Galaxy S23</p>
+            </div>
+            <div class="text-right">
+              <p class="text-xs text-gray-500 mb-1">Current Bid</p>
+              <p class="text-lg font-bold text-slateDark">€510.50</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code Snippet embedded in UI -->
+        <div
+          class="mt-4 bg-slateDark rounded-lg p-4 font-mono text-[11px] text-gray-300 leading-relaxed overflow-x-auto no-scrollbar">
+          <span class="text-pink-400">const</span> response = <span class="text-pink-400">await</span>
+          northladder.auctions.<span class="text-blue-300">create</span>({<br />
+          &nbsp;&nbsp;device_id: <span class="text-green-300">'dev_892A'</span>,<br />
+          &nbsp;&nbsp;grade: <span class="text-green-300">'A_PRISTINE'</span>,<br />
+          &nbsp;&nbsp;reserve_price: <span class="text-yellow-300">60000</span><br />
+          });
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================= -->
+  <!-- LOGO GRID & STATS                         -->
+  <!-- ========================================= -->
+  <section class="py-16 border-y border-gray-100">
+    <div class="max-w-[1080px] mx-auto px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-12 items-center">
+        <!-- Stats -->
+        <div class="lg:col-span-1 border-l-2 border-primary pl-4">
+          <p class="text-4xl font-bold text-slateDark mb-1">75+</p>
+          <p class="text-sm font-semibold text-slateText uppercase tracking-wide">Enterprise Partners</p>
+        </div>
+        <!-- Static Logos -->
+        <div class="lg:col-span-3 flex flex-wrap gap-x-12 gap-y-8 opacity-50 grayscale">
+          <span class="text-2xl font-bold text-slateDark">AMAZON</span>
+          <span class="text-2xl font-bold text-slateDark">VODAFONE</span>
+          <span class="text-2xl font-bold text-slateDark">MMS</span>
+          <span class="text-2xl font-bold text-slateDark">VIVO</span>
+          <span class="text-2xl font-bold text-slateDark">SAMSUNG</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================= -->
+  <!-- CORE WORKFLOW (PIPELINE)                  -->
+  <!-- ========================================= -->
+  <section class="py-24 bg-white relative">
+    <div class="max-w-[1080px] mx-auto px-6">
+
+      <div class="mb-16 max-w-2xl">
+        <h2 class="text-3xl font-bold mb-4">A fully integrated infrastructure</h2>
+        <p class="text-lg text-slateText">Manage the entire lifecycle of trade-in devices from retail ingestion to
+          global B2B settlement using our unified API suite.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+        <!-- Step 1 -->
+        <div class="flex flex-col">
+          <div class="w-10 h-10 rounded-lg bg-indigo-50 text-primary flex items-center justify-center font-bold mb-6">1
+          </div>
+          <h3 class="text-lg font-bold mb-2">Frictionless Ingestion</h3>
+          <p class="text-sm text-slateText mb-6">Connect via API. Millions of devices flow from OEMs and Telcos into the
+            ecosystem with absolute zero inventory risk to you.</p>
+          <!-- Static UI Element -->
+          <div class="bg-bgLight border border-gray-200 rounded-lg p-4 mt-auto">
+            <div class="flex justify-between text-xs font-semibold mb-2">
+              <span class="text-slateDark">POST /v1/ingest</span>
+              <span class="text-green-600 bg-green-100 px-2 rounded">200 OK</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-1.5">
+              <div class="bg-primary h-1.5 rounded-full" style="width: 100%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="flex flex-col">
+          <div class="w-10 h-10 rounded-lg bg-indigo-50 text-primary flex items-center justify-center font-bold mb-6">2
+          </div>
+          <h3 class="text-lg font-bold mb-2">Objective AI Grading</h3>
+          <p class="text-sm text-slateText mb-6">Proprietary intelligence engines analyze every device instantly,
+            removing human bias and creating a universal standard.</p>
+          <!-- Static UI Element -->
+          <div class="bg-bgLight border border-gray-200 rounded-lg p-4 mt-auto">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="w-6 h-6 rounded-full border-2 border-primary border-t-transparent rounded-full"></div>
+              <span class="text-xs font-semibold text-slateDark">Analyzing Optics...</span>
+            </div>
+            <p class="text-[11px] text-gray-500 font-mono">Result: Grade A Pristine</p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="flex flex-col">
+          <div class="w-10 h-10 rounded-lg bg-indigo-50 text-primary flex items-center justify-center font-bold mb-6">3
+          </div>
+          <h3 class="text-lg font-bold mb-2">Instant Liquidity</h3>
+          <p class="text-sm text-slateText mb-6">A real-time multi-buyer auction dynamically matches supply with global
+            demand, finding the absolute highest value in milliseconds.</p>
+          <!-- Static UI Element -->
+          <div class="bg-bgLight border border-gray-200 rounded-lg p-4 mt-auto">
+            <div class="flex justify-between items-center border-b border-gray-200 pb-2 mb-2">
+              <span class="text-[11px] font-mono text-gray-500">Highest Bidder</span>
+              <span class="text-xs font-bold text-slateDark">€645.00</span>
+            </div>
+            <div class="text-[11px] text-gray-500 font-medium">Asia Distributor Hub</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================= -->
+  <!-- DUAL ARCHITECTURE                         -->
+  <!-- ========================================= -->
+  <section class="py-24 bg-bgLight border-t border-gray-200">
+    <div class="max-w-[1080px] mx-auto px-6">
+      <h2 class="text-3xl font-bold text-center mb-16">Choose your integration path</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Partners -->
+        <div
+          class="bg-white p-10 rounded-xl shadow-stripe-sm border border-gray-100 hover:shadow-stripe transition-shadow duration-300">
+          <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-6">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+              </path>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold mb-3">For Partners</h3>
+          <p class="text-slateText mb-8">Retailers, Telcos, and OEMs. Offload inventory risk instantly and plug directly
+            into the world's most aggressive bidding algorithms to maximize margins.</p>
+          <a href="#"
+            class="text-primary font-semibold hover:text-primaryHover transition-colors flex items-center gap-1">
+            Join 75+ Partners <span aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+
+        <!-- Buyers -->
+        <div
+          class="bg-white p-10 rounded-xl shadow-stripe-sm border border-gray-100 hover:shadow-stripe transition-shadow duration-300">
+          <div class="w-12 h-12 bg-slateDark rounded-lg flex items-center justify-center mb-6">
+            <svg class="w-6 h-6 text-cyanAccent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6">
+              </path>
+            </svg>
+          </div>
+          <h3 class="text-2xl font-bold mb-3">For Buyers</h3>
+          <p class="text-slateText mb-8">Vetted B2B buyers. Source high-volume, globally certified Grade-A inventory
+            directly from origin without intermediaries slowing you down.</p>
+          <a href="#"
+            class="text-primary font-semibold hover:text-primaryHover transition-colors flex items-center gap-1">
+            Request Marketplace Access <span aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================= -->
+  <!-- RESIDUAL VALUE INDEX (DARK MODE)          -->
+  <!-- ========================================= -->
+  <section class="py-24 bg-slateDark text-white">
+    <div class="max-w-[1080px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+      <div>
+        <h2 class="text-3xl font-bold text-white mb-6">Proprietary Pricing Intelligence</h2>
+        <p class="text-[#adbdcc] text-lg mb-8 leading-relaxed">
+          The Residual Value Index uses machine learning to process millions of data points, accurately predicting value
+          decay curves and market shifts months in advance.
+        </p>
+        <a href="#"
+          class="inline-flex items-center gap-2 bg-[#00D4FF] text-slateDark font-semibold px-6 py-3 rounded-full hover:bg-white transition-colors">
+          Download Data Sample
+        </a>
+      </div>
+
+      <!-- Static Code Terminal UI -->
+      <div
+        class="bg-[#0f172a] rounded-xl border border-gray-700 shadow-2xl p-6 font-mono text-sm overflow-hidden relative">
+        <!-- Fake window controls -->
+        <div class="flex gap-2 mb-4">
+          <div class="w-3 h-3 rounded-full bg-gray-600"></div>
+          <div class="w-3 h-3 rounded-full bg-gray-600"></div>
+          <div class="w-3 h-3 rounded-full bg-gray-600"></div>
+        </div>
+        <div class="text-[#adbdcc] mb-2">$ curl https://api.northladder.com/v1/forecast/rv_index</div>
+        <div class="text-gray-400 mb-2">{"device": "iphone_14_pro", "market": "EU"}</div>
+        <div class="text-[#00D4FF]">{<br />
+          &nbsp;&nbsp;"current_alpha": "+14.2%",<br />
+          &nbsp;&nbsp;"decay_projection_q4": "-3.1%",<br />
+          &nbsp;&nbsp;"confidence_score": 0.98<br />
+          }</div>
+        <!-- Static overlay line -->
+        <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-[#00D4FF]"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================= -->
+  <!-- STRIPE-STYLE FOOTER                       -->
+  <!-- ========================================= -->
+  <footer class="bg-bgLight pt-16 pb-8 border-t border-gray-200">
+    <div class="max-w-[1080px] mx-auto px-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+
+        <div class="col-span-2 md:col-span-1">
+          <a href="#" class="flex items-center gap-2 mb-4">
+            <a href="#" class="flex items-center gap-2 pb-2">
+              <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+                class="h-6 w-auto brightness-0" />
+            </a>
+          </a>
+          <p class="text-sm text-slateText mb-6 pr-4">
+            The standard for circular commerce infrastructure.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="font-semibold text-slateDark mb-4">Products</h3>
+          <ul class="space-y-3 text-sm text-slateText">
+            <li><a href="#" class="hover:text-primary transition-colors">API Reference</a></li>
+            <li><a href="#" class="hover:text-primary transition-colors">Partner Hub</a></li>
+            <li><a href="#" class="hover:text-primary transition-colors">Buyer Marketplace</a></li>
+            <li><a href="#" class="hover:text-primary transition-colors">Pricing Intelligence</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="font-semibold text-slateDark mb-4">Resources</h3>
+          <ul class="space-y-3 text-sm text-slateText">
+            <li><a href="#" class="hover:text-primary transition-colors">Documentation</a></li>
+            <li><a href="#" class="hover:text-primary transition-colors">Market Reports</a></li>
+            <li><a href="#" class="hover:text-primary transition-colors">Support</a></li>
+            <li><a href="#" class="hover:text-primary transition-colors">API Status</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="font-semibold text-slateDark mb-4">Company</h3>
+          <ul class="space-y-3 text-sm text-slateText">
+            <li><a href="#" class="hover:text-primary transition-colors">About</a></li>
+            <li><a href="#" class="hover:text-primary transition-colors">Careers</a></li>
+            <li><a href="#" class="hover:text-primary transition-colors">Newsroom</a></li>
+            <li><a href="#" class="hover:text-primary transition-colors">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        class="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-slateText">
+        <div class="mb-4 md:mb-0">
+          &copy; 2026 NorthLadder. All rights reserved.
+        </div>
+        <div class="flex gap-4">
+          <a href="#" class="hover:text-slateDark transition-colors">Privacy Policy</a>
+          <a href="#" class="hover:text-slateDark transition-colors">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+<script>
+  // --- DESKTOP DROPDOWN LOGIC (CLICK TO OPEN) ---
+  const dropdownContainers = document.querySelectorAll('.nav-dropdown-container');
+
+  // Close all dropdowns helper function
+  function closeAllDropdowns() {
+    dropdownContainers.forEach(container => {
+      const menu = container.querySelector('.nav-dropdown-menu');
+      const arrow = container.querySelector('svg');
+
+      menu.classList.remove('opacity-100', 'visible', 'translate-y-0');
+      menu.classList.add('opacity-0', 'invisible', 'translate-y-2');
+      arrow.classList.remove('rotate-180');
+    });
+  }
+
+  dropdownContainers.forEach(container => {
+    const btn = container.querySelector('.nav-dropdown-btn');
+    const menu = container.querySelector('.nav-dropdown-menu');
+    const arrow = container.querySelector('svg');
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Prevent bubbling to the document click listener
+
+      const isOpen = menu.classList.contains('visible');
+
+      // First close everything
+      closeAllDropdowns();
+
+      // If it wasn't open before, open it now
+      if (!isOpen) {
+        menu.classList.remove('opacity-0', 'invisible', 'translate-y-2');
+        menu.classList.add('opacity-100', 'visible', 'translate-y-0');
+        arrow.classList.add('rotate-180');
+      }
+    });
+
+    // Prevent clicks inside the menu from closing it
+    menu.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+  });
+
+  // Close dropdowns when clicking anywhere outside
+  document.addEventListener('click', () => {
+    closeAllDropdowns();
+  });
+</script>
+
+</html>
