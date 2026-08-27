@@ -1051,17 +1051,18 @@
           <div class="grid [grid-template-areas:'stack'] items-center max-w-2xl lg:max-w-3xl">
 
             <!-- Headline (Masked Line Reveal) -->
+            <!-- Headline (Letter-by-letter reveal) -->
             <h1
               class="hero-title [grid-area:stack] font-sans font-light text-4xl md:text-5xl !leading-[1.15] tracking-tight text-ink m-0">
-              <span class="block overflow-hidden pb-2"><span
-                  class="anim-line block translate-y-[120%] rotate-[2deg] transform-origin-bottom-left">The
-                  World's</span></span>
-              <span class="block overflow-hidden pb-2"><span
-                  class="anim-line block font-medium translate-y-[120%] rotate-[2deg] transform-origin-bottom-left">Leading
-                  AI-Powered</span></span>
-              <span class="block overflow-hidden pb-2"><span
-                  class="anim-line block translate-y-[120%] rotate-[2deg] transform-origin-bottom-left">Circularity
-                  Marketplace.</span></span>
+              <span class="block overflow-hidden pb-2">
+                <span class="typewriter-line block">The World's</span>
+              </span>
+              <span class="block overflow-hidden pb-2">
+                <span class="typewriter-line block font-medium">Leading AI-Powered</span>
+              </span>
+              <span class="block overflow-hidden pb-2">
+                <span class="typewriter-line block">Circularity Marketplace.</span>
+              </span>
             </h1>
 
             <!-- Subheadline (Masked Line Reveal) -->
@@ -1736,13 +1737,10 @@
           class="w-full h-full object-cover bpg-parallax-img opacity-80" />
       </div>
 
-      <!-- Deep Scrim to ensure text readability (Dark gradient from the left) -->
-
-
       <div class="max-w-[1400px] w-full mx-auto px-6 lg:px-12 relative z-20 py-24 lg:py-0">
         <div class="max-w-xl">
 
-          <!-- Cinematic Kicker -->
+          <!-- Cinematic Kicker (Remains bpg-anim) -->
           <div
             class="bpg-anim inline-flex items-center gap-3 px-4 py-2 rounded-full border border-white/10 bg-white/5 mb-8 backdrop-blur-md shadow-[0_0_15px_rgba(0,0,0,0.5)]">
             <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
@@ -1751,7 +1749,7 @@
             </p>
           </div>
 
-          <!-- Main Title -->
+          <!-- Main Title (Remains bpg-anim) -->
           <h2
             class="bpg-anim font-display font-light text-3xl md:text-4xl lg:text-5xl text-white tracking-tight leading-[1.05] mb-12">
             Best Price <br />
@@ -1761,8 +1759,8 @@
           <!-- Staggered Value Props -->
           <div class="space-y-10 border-l border-white/10 pl-8 ml-4">
 
-            <!-- Point 1 -->
-            <div class="bpg-anim relative group">
+            <!-- Point 1 (Changed to bpg-step) -->
+            <div class="bpg-step relative group">
               <div
                 class="absolute -left-[49px] top-1 w-4 h-4 rounded-full bg-brand-mint border-4 border-[#050505] group-hover:scale-125 transition-transform duration-300">
               </div>
@@ -1775,22 +1773,22 @@
               </p>
             </div>
 
-            <!-- Point 2 -->
-            <div class="bpg-anim relative group">
+            <!-- Point 2 (Changed to bpg-step) -->
+            <div class="bpg-step relative group">
               <div
                 class="absolute -left-[49px] top-1 w-4 h-4 rounded-full bg-white/20 border-4 border-[#050505] group-hover:bg-brand-mint group-hover:scale-125 transition-all duration-300">
               </div>
               <h3 class="font-sans text-xl font-medium text-white mb-2 tracking-wide">
                 Real-Time Value
               </h3>
-              <p class="font-sans text-sm md:text-baseð text-white font-light leading-relaxed">
+              <p class="font-sans text-sm md:text-base text-white font-light leading-relaxed">
                 Every auction reflects the market as it stands right now, capturing true residual value before it has
                 the chance to depreciate.
               </p>
             </div>
 
-            <!-- Point 3 -->
-            <div class="bpg-anim relative group">
+            <!-- Point 3 (Changed to bpg-step) -->
+            <div class="bpg-step relative group">
               <div
                 class="absolute -left-[49px] top-1 w-4 h-4 rounded-full bg-white/20 border-4 border-[#050505] group-hover:bg-brand-mint group-hover:scale-125 transition-all duration-300">
               </div>
@@ -2460,24 +2458,8 @@
     document.addEventListener("DOMContentLoaded", () => {
       gsap.registerPlugin(ScrollTrigger);
 
-      // 1. Create the Premium Entrance Timeline
-      const heroTl = gsap.timeline({ defaults: { ease: "power4.out" } });
+      heroBanner();
 
-      // 2. Masked Line Reveal (Text slides up from invisible baseline)
-      heroTl.to(".anim-line", {
-        yPercent: -120, // Counteracts the Tailwind translate-y-[120%]
-        rotation: 0,    // Snaps the 2deg rotation back to perfectly flat
-        duration: 1.4,
-        stagger: 0.15,  // 0.15s delay between each line appearing
-        delay: 0.2      // Tiny delay to let the video start playing first
-      });
-
-      // 3. Fade and float the scroll indicator in at the very end
-      heroTl.fromTo(".scroll-indicator",
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 1, ease: "power2.out" },
-        "-=0.6" // Start this slightly before the text finishes settling
-      );
       // =========================================
       // THREE.JS: THE LIQUIDITY GLOBE
       // =========================================
@@ -3039,7 +3021,6 @@
 
       if (bpgSection) {
         // 1. Luxurious Image Parallax
-        // Image moves slightly down as the user scrolls down to create deep cinematic depth
         gsap.to(".bpg-parallax-img", {
           yPercent: 15,
           ease: "none",
@@ -3051,26 +3032,47 @@
           },
         });
 
-        // 2. Cinematic Staggered Reveal for Typography
+        // 2. Cinematic Reveal for Kicker & Title (Triggers when section enters)
         gsap.fromTo(
           ".bpg-anim",
-          { y: 50, opacity: 0, filter: "blur(10px)" },
+          { y: 40, opacity: 0, filter: "blur(10px)" },
           {
             y: 0,
             opacity: 1,
             filter: "blur(0px)",
             duration: 1.2,
-            stagger: 0.15,
+            stagger: 0.2,
             ease: "power3.out",
             scrollTrigger: {
               trigger: bpgSection,
-              start: "top 70%",
+              start: "top 75%",
               toggleActions: "play none none reverse",
             },
           }
         );
-      }
 
+        // 3. Step-by-Step Scroll Reveal for the Points
+        const steps = gsap.utils.toArray(".bpg-step");
+
+        steps.forEach((step, index) => {
+          gsap.fromTo(
+            step,
+            { y: 30, opacity: 0, filter: "blur(8px)" },
+            {
+              y: 0,
+              opacity: 1,
+              filter: "blur(0px)",
+              duration: 1,
+              ease: "power2.out",
+              scrollTrigger: {
+                trigger: step,
+                start: "top 85%", // Triggers when THIS specific step crosses 85% of the screen
+                toggleActions: "play none none reverse",
+              }
+            }
+          );
+        });
+      }
       // --- 8. PREMIUM NEWS SECTION ANIMATIONS ---
       const newsSection = document.getElementById("news-insights-section");
       if (newsSection) {
@@ -3585,6 +3587,123 @@
       ScrollTrigger.sort();
       ScrollTrigger.refresh();
     });
+
+    function heroBanner() {
+      // 1. Text Splitting Function for the typewriter effect
+      const typewriterLines = document.querySelectorAll('.typewriter-line');
+
+      typewriterLines.forEach(line => {
+        const text = line.textContent.trim();
+        line.textContent = ''; // clear the original text
+
+        // Split text into an array of characters and wrap each in a span
+        text.split('').forEach(char => {
+          const charSpan = document.createElement('span');
+          // Handle spaces properly so they don't collapse in HTML
+          charSpan.innerHTML = char === ' ' ? '&nbsp;' : char;
+          // inline-block is strictly required for GSAP to transform characters (y, rotation, etc.)
+          charSpan.style.display = 'inline-block';
+          charSpan.className = 'char-span';
+          line.appendChild(charSpan);
+        });
+      });
+
+      // 2. Create the Premium Entrance Timeline
+      const heroTl = gsap.timeline({ defaults: { ease: "power4.out" } });
+
+      // 3. Animate the H1 letters one by one (Typing effect)
+      heroTl.fromTo(".char-span",
+        {
+          yPercent: 120,     // Start pushed down
+          rotationZ: 10,     // Start slightly tilted
+          opacity: 0         // Start invisible
+        },
+        {
+          yPercent: 0,
+          rotationZ: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.04,     // The delay between each letter appearing (adjust for typing speed)
+          delay: 0.2         // Initial delay for the video to load
+        }
+      );
+
+      // 4. Animate the H2 (Subheadline) ONLY after H1 is fully typed
+      // By placing this on the same timeline, it automatically waits for the stagger above to finish
+      heroTl.to(".hero-subtitle .anim-line", {
+        yPercent: -120, // Counteracts your Tailwind translate-y-[120%]
+        rotation: 0,    // Snaps the 2deg rotation back to perfectly flat
+        duration: 1.2,
+        stagger: 0.15
+      }, "+=0.1"); // Starts 0.1s after the H1 typing completes
+
+      // 5. Fade and float the scroll indicator in at the very end
+      heroTl.fromTo(".scroll-indicator",
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 1, ease: "power2.out" },
+        "-=0.6" // Starts slightly before the H2 text finishes settling into place
+      );
+    }
+
+    // function heroBanner() {
+    //   // 1. Text Splitting Function for the typewriter effect
+    //   const typewriterLines = document.querySelectorAll('.typewriter-line');
+
+    //   typewriterLines.forEach(line => {
+    //     const text = line.textContent.trim();
+    //     line.textContent = ''; // clear the original text
+
+    //     // Split text into an array of characters and wrap each in a span
+    //     text.split('').forEach(char => {
+    //       const charSpan = document.createElement('span');
+    //       // Handle spaces properly so they don't collapse in HTML
+    //       charSpan.innerHTML = char === ' ' ? '&nbsp;' : char;
+    //       // inline-block is strictly required for GSAP to transform characters
+    //       charSpan.style.display = 'inline-block';
+    //       charSpan.className = 'char-span';
+    //       line.appendChild(charSpan);
+    //     });
+    //   });
+
+    //   // 2. Create the Premium Entrance Timeline
+    //   const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+    //   // 3. Animate the H1 letters one by one (Swiping / Writing effect)
+    //   heroTl.fromTo(".char-span",
+    //     {
+    //       opacity: 0,
+    //       x: -15,                        // Start slightly shifted to the left
+    //       clipPath: "inset(0 100% 0 0)", // CSS Mask: completely crops the letter from the right
+    //       filter: "blur(4px)"            // Slight motion blur
+    //     },
+    //     {
+    //       opacity: 1,
+    //       x: 0,                          // Slide into resting position
+    //       clipPath: "inset(0 0% 0 0)",   // Swipe the mask away to reveal the full letter
+    //       filter: "blur(0px)",           // Snap into sharp focus
+    //       duration: 0.5,                 // How long each letter takes to draw
+    //       stagger: 0.03,                 // Extremely fast stagger to simulate natural writing speed
+    //       delay: 0.2                     // Initial delay for the video to load
+    //     }
+    //   );
+
+    //   // 4. Animate the H2 (Subheadline) ONLY after H1 is fully typed
+    //   heroTl.to(".hero-subtitle .anim-line", {
+    //     yPercent: -120, // Counteracts your Tailwind translate-y-[120%]
+    //     rotation: 0,    // Snaps the 2deg rotation back to perfectly flat
+    //     duration: 1.2,
+    //     stagger: 0.15,
+    //     ease: "power4.out"
+    //   }, "+=0.1"); // Starts 0.1s after the H1 writing completes
+
+    //   // 5. Fade and float the scroll indicator in at the very end
+    //   heroTl.fromTo(".scroll-indicator",
+    //     { opacity: 0, y: 20 },
+    //     { opacity: 1, y: 0, duration: 1, ease: "power2.out" },
+    //     "-=0.6" // Starts slightly before the H2 text finishes settling into place
+    //   );
+    // }
+
   </script>
 </body>
 
