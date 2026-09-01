@@ -1,0 +1,2780 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorthLadder - The world's most advanced Trade-in solution</title>
+  <!-- Brand Approved Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- GSAP Core & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: "#EDEEF5",
+              obsidian: "#0A0A0B",
+              charcoal: "#2D2D32",
+              primary: "#3B0764",
+              light: "#9333EA",
+              bright: "#C084FC",
+              mint: "#A855F7",
+            },
+            primary: {
+              950: "#3B0764",
+              900: "#581C87",
+              800: "#6B21A8",
+              700: "#7E22CE",
+              600: "#9333EA",
+              DEFAULT: "#9333EA",
+              500: "#A855F7",
+              400: "#C084FC",
+              300: "#D8B4FE",
+              200: "#E9D5FF",
+              100: "#F3E8FF",
+            },
+            ink: "#0A0F1C",       // Deepest navy/black for high-contrast text
+            surface: "#FFFFFF",   // Pure white for foregrounds
+          },
+          fontFamily: {
+            sans: ["Poppins", "sans-serif"],
+            display: ["Montserrat", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Hide scrollbars */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    body {
+      background-color: #edeef5;
+      color: #0a0a0b;
+      overflow-x: hidden;
+    }
+
+    .apple-blur-light {
+      background: rgba(237, 238, 245, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    /* Fixed CSS Animations for Hero Load */
+    .hero-element {
+      opacity: 0;
+      animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .delay-1 {
+      animation-delay: 0.1s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.3s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.5s;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Ambient Breathing Glow */
+    @keyframes breathe {
+
+      0%,
+      100% {
+        transform: scale(1) translate(0, 0);
+        opacity: 0.4;
+      }
+
+      50% {
+        transform: scale(1.1) translate(20px, -20px);
+        opacity: 0.6;
+      }
+    }
+
+    .ambient-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle,
+          rgba(181, 153, 250, 0.4) 0%,
+          rgba(78, 0, 142, 0.1) 40%,
+          transparent 70%);
+      filter: blur(60px);
+      border-radius: 50%;
+      z-index: 0;
+      animation: breathe 10s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* Horizontal Line Styles */
+    .journey-line-container {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 300vw;
+      height: 400px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .journey-line-active {
+      stroke-dasharray: 4000;
+      stroke-dashoffset: 4000;
+    }
+
+    /* Premium Glass Cards */
+    .info-card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow:
+        0 20px 40px -10px rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    #cursor-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 480px;
+      height: 480px;
+      margin-left: -240px;
+      margin-top: -240px;
+      background: radial-gradient(circle,
+          rgba(181, 153, 250, 0.16) 0%,
+          rgba(78, 0, 142, 0.05) 45%,
+          transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    @media (max-width: 768px) {
+      #cursor-glow {
+        display: none;
+      }
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.035;
+      mix-blend-mode: multiply;
+    }
+
+    .panel-index {
+      -webkit-text-stroke: 1.5px rgba(10, 10, 11, 0.08);
+      color: transparent;
+    }
+
+    /* Infinite Marquee Animation */
+    .marquee-track {
+      width: max-content;
+      animation: marqueeScroll 25s linear infinite;
+      will-change: transform;
+    }
+
+    @keyframes marqueeScroll {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Pause marquee on hover for better UX */
+    .marquee-track:hover {
+      animation-play-state: paused;
+    }
+
+    /* Circular Split Mechanics */
+    .orb-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      /* Removed CSS transform so GSAP can handle it without jumping */
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.15),
+        inset 0 2px 10px rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      will-change: transform;
+    }
+
+    @media (min-width: 1024px) {
+      .orb-container {
+        width: 550px;
+        height: 550px;
+      }
+    }
+
+    /* Connection Line that draws between the orbs */
+    #orb-connector {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 2px;
+      background: linear-gradient(90deg, #4e008e, #48b48d);
+      width: 0px;
+      /* Expands via GSAP */
+      z-index: 0;
+      opacity: 0;
+    }
+
+    /* Residual Value Chart Animations */
+    #rv-chart-line {
+      stroke-dasharray: 1500;
+      stroke-dashoffset: 1500;
+    }
+
+    #rv-chart-fill {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .select-arrow {
+      background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%23A1A1AA' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0 center;
+      background-size: 12px;
+    }
+
+    /* Premium Apple-Style Navbar Dropdown Animations */
+    .nav-group {
+      position: static;
+    }
+
+    /* Critical: allows menu to span full width of header */
+    .mega-menu {
+      position: absolute;
+      left: 0;
+      top: 100%;
+      width: 100%;
+      background: rgba(237, 238, 245, 0.95);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.05);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+      cursor: default;
+    }
+
+    .nav-group:hover .mega-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Staggered items inside the menu */
+    .mega-item {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-group:hover .mega-item {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .nav-group:hover .col-1 .mega-item:nth-child(1) {
+      transition-delay: 0.04s;
+    }
+
+    .nav-group:hover .col-1 .mega-item:nth-child(2) {
+      transition-delay: 0.08s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(1) {
+      transition-delay: 0.12s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(2) {
+      transition-delay: 0.16s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(3) {
+      transition-delay: 0.20s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(4) {
+      transition-delay: 0.24s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(5) {
+      transition-delay: 0.28s;
+    }
+
+    /* Mobile Apple-style Navigation */
+    #mobile-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #EDEEF5;
+      z-index: 40;
+      padding-top: 85px;
+      padding-inline: 24px;
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0.4s, opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+
+    #mobile-menu.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .mobile-nav-item {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #mobile-menu.active .mobile-nav-item {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Mobile Menu Cascading Delays */
+    #mobile-menu.active .mobile-nav-item:nth-child(1) {
+      transition-delay: 0.10s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(2) {
+      transition-delay: 0.14s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(3) {
+      transition-delay: 0.18s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(4) {
+      transition-delay: 0.22s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(5) {
+      transition-delay: 0.26s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(6) {
+      transition-delay: 0.30s;
+    }
+
+    /* Hamburger Icon Animation */
+    .menu-line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform-origin: center;
+      transition:
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.2s ease;
+    }
+
+    .line-1 {
+      transform: translate(-50%, -6px);
+    }
+
+    .line-2 {
+      transform: translate(-50%, 0);
+    }
+
+    .line-3 {
+      transform: translate(-50%, 6px);
+    }
+
+    .menu-open .line-1 {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .menu-open .line-2 {
+      opacity: 0;
+    }
+
+    .menu-open .line-3 {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    /* Mobile Drilldown Enhancements */
+    #mobile-menu {
+      overflow-x: hidden;
+    }
+
+    .submenu-active #mobile-menu-slider {
+      transform: translateX(-100%);
+    }
+
+    .submenu-active #mobile-back-header {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .mobile-submenu a,
+    .mobile-submenu p {
+      opacity: 0;
+      transform: translateX(20px);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .submenu-active .mobile-submenu.active a,
+    .submenu-active .mobile-submenu.active p {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Stagger sub-items for premium cascade */
+    .submenu-active .mobile-submenu.active *:nth-child(1) {
+      transition-delay: 0.10s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(2) {
+      transition-delay: 0.14s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(3) {
+      transition-delay: 0.18s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(4) {
+      transition-delay: 0.22s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(5) {
+      transition-delay: 0.26s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(6) {
+      transition-delay: 0.30s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(7) {
+      transition-delay: 0.34s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(8) {
+      transition-delay: 0.38s;
+    }
+
+    /* Clean up any rogue arrows in the mobile submenu */
+    .mobile-submenu a {
+      position: relative;
+      background-image: none !important;
+      padding-left: 0 !important;
+    }
+
+    .mobile-submenu a svg {
+      display: none !important;
+      /* Forces any stray SVGs inside these specific links to hide */
+    }
+
+    /* Cinematic Tab Transitions (Motion Blur & Scale Wipe) */
+    .modal-form {
+      transition: opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1),
+        transform 0.8s cubic-bezier(0.19, 1, 0.22, 1),
+        filter 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+      will-change: transform, opacity, filter;
+    }
+
+    .form-hidden-left {
+      opacity: 0;
+      transform: translateX(-80px) scale(0.95);
+      filter: blur(12px);
+    }
+
+    .form-hidden-right {
+      opacity: 0;
+      transform: translateX(80px) scale(0.95);
+      filter: blur(12px);
+    }
+
+    .form-active {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      filter: blur(0px);
+    }
+
+    .cinematic-grid {
+      background-image:
+        linear-gradient(to right, rgba(147, 51, 234, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(147, 51, 234, 0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 80%);
+      mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 80%);
+      animation: gridDrift 20s linear infinite;
+    }
+
+    @keyframes gridDrift {
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(60px);
+      }
+    }
+
+    /* Hover enhancement for the CTA button arrow */
+    .cta-btn:hover .cta-arrow {
+      transform: translateX(4px);
+    }
+
+    /* Enable 3D space for the background elements */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+  </style>
+
+  <link rel="icon" type="image/x-icon" href="favicon.png" />
+</head>
+
+<body>
+  <!-- Grain texture -->
+  <svg class="grain" xmlns="http://www.w3.org/2000/svg">
+    <filter id="noiseFilter">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"></feTurbulence>
+      <feColorMatrix type="saturate" values="0"></feColorMatrix>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#noiseFilter)"></rect>
+  </svg>
+
+  <div id="cursor-glow"></div>
+
+  <!-- NAVBAR -->
+  <header id="main-nav"
+    class="fixed top-0 left-1/2 -translate-x-1/2 w-full z-50 apple-blur-light transition-all duration-500 bg-transparent">
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+      <div class="flex items-center justify-between h-[72px]">
+        <a href="home.html" class="flex items-center gap-3 cursor-pointer">
+          <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+            class="h-6 w-auto brightness-0" />
+        </a>
+
+        <nav class="hidden md:flex space-x-8 lg:space-x-10 h-full">
+          <!-- 1. For Partners -->
+          <div class="nav-group h-full flex items-center">
+            <a href="partner-hub.html"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              For Partners
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <!-- Apple-style Primary Column -->
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Explore</p>
+                  <a href="partner-hub.html"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-3">Partner
+                    Hub</a>
+                </div>
+                <!-- Apple-style Secondary Column -->
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Solutions</p>
+                  <a href="#retailers"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Retailers</a>
+                  <a href="partners/telcos-and-operators.html"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Telcos & Operators</a>
+                  <a href="#oems"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    OEMs & Brands</a>
+                  <a href="#ecommerce"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Ecommerce</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. For Buyers -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#buyers"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              For Buyers
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Explore</p>
+                  <a href="buyer-hub.html"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-mint transition-colors mb-3">Buyer
+                    Hub</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Resources</p>
+                  <a href="buyers/how-auction-work.html"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">How
+                    Auctions Work</a>
+                  <a href="#register"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Register
+                    as Buyer</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Neutral Marketplace -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#neutral-marketplace"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Neutral Marketplace
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Infrastructure</p>
+                  <a href="the-platform.html"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">The
+                    Platform</a>
+                  <a href="#ai-grading"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">AI
+                    Grading</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Intelligence -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#insights"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Insights
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Data</p>
+                  <a href="#rv-index"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">RV
+                    Index</a>
+                  <a href="#market-reports"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">Market
+                    Reports</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Editorial</p>
+                  <a href="#leaders"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">60
+                    Seconds With Circularity Leaders</a>
+                  <a href="#blogs"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Blogs</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Company -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#company"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Company
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    About</p>
+                  <a href="#inside"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">Inside
+                    NorthLadder</a>
+                  <a href="#builders"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">The
+                    Builders</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Discover</p>
+                  <a href="#stories"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Customer
+                    Stories</a>
+                  <a href="#newsroom"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Newsroom</a>
+                  <a href="#join"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Join
+                    The Team</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Language Toggle (Navbar) -->
+        <div class="relative group hidden md:block">
+          <button
+            class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418">
+              </path>
+            </svg>
+            EN
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+
+          <!-- Dropdown -->
+          <div
+            class="absolute right-0 mt-4 w-32 bg-white/90 backdrop-blur-xl border border-gray-100 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden translate-y-2 group-hover:translate-y-0">
+            <div class="p-1.5 space-y-0.5">
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-brand-obsidian bg-gray-50 rounded-lg">English</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">العربية
+                (AR)</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Deutsch</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Español</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Français</a>
+            </div>
+          </div>
+        </div>
+        <div class="items-center space-x-8">
+          <button id="mobile-menu-btn" class="md:hidden flex justify-center items-center w-8 h-8 z-50 relative"
+            aria-label="Toggle menu">
+            <span class="menu-line line-1 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+            <span class="menu-line line-2 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+            <span class="menu-line line-3 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+          </button>
+          <div class="flex justify-center items-center space-x-8">
+            <a href="#login"
+              class="hidden md:flex text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">Log
+              in</a>
+            <a href="#contact"
+              class="hidden md:flex text-[13px] font-sans font-medium text-white bg-brand-obsidian hover:bg-brand-primary px-6 py-2.5 rounded-full transition-all duration-300 shadow-lg shadow-black/10">
+              Get Started
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE APPLE-STYLE FULLSCREEN MENU -->
+  <nav id="mobile-menu" class="md:hidden">
+    <!-- Menu Slider Container -->
+    <div id="mobile-menu-slider"
+      class="relative w-full h-[calc(100%-80px)] flex transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] px-6">
+
+      <!-- LEVEL 1: MAIN MENU -->
+      <div id="mobile-level-1" class="w-full flex-shrink-0 flex flex-col space-y-7 pt-4">
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-partners">
+          For Partners
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-buyers">
+          For Buyers
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-marketplace">
+          Neutral Marketplace
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-intelligence">
+          Insights
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-company">
+          Company
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+
+        <div class="mobile-nav-item pt-8 border-t border-gray-300/50 mt-4 flex flex-col space-y-4">
+          <a href="#login" class="text-lg font-sans font-medium text-brand-charcoal">Log in</a>
+          <a href="#contact" class="text-lg font-sans font-medium text-brand-primary">Get Started</a>
+        </div>
+      </div>
+
+      <!-- LEVEL 2: SUBMENUS -->
+      <div id="mobile-level-2" class="absolute top-0 left-full w-full h-full pb-24 overflow-y-auto px-6 pt-4">
+
+        <!-- Submenu: Partners -->
+        <div id="submenu-partners" class="mobile-submenu hidden flex-col space-y-6">
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mb-2">Explore</p>
+          <a href="partner-hub.html" class="text-xl font-display font-semibold text-brand-obsidian block mb-4">Partner
+            Hub</a>
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mt-6 mb-2">Solutions</p>
+          <a href="#retailers"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For Retailers</a>
+          <a href="partners/telcos-and-operators.html"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For
+            Telcos & Operators</a>
+          <a href="#oems" class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For
+            OEMs & Brands</a>
+          <a href="#ecommerce"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For Ecommerce</a>
+        </div>
+
+        <!-- Remaining Submenus (Buyers, Marketplace, Intelligence, Company) go here, exact same pristine format... -->
+
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- HERO SECTION -->
+    <section id="company-hero" class="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden bg-brand-bg">
+      <!-- Premium Background Imagery (Abstract Light Architecture/Glass) -->
+      <div class="absolute inset-0 z-0">
+        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop"
+          alt="Abstract Architecture" class="hero-bg-img w-full h-full object-cover opacity-[0.35]"
+          style="transform: scale(1.1);" />
+        <!-- Gradient to blend image into the page background smoothly -->
+        <div class="absolute inset-0 bg-gradient-to-b from-brand-bg/30 via-brand-bg/60 to-brand-bg"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-brand-bg/80 via-transparent to-transparent"></div>
+      </div>
+
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 w-full">
+        <!-- Masked Tag -->
+        <div class="overflow-hidden mb-8">
+          <p
+            class="hero-tag font-sans text-[11px] uppercase tracking-[0.3em] font-bold text-brand-primary translate-y-full">
+            Company
+          </p>
+        </div>
+
+        <!-- Masked Heading Lines -->
+        <h1
+          class="font-display text-4xl md:text-5xl lg:text-6xl font-medium text-brand-obsidian leading-[1.05] tracking-tight mb-10 max-w-5xl">
+          <div class="overflow-hidden py-1"><span class="hero-title-line block translate-y-full">We didn't improve
+              the</span></div>
+          <div class="overflow-hidden py-1"><span class="hero-title-line block translate-y-full">secondary device
+              market.</span></div>
+          <div class="overflow-hidden py-1"><span
+              class="hero-title-line block translate-y-full text-brand-primary font-semibold">We
+              rebuilt it.</span></div>
+        </h1>
+
+        <!-- Description -->
+        <p
+          class="hero-desc font-sans text-lg md:text-xl text-brand-charcoal font-light leading-[1.8] max-w-2xl opacity-0 translate-y-8">
+          NorthLadder was founded on the belief that a neutral marketplace — one that structurally cannot take a side —
+          would change how the secondary device market works. It did.
+        </p>
+      </div>
+    </section>
+
+    <!-- INSIDE NORTHLADDER SECTION (Completely Unique Editorial Layout) -->
+    <section id="inside-northladder" class="relative pt-32 lg:pt-48 overflow-hidden bg-brand-bg">
+      <!-- Deep Ambient Orbs -->
+      <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div
+          class="animatic-orb orb-1 absolute top-[20%] right-[-5%] w-[500px] h-[500px] bg-brand-mint/10 rounded-full blur-[120px]">
+        </div>
+      </div>
+
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
+        <div class="flex flex-col lg:flex-row gap-20 lg:gap-32">
+
+          <!-- Left: Narrative Column -->
+          <div class="lg:w-7/12 space-y-16">
+            <div>
+              <div class="overflow-hidden mb-8">
+                <p
+                  class="story-tag font-sans text-[11px] uppercase tracking-[0.4em] font-bold text-brand-primary translate-y-full flex items-center gap-4">
+                  <span class="w-8 h-[1px] bg-brand-primary block"></span>
+                  Inside NorthLadder
+                </p>
+              </div>
+              <h2
+                class="story-title font-display text-4xl md:text-5xl font-semibold text-brand-obsidian leading-[1.1] opacity-0 translate-y-8">
+                Our story and<br />what drives us
+              </h2>
+            </div>
+
+            <div
+              class="story-paragraphs space-y-8 font-sans text-[16px] md:text-[18px] text-brand-charcoal font-light leading-[1.85]">
+              <p class="opacity-0 translate-y-8">
+                NorthLadder was founded in Dubai with a simple observation: the secondary device market was full of
+                single-buyer pricing spreads, photo-based grading disputes, and intermediaries that profited by holding
+                information asymmetry between partners and buyers. The market was large. The infrastructure was broken.
+              </p>
+              <p class="opacity-0 translate-y-8">
+                We built the platform to fix it. An AI grading standard that replaced 7 subjective photos with a
+                20-second objective AR video. An open auction where every buyer sees every bid. A neutral infrastructure
+                that cannot buy inventory — and therefore cannot manipulate prices. Published fees. Grade-backed SLAs.
+              </p>
+              <p class="opacity-0 translate-y-8">
+                Today, 75+ partners across EU, GCC, and Asia connect their trade-in inventory to NorthLadder. €Xm in
+                devices traded. 94% lot sell-through. 40% fewer disputes. We're based in Dubai with operations across
+                Europe and the Gulf — and we're building the data layer that the circular device economy needs.
+              </p>
+            </div>
+          </div>
+
+          <!-- Right: Monumental Typographic Data (No Cards) -->
+          <div class="lg:w-5/12 relative flex flex-col justify-end` mt-12 lg:mt-0">
+
+            <!-- Vertical Timeline Axis -->
+            <div class="relative pl-8 md:pl-12 border-l-[1.5px] border-brand-obsidian/10 data-axis">
+              <!-- Animated drawing line over the border -->
+              <div class="absolute top-0 left-[-1.5px] w-[1.5px] h-0 bg-brand-primary axis-line"></div>
+
+              <!-- Typographic Milestone 1 -->
+              <div class="relative group mb-20 data-node opacity-0 translate-x-8">
+                <div
+                  class="absolute -left-[37px] md:-left-[53px] top-4 w-2 h-2 rounded-full bg-brand-bg border border-brand-primary ring-4 ring-brand-primary/20 node-dot transition-all duration-500 group-hover:scale-150 group-hover:bg-brand-primary">
+                </div>
+                <div class="overflow-hidden">
+                  <h3
+                    class="font-display text-6xl font-semibold text-brand-obsidian tracking-tighter leading-none mb-3">
+                    2019</h3>
+                </div>
+                <p class="font-sans text-xs md:text-sm tracking-[0.25em] font-medium uppercase text-brand-primary">
+                  Founded in Dubai</p>
+              </div>
+
+              <!-- Typographic Milestone 2 -->
+              <div class="relative group mb-20 data-node opacity-0 translate-x-8">
+                <div
+                  class="absolute -left-[37px] md:-left-[53px] top-4 w-2 h-2 rounded-full bg-brand-bg border border-brand-mint ring-4 ring-brand-mint/20 node-dot transition-all duration-500 group-hover:scale-150 group-hover:bg-brand-mint">
+                </div>
+                <div class="overflow-hidden">
+                  <h3
+                    class="font-display text-6xl font-semibold text-brand-obsidian tracking-tighter leading-none mb-3">
+                    75<span class="text-brand-primary">+</span></h3>
+                </div>
+                <p class="font-sans text-xs md:text-sm tracking-[0.25em] font-medium uppercase text-brand-primary">
+                  Partner Companies</p>
+              </div>
+
+              <!-- Typographic Milestone 3 -->
+              <div class="relative group mb-12 data-node opacity-0 translate-x-8">
+                <div
+                  class="absolute -left-[37px] md:-left-[53px] top-4 w-2 h-2 rounded-full bg-brand-bg border border-brand-bright ring-4 ring-brand-bright/20 node-dot transition-all duration-500 group-hover:scale-150 group-hover:bg-brand-bright">
+                </div>
+                <div class="overflow-hidden">
+                  <h3
+                    class="font-display text-6xl font-semibold text-brand-obsidian tracking-tighter leading-none mb-3">
+                    20<span class="text-brand-primary">+</span></h3>
+                </div>
+                <p class="font-sans text-xs md:text-sm tracking-[0.25em] font-medium uppercase text-brand-primary">
+                  Countries Active</p>
+              </div>
+            </div>
+
+            <!-- Institutional Backing (Inline Elegant Layout) -->
+            <div class="mt-8 pt-10 border-t border-brand-obsidian/10 backed-by-section opacity-0 translate-y-8">
+              <h4 class="font-sans text-[10px] font-bold text-gray-400 mb-6 uppercase tracking-[0.3em]">Institutional
+                Backing</h4>
+              <div class="flex flex-wrap gap-x-6 gap-y-4 items-center">
+                <span class="text-lg font-display text-brand-obsidian font-semibold tracking-tight">Series B
+                  Investors</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-brand-primary/40"></span>
+                <span class="text-lg font-display text-brand-obsidian font-semibold tracking-tight">Renewd <span
+                    class="text-gray-400 font-light text-base">(Acquired)</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="the-builders" class="relative py-32 lg:py-48 overflow-hidden bg-brand-bg">
+      <!-- Cinematic Background: Moving grid & ambient lights -->
+      <div class="absolute inset-0 z-0 pointer-events-none">
+        <div class="absolute inset-0 cinematic-grid w-full h-[120%] -top-[10%]"></div>
+        <div
+          class="absolute top-[10%] left-[-5%] w-[600px] h-[600px] bg-brand-light/10 rounded-full blur-[120px] builder-glow-1">
+        </div>
+        <div
+          class="absolute bottom-[-10%] right-[-5%] w-[700px] h-[700px] bg-brand-primary/10 rounded-full blur-[140px] builder-glow-2">
+        </div>
+      </div>
+
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
+        <!-- Section Header -->
+        <div class="mb-20 md:mb-32">
+          <div class="overflow-hidden mb-8">
+            <p
+              class="builder-tag font-sans text-[11px] uppercase tracking-[0.4em] font-bold text-brand-primary translate-y-full flex items-center gap-4">
+              <span class="w-8 h-[1px] bg-brand-primary block"></span>
+              The Builders
+            </p>
+          </div>
+          <div class="overflow-hidden">
+            <h2
+              class="builder-title font-display text-4xl md:text-5xl font-semibold text-brand-obsidian leading-[1.1] translate-y-[110%]">
+              The team behind<br />the platform
+            </h2>
+          </div>
+        </div>
+
+        <!-- Team Grid (Architectural Layout) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-20 border-t border-brand-obsidian/10 pt-16">
+
+          <!-- Profile 1 -->
+          <div class="builder-card opacity-0 translate-y-12 relative group">
+            <!-- Structural Hover Line -->
+            <div
+              class="absolute top-[-65px] left-0 w-full h-[2px] bg-brand-primary scale-x-0 origin-left transition-transform duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-x-100">
+            </div>
+
+            <h3 class="font-display text-3xl font-bold text-brand-obsidian tracking-tight mb-2">Founder / CEO</h3>
+            <p class="font-sans text-[11px] font-semibold tracking-[0.2em] uppercase text-brand-primary mb-6">
+              NorthLadder · Dubai</p>
+            <p
+              class="font-sans text-[15px] md:text-[16px] text-brand-charcoal font-light leading-[1.8] opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+              Founded NorthLadder in 2019 to fix structural problems in the secondary device market. Background in B2B
+              marketplace infrastructure and cross-border trade.
+            </p>
+          </div>
+
+          <!-- Profile 2 -->
+          <div class="builder-card opacity-0 translate-y-12 relative group">
+            <!-- Structural Hover Line -->
+            <div
+              class="absolute top-[-65px] left-0 w-full h-[2px] bg-brand-primary scale-x-0 origin-left transition-transform duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-x-100">
+            </div>
+
+            <h3 class="font-display text-3xl font-bold text-brand-obsidian tracking-tight mb-2">CTO</h3>
+            <p class="font-sans text-[11px] font-semibold tracking-[0.2em] uppercase text-brand-primary mb-6">
+              NorthLadder · Dubai / Amsterdam</p>
+            <p
+              class="font-sans text-[15px] md:text-[16px] text-brand-charcoal font-light leading-[1.8] opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+              Built the AR grading engine and auction platform. Previous experience at logistics tech and fintech
+              infrastructure companies.
+            </p>
+          </div>
+
+          <!-- Profile 3 -->
+          <div class="builder-card opacity-0 translate-y-12 relative group">
+            <!-- Structural Hover Line -->
+            <div
+              class="absolute top-[-65px] left-0 w-full h-[2px] bg-brand-primary scale-x-0 origin-left transition-transform duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-x-100">
+            </div>
+
+            <h3 class="font-display text-3xl font-bold text-brand-obsidian tracking-tight mb-2">Head of Partnerships
+            </h3>
+            <p class="font-sans text-[11px] font-semibold tracking-[0.2em] uppercase text-brand-primary mb-6">
+              NorthLadder · Amsterdam</p>
+            <p
+              class="font-sans text-[15px] md:text-[16px] text-brand-charcoal font-light leading-[1.8] opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+              Built the partner network across EU and GCC. Background in telco device lifecycle and trade-in programme
+              management at major European operators.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CUSTOMER STORIES SECTION -->
+    <section id="customer-stories" class="relative pb-32 lg:pb-48 pt-10 overflow-hidden bg-brand-bg">
+      <!-- Cinematic Ambient Background -->
+      <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <!-- Ethereal flowing gradients -->
+        <div
+          class="absolute top-[30%] left-[-10%] w-[800px] h-[800px] bg-brand-mint/10 rounded-full blur-[150px] mix-blend-multiply story-glow-1">
+        </div>
+        <div
+          class="absolute bottom-[-20%] right-[10%] w-[600px] h-[600px] bg-brand-primary/10 rounded-full blur-[120px] mix-blend-multiply story-glow-2">
+        </div>
+        <!-- Subtle angled light beams -->
+        <div
+          class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent opacity-30 transform -skew-y-12 scale-150 story-beam">
+        </div>
+      </div>
+
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
+        <!-- Section Header -->
+        <div class="mb-16 md:mb-24 flex flex-col items-start text-left">
+          <div class="overflow-hidden mb-8">
+            <p
+              class="story-sec-tag font-sans text-[11px] uppercase tracking-[0.4em] font-bold text-brand-primary translate-y-full flex items-center justify-center gap-4">
+              <span class="w-8 h-[1px] bg-brand-primary block"></span>
+              Customer Stories
+            </p>
+          </div>
+          <div class="overflow-hidden">
+            <h2
+              class="story-sec-title font-display text-4xl md:text-5xl font-semibold text-brand-obsidian leading-[1.1] translate-y-[110%]">
+              What partners and<br />buyers say
+            </h2>
+          </div>
+        </div>
+
+        <!-- Stories Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+
+          <!-- Story Card 1 -->
+          <div
+            class="testimonial-card opacity-0 translate-y-16 relative bg-white/40 backdrop-blur-2xl border border-white/60 p-10 md:p-14 rounded-[2rem] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.03)] group overflow-hidden flex flex-col justify-between">
+            <!-- Giant background quote mark -->
+            <div
+              class="absolute -top-10 -left-6 text-[200px] font-display font-bold text-brand-primary opacity-[0.03] leading-none pointer-events-none group-hover:scale-110 transition-transform duration-700 ease-out">
+              "</div>
+
+            <div class="relative z-10 mb-12">
+              <h3 class="font-display text-2xl font-bold text-brand-obsidian tracking-tight mb-2">EU Telco Operator</h3>
+              <p class="font-sans text-[11px] font-semibold tracking-[0.2em] uppercase text-gray-500">Partner · Western
+                Europe · Anonymised</p>
+
+              <p
+                class="mt-8 font-sans text-[17px] md:text-[19px] text-brand-charcoal font-light leading-[1.8] italic relative">
+                "We moved our trade-in programme to NorthLadder and saw upgrade attach rate improve by 22% in the first
+                quarter. The RV Index gives our product team the pricing intelligence we were previously estimating from
+                internal models."
+              </p>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="relative z-10 grid grid-cols-3 gap-4 pt-8 border-t border-brand-obsidian/10">
+              <div>
+                <h4 class="font-display text-xl text-3xl font-semibold md:font-bold text-brand-primary mb-1">+22%</h4>
+                <p class="font-sans text-[11px] tracking-widest font-medium uppercase text-gray-500">Attach rate</p>
+              </div>
+              <div>
+                <h4 class="font-display text-xl text-3xl font-semibold md:font-bold text-brand-primary mb-1">40%</h4>
+                <p class="font-sans text-[11px] tracking-widest font-medium uppercase text-gray-500">Fewer disputes</p>
+              </div>
+              <div>
+                <h4 class="font-display text-xl text-3xl font-semibold md:font-bold text-brand-primary mb-1">&lt;48h</h4>
+                <p class="font-sans text-[11px] tracking-widest font-medium uppercase text-gray-500">Settlement</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Story Card 2 -->
+          <div
+            class="testimonial-card opacity-0 translate-y-16 relative bg-white/40 backdrop-blur-2xl border border-white/60 p-10 md:p-14 rounded-[2rem] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.03)] group overflow-hidden flex flex-col justify-between lg:translate-y-12">
+            <!-- Giant background quote mark -->
+            <div
+              class="absolute -top-10 -left-6 text-[200px] font-display font-bold text-brand-mint opacity-[0.03] leading-none pointer-events-none group-hover:scale-110 transition-transform duration-700 ease-out">
+              "</div>
+
+            <div class="relative z-10 mb-12">
+              <h3 class="font-display text-2xl font-bold text-brand-obsidian tracking-tight mb-2">Electronics Retailer
+              </h3>
+              <p class="font-sans text-[11px] font-semibold tracking-[0.2em] uppercase text-gray-500">Partner · UK/EU ·
+                Anonymised</p>
+
+              <p
+                class="mt-8 font-sans text-[17px] md:text-[19px] text-brand-charcoal font-light leading-[1.8] italic relative">
+                "Our trade-in attach rate went from 12% to 27% within 8 weeks of launching the NorthLadder widget. The
+                checkout integration took 3 days. The price transparency converted customers who'd been hesitating."
+              </p>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="relative z-10 grid grid-cols-3 gap-4 pt-8 border-t border-brand-obsidian/10">
+              <div>
+                <h4 class="font-display text-xl text-3xl font-semibold md:font-bold text-brand-mint mb-1">+15%</h4>
+                <p class="font-sans text-[11px] tracking-widest font-medium uppercase text-gray-500 overflow-hidden text-wrap">Attach rate</p>
+              </div>
+              <div>
+                <h4 class="font-display text-xl text-3xl font-semibold md:font-bold text-brand-mint mb-1">3 days</h4>
+                <p class="font-sans text-[11px] tracking-widest font-medium uppercase text-gray-500 overflow-hidden text-wrap">Integration</p>
+              </div>
+              <div>
+                <h4 class="font-display text-xl text-3xl font-semibold md:font-bold text-brand-mint mb-1">+18%</h4>
+                <p class="font-sans text-[11px] tracking-widest font-medium uppercase text-gray-500 overflow-hidden text-wrap">Revenue</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- BUYER TESTIMONIAL & CTA SECTION -->
+    <section id="buyer-testimonial" class="relative py-32 lg:py-48 overflow-hidden bg-brand-bg">
+      <!-- Immersive Cinematic Background -->
+      <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
+        <!-- Ambient rhythmic pulses simulating the "open auction" energy -->
+        <div
+          class="absolute w-[800px] h-[800px] bg-brand-light/5 rounded-full blur-[100px] mix-blend-multiply buyer-pulse-1">
+        </div>
+        <div
+          class="absolute w-[600px] h-[600px] bg-brand-primary/10 rounded-full blur-[120px] mix-blend-multiply buyer-pulse-2">
+        </div>
+
+        <!-- Diagonal Glass Shard Effect -->
+        <div
+          class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent opacity-20 transform skew-x-12 scale-150 buyer-shard">
+        </div>
+      </div>
+
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
+        <div class="flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
+
+          <!-- Monumental Quote Area -->
+          <div class="lg:w-7/12 relative">
+            <!-- Giant Decorative Quote Mark -->
+            <div
+              class="absolute -top-16 -left-8 md:-left-12 text-[180px] md:text-[250px] font-display font-bold text-brand-primary opacity-[0.04] leading-none pointer-events-none quote-mark">
+              "</div>
+
+            <div class="overflow-hidden mb-10">
+              <p
+                class="buyer-tag font-sans text-[11px] uppercase tracking-[0.4em] font-bold text-brand-primary translate-y-full flex items-center gap-4">
+                <span class="w-8 h-[1px] bg-brand-primary block"></span>
+                Buyer Testimonial
+              </p>
+            </div>
+
+            <h2
+              class="buyer-quote font-display text-2xl md:text-3xl font-medium text-brand-obsidian leading-[1.15] tracking-tight mb-12 opacity-0 translate-y-12">
+              "The open auction model means I'm not competing against a preferred buyer at a different price. The AR
+              video means I know exactly what I'm bidding on. I moved 60% of EU sourcing to NorthLadder within 6
+              months."
+            </h2>
+
+            <div class="buyer-author opacity-0 translate-x-8 border-l-2 border-brand-primary pl-6">
+              <p class="font-sans text-[14px] font-semibold tracking-[0.1em] uppercase text-gray-500">
+                Head of Procurement, EU Device Distributor
+              </p>
+            </div>
+          </div>
+
+          <!-- Elevated CTA Card -->
+          <div class="lg:w-5/12 w-full perspective-1000">
+            <div
+              class="buyer-cta-card opacity-0 translate-y-16 rotate-x-6 relative bg-white/50 backdrop-blur-3xl border border-white/80 p-10 md:p-14 rounded-[2rem] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.05)] group overflow-hidden">
+
+              <!-- Subtle interactive glow inside card -->
+              <div
+                class="absolute top-0 right-0 w-64 h-64 bg-brand-mint/10 rounded-full blur-[80px] transition-transform duration-700 group-hover:scale-150 group-hover:-translate-x-10 group-hover:translate-y-10">
+              </div>
+
+              <div class="relative z-10">
+                <h3 class="font-display text-3xl md:text-4xl font-bold text-brand-obsidian tracking-tight mb-6">
+                  Want to share your experience?
+                </h3>
+                <p class="font-sans text-[16px] text-brand-charcoal font-light leading-[1.8] mb-10 opacity-80">
+                  We work with select partners on in-depth case studies and thought leadership features.
+                </p>
+
+                <a href="#contact"
+                  class="inline-flex items-center justify-center gap-3 bg-brand-obsidian text-white font-sans font-medium text-[15px] px-8 py-4 rounded-full hover:bg-brand-primary transition-all duration-300 shadow-lg shadow-black/10 hover:shadow-brand-primary/25 cta-btn">
+                  Get in touch
+                  <svg class="w-4 h-4 transition-transform duration-300 cta-arrow" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                    </path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- NEWSROOM SECTION -->
+    <section id="newsroom" class="relative py-32 lg:py-48 overflow-hidden bg-brand-bg">
+
+      <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <!-- Soft diffuse glows only (Scanner lines removed) -->
+        <div
+          class="absolute top-[-10%] right-[20%] w-[500px] h-[500px] bg-brand-light/10 rounded-full blur-[140px] mix-blend-multiply news-glow-1">
+        </div>
+        <div
+          class="absolute bottom-[-10%] left-[10%] w-[600px] h-[600px] bg-brand-primary/10 rounded-full blur-[120px] mix-blend-multiply news-glow-2">
+        </div>
+      </div>
+
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
+        <div class="flex flex-col lg:flex-row gap-16 lg:gap-24">
+
+          <!-- Left: Sticky Header & Media Contact -->
+          <div class="lg:w-4/12 flex flex-col justify-between">
+            <div class="sticky top-32">
+              <div class="overflow-hidden mb-8">
+                <p
+                  class="news-tag font-sans text-[11px] uppercase tracking-[0.4em] font-bold text-brand-primary translate-y-full flex items-center gap-4">
+                  <span class="w-8 h-[1px] bg-brand-primary block"></span>
+                  Newsroom
+                </p>
+              </div>
+              <div class="overflow-hidden mb-12">
+                <h2
+                  class="news-title font-display text-4xl md:text-5xl font-semibold text-brand-obsidian leading-[1.1] translate-y-[110%]">
+                  Press &<br />announcements
+                </h2>
+              </div>
+
+              <!-- Media Enquiries Block -->
+              <div class="news-contact opacity-0 translate-y-8 mt-auto pt-16 lg:pt-32">
+                <h4 class="font-sans text-[11px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-4">Media
+                  enquiries</h4>
+                <a href="mailto:press@northladder.com" class="group inline-flex items-center gap-4">
+                  <span
+                    class="font-display text-xl md:text-2xl font-semibold text-brand-obsidian group-hover:text-brand-primary transition-colors duration-300 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-brand-primary after:scale-x-0 after:origin-right hover:after:origin-left hover:after:scale-x-100 after:transition-transform after:duration-500">
+                    press@northladder.com
+                  </span>
+                  <svg
+                    class="w-5 h-5 text-brand-primary transform -rotate-45 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3">
+                    </path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: News List -->
+          <div class="lg:w-8/12 flex flex-col">
+            <div class="border-t-[1.5px] border-brand-obsidian/10">
+
+              <!-- News Item 1 -->
+              <a href="#"
+                class="news-item group block py-8 md:py-12 border-b-[1.5px] border-brand-obsidian/10 relative overflow-hidden opacity-0 translate-y-12">
+                <div
+                  class="absolute inset-0 bg-white/40 scale-y-0 origin-bottom transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-y-100 z-0">
+                </div>
+                <div class="relative z-10 flex flex-col md:flex-row gap-6 md:gap-12">
+                  <div class="md:w-1/5 pt-2">
+                    <span class="font-sans text-[11px] font-bold tracking-[0.2em] uppercase text-brand-primary">Aug
+                      2026</span>
+                  </div>
+                  <div class="md:w-4/5 flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-12">
+                    <h3
+                      class="font-display text-2xl md:text-3xl font-medium text-brand-obsidian tracking-tight group-hover:text-brand-primary transition-colors duration-300 leading-[1.3] lg:max-w-[70%]">
+                      NorthLadder expands partner network to 75+ companies across 20 markets
+                    </h3>
+                    <div class="flex items-center gap-6 justify-between lg:justify-end">
+                      <span
+                        class="px-4 py-2 rounded-full border border-brand-obsidian/10 bg-white/50 backdrop-blur-sm text-[10px] font-semibold tracking-widest uppercase text-brand-charcoal whitespace-nowrap">Press
+                        release</span>
+                      <div
+                        class="w-10 h-10 rounded-full border border-brand-obsidian/10 flex items-center justify-center group-hover:border-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 flex-shrink-0">
+                        <svg class="w-4 h-4 transform -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a>
+
+              <!-- News Item 2 -->
+              <a href="#"
+                class="news-item group block py-8 md:py-12 border-b-[1.5px] border-brand-obsidian/10 relative overflow-hidden opacity-0 translate-y-12">
+                <div
+                  class="absolute inset-0 bg-white/40 scale-y-0 origin-bottom transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-y-100 z-0">
+                </div>
+                <div class="relative z-10 flex flex-col md:flex-row gap-6 md:gap-12">
+                  <div class="md:w-1/5 pt-2">
+                    <span class="font-sans text-[11px] font-bold tracking-[0.2em] uppercase text-brand-primary">Jul
+                      2026</span>
+                  </div>
+                  <div class="md:w-4/5 flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-12">
+                    <h3
+                      class="font-display text-2xl md:text-3xl font-medium text-brand-obsidian tracking-tight group-hover:text-brand-primary transition-colors duration-300 leading-[1.3] lg:max-w-[70%]">
+                      RV Index launches EU and GCC pricing data for partner access
+                    </h3>
+                    <div class="flex items-center gap-6 justify-between lg:justify-end">
+                      <span
+                        class="px-4 py-2 rounded-full border border-brand-obsidian/10 bg-white/50 backdrop-blur-sm text-[10px] font-semibold tracking-widest uppercase text-brand-charcoal whitespace-nowrap">Product</span>
+                      <div
+                        class="w-10 h-10 rounded-full border border-brand-obsidian/10 flex items-center justify-center group-hover:border-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 flex-shrink-0">
+                        <svg class="w-4 h-4 transform -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a>
+
+              <!-- News Item 3 -->
+              <a href="#"
+                class="news-item group block py-8 md:py-12 border-b-[1.5px] border-brand-obsidian/10 relative overflow-hidden opacity-0 translate-y-12">
+                <div
+                  class="absolute inset-0 bg-white/40 scale-y-0 origin-bottom transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-y-100 z-0">
+                </div>
+                <div class="relative z-10 flex flex-col md:flex-row gap-6 md:gap-12">
+                  <div class="md:w-1/5 pt-2">
+                    <span class="font-sans text-[11px] font-bold tracking-[0.2em] uppercase text-brand-primary">Jun
+                      2026</span>
+                  </div>
+                  <div class="md:w-4/5 flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-12">
+                    <h3
+                      class="font-display text-2xl md:text-3xl font-medium text-brand-obsidian tracking-tight group-hover:text-brand-primary transition-colors duration-300 leading-[1.3] lg:max-w-[70%]">
+                      NorthLadder cited in EU Circular Economy working group report
+                    </h3>
+                    <div class="flex items-center gap-6 justify-between lg:justify-end">
+                      <span
+                        class="px-4 py-2 rounded-full border border-brand-obsidian/10 bg-white/50 backdrop-blur-sm text-[10px] font-semibold tracking-widest uppercase text-brand-charcoal whitespace-nowrap">Coverage</span>
+                      <div
+                        class="w-10 h-10 rounded-full border border-brand-obsidian/10 flex items-center justify-center group-hover:border-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 flex-shrink-0">
+                        <svg class="w-4 h-4 transform -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a>
+
+              <!-- News Item 4 -->
+              <a href="#"
+                class="news-item group block py-8 md:py-12 border-b-[1.5px] border-brand-obsidian/10 relative overflow-hidden opacity-0 translate-y-12">
+                <div
+                  class="absolute inset-0 bg-white/40 scale-y-0 origin-bottom transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-y-100 z-0">
+                </div>
+                <div class="relative z-10 flex flex-col md:flex-row gap-6 md:gap-12">
+                  <div class="md:w-1/5 pt-2">
+                    <span class="font-sans text-[11px] font-bold tracking-[0.2em] uppercase text-brand-primary">May
+                      2026</span>
+                  </div>
+                  <div class="md:w-4/5 flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-12">
+                    <h3
+                      class="font-display text-2xl md:text-3xl font-medium text-brand-obsidian tracking-tight group-hover:text-brand-primary transition-colors duration-300 leading-[1.3] lg:max-w-[70%]">
+                      Series B funding: NorthLadder accelerates EU expansion
+                    </h3>
+                    <div class="flex items-center gap-6 justify-between lg:justify-end">
+                      <span
+                        class="px-4 py-2 rounded-full border border-brand-obsidian/10 bg-white/50 backdrop-blur-sm text-[10px] font-semibold tracking-widest uppercase text-brand-charcoal whitespace-nowrap">Funding</span>
+                      <div
+                        class="w-10 h-10 rounded-full border border-brand-obsidian/10 flex items-center justify-center group-hover:border-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-all duration-300 flex-shrink-0">
+                        <svg class="w-4 h-4 transform -rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a>
+
+            </div>
+
+            <!-- Full Newsroom CTA -->
+            <div class="mt-16 flex justify-start news-cta opacity-0 translate-y-8">
+              <a href="#"
+                class="inline-flex items-center gap-3 border-[1.5px] border-brand-obsidian/20 text-brand-obsidian font-sans font-semibold text-[13px] uppercase tracking-widest px-10 py-4 rounded-full hover:border-brand-primary hover:bg-brand-primary hover:text-white transition-all duration-300 group">
+                Full newsroom
+                <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none"
+                  stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                  </path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- JOIN THE TEAM SECTION -->
+    <section id="join-team" class="relative py-32 lg:py-48 overflow-hidden bg-brand-bg">
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
+
+        <!-- Premium Dark Architecture Container -->
+        <div
+          class="join-container relative bg-brand-obsidian rounded-[3rem] md:rounded-[4rem] overflow-hidden px-8 py-16 md:p-20 lg:p-24 shadow-2xl opacity-0 translate-y-16">
+
+          <!-- Deep Ambient Tech Background -->
+          <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+            <!-- Blueprint Grid overlay -->
+            <div class="absolute inset-0 opacity-[0.03]"
+              style="background-image: linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px); background-size: 40px 40px;">
+            </div>
+
+            <!-- Floating Cinematic Glows -->
+            <div
+              class="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-brand-primary/40 rounded-full blur-[130px] mix-blend-screen join-glow-1">
+            </div>
+            <div
+              class="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-brand-mint/30 rounded-full blur-[100px] mix-blend-screen join-glow-2">
+            </div>
+
+            <!-- Sweeping Light Beam -->
+            <div class="absolute inset-0 w-full h-full">
+              <div
+                class="absolute top-0 left-[-100%] w-[50%] h-full bg-gradient-to-r from-transparent via-white/5 to-transparent transform skew-x-[-25deg] join-beam">
+              </div>
+            </div>
+          </div>
+
+          <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-center">
+
+            <!-- Left: Headline & Locations -->
+            <div class="lg:col-span-7 flex flex-col">
+              <div class="overflow-hidden mb-8">
+                <p
+                  class="join-tag font-sans text-[11px] uppercase tracking-[0.4em] font-bold text-brand-mint translate-y-full flex items-center gap-4">
+                  <span class="w-8 h-[1px] bg-brand-mint block"></span>
+                  Join The Team
+                </p>
+              </div>
+
+              <div class="overflow-hidden mb-12">
+                <h2
+                  class="join-title font-display text-4xl md:text-5xl font-bold text-white leading-[1.1] translate-y-[110%] tracking-tight">
+                  Build the infrastructure<br />for the circular economy.
+                </h2>
+              </div>
+
+              <!-- Location Pills -->
+              <div class="join-locations opacity-0 translate-y-8 flex flex-wrap gap-3">
+                <span
+                  class="px-5 py-2.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-[11px] font-sans font-medium tracking-[0.15em] uppercase text-gray-300">Dubai
+                  HQ</span>
+                <span
+                  class="px-5 py-2.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-md text-[11px] font-sans font-medium tracking-[0.15em] uppercase text-gray-300">Amsterdam</span>
+                <span
+                  class="px-5 py-2.5 rounded-full border border-brand-bright/30 bg-brand-bright/10 backdrop-blur-md text-[11px] font-sans font-medium tracking-[0.15em] uppercase text-brand-bright">Remote-first*</span>
+              </div>
+
+              <p class="join-locations font-sans text-[11px] text-gray-500 mt-4 opacity-0">*for certain roles</p>
+            </div>
+
+            <!-- Right: The 3 Pillars (Interactive Glass List) -->
+            <div class="lg:col-span-5 flex flex-col space-y-4 lg:space-y-6">
+
+              <!-- Pillar 1 -->
+              <div
+                class="join-pillar opacity-0 translate-x-12 relative group bg-white/5 border border-white/10 rounded-[1.5rem] p-8 hover:bg-white/10 transition-colors duration-500 overflow-hidden cursor-default">
+                <div
+                  class="absolute top-0 left-0 w-1.5 h-full bg-brand-mint scale-y-0 origin-top transition-transform duration-500 group-hover:scale-y-100">
+                </div>
+                <h3 class="font-display text-2xl font-bold text-white mb-2">Global by default</h3>
+                <p class="font-sans text-[15px] text-gray-400 font-light leading-[1.7]">
+                  EU + GCC operations.<br />Multi-timezone team.
+                </p>
+              </div>
+
+              <!-- Pillar 2 -->
+              <div
+                class="join-pillar opacity-0 translate-x-12 relative group bg-white/5 border border-white/10 rounded-[1.5rem] p-8 hover:bg-white/10 transition-colors duration-500 overflow-hidden cursor-default">
+                <div
+                  class="absolute top-0 left-0 w-1.5 h-full bg-brand-primary scale-y-0 origin-top transition-transform duration-500 group-hover:scale-y-100">
+                </div>
+                <h3 class="font-display text-2xl font-bold text-white mb-2">Infrastructure builders</h3>
+                <p class="font-sans text-[15px] text-gray-400 font-light leading-[1.7]">
+                  We build market infrastructure.<br />High ownership.
+                </p>
+              </div>
+
+              <!-- Pillar 3 -->
+              <div
+                class="join-pillar opacity-0 translate-x-12 relative group bg-white/5 border border-white/10 rounded-[1.5rem] p-8 hover:bg-white/10 transition-colors duration-500 overflow-hidden cursor-default">
+                <div
+                  class="absolute top-0 left-0 w-1.5 h-full bg-brand-bright scale-y-0 origin-top transition-transform duration-500 group-hover:scale-y-100">
+                </div>
+                <h3 class="font-display text-2xl font-bold text-white mb-2">Data-driven</h3>
+                <p class="font-sans text-[15px] text-gray-400 font-light leading-[1.7]">
+                  Every decision grounded in<br />auction data.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OPEN ROLES SECTION -->
+    <section id="open-roles" class="relative py-32 lg:py-48 overflow-hidden bg-brand-bg perspective-1000">
+      <!-- 3D Luxury Cinematic Background -->
+      <div class="absolute inset-0 z-0 pointer-events-none flex items-center justify-center transform-style-3d">
+
+        <!-- 3D Floor Grid -->
+        <div
+          class="absolute bottom-[-20%] left-[-20%] w-[140%] h-[80%] bg-[linear-gradient(to_right,rgba(147,51,234,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(147,51,234,0.08)_1px,transparent_1px)] bg-[size:40px_40px] [transform:rotateX(75deg)] [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_70%)] role-grid">
+        </div>
+
+        <!-- Floating 3D Frosted Glass Panes -->
+        <div
+          class="absolute top-[20%] right-[10%] w-[400px] h-[400px] bg-white/10 backdrop-blur-2xl border border-white/40 rounded-3xl role-pane-1 [transform:translateZ(-100px)_rotateX(20deg)_rotateY(-30deg)] shadow-2xl">
+        </div>
+        <div
+          class="absolute bottom-[10%] left-[5%] w-[500px] h-[300px] bg-brand-primary/5 backdrop-blur-3xl border border-brand-primary/10 rounded-full role-pane-2 [transform:translateZ(-300px)_rotateX(-20deg)_rotateY(40deg)] shadow-2xl">
+        </div>
+        <div
+          class="absolute top-[10%] left-[20%] w-[200px] h-[200px] bg-brand-mint/10 backdrop-blur-xl border border-brand-mint/20 rounded-2xl role-pane-3 [transform:translateZ(50px)_rotateX(45deg)_rotateY(15deg)] shadow-2xl">
+        </div>
+
+        <!-- Deep Ambient Glows -->
+        <div
+          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-primary/5 rounded-full blur-[150px] mix-blend-multiply">
+        </div>
+      </div>
+
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
+
+        <!-- Section Header -->
+        <div class="mb-20">
+          <div class="overflow-hidden mb-8">
+            <p
+              class="role-sec-tag font-sans text-[11px] uppercase tracking-[0.4em] font-bold text-brand-primary translate-y-full flex items-center gap-4">
+              <span class="w-8 h-[1px] bg-brand-primary block"></span>
+              Open Roles
+            </p>
+          </div>
+          <div class="overflow-hidden">
+            <h2
+              class="role-sec-title font-display text-4xl md:text-5xl font-semibold text-brand-obsidian leading-[1.1] translate-y-[110%]">
+              Join the mission
+            </h2>
+          </div>
+        </div>
+
+        <!-- Roles Interactive List -->
+        <div class="flex flex-col border-t-[1.5px] border-brand-obsidian/10">
+
+          <!-- Role Item 1 -->
+          <a href="#"
+            class="role-item group flex flex-col md:flex-row md:items-center py-8 md:py-10 border-b-[1.5px] border-brand-obsidian/10 relative overflow-hidden opacity-0 translate-y-12">
+            <!-- 3D Hover Expansion Background -->
+            <div
+              class="absolute inset-0 bg-white/40 backdrop-blur-md scale-y-0 origin-bottom transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-y-100 z-0 rounded-2xl">
+            </div>
+
+            <div class="relative z-10 flex flex-col md:flex-row w-full gap-6 md:gap-0 px-4">
+              <div class="md:w-1/4 flex items-center">
+                <span
+                  class="font-sans text-[11px] font-bold tracking-[0.2em] uppercase text-brand-primary">Engineering</span>
+              </div>
+              <div class="md:w-5/12 flex items-center">
+                <h3
+                  class="font-display text-2xl md:text-3xl font-medium text-brand-obsidian tracking-tight group-hover:text-brand-primary transition-colors duration-300">
+                  Senior Backend Engineer <span class="block text-lg font-medium text-brand-charcoal mt-1">— Auction
+                    Platform</span>
+                </h3>
+              </div>
+              <div class="md:w-1/4 flex items-center">
+                <span class="font-sans text-[14px] font-light text-gray-500 tracking-wide">Dubai / Remote</span>
+              </div>
+              <div class="md:w-1/12 flex items-center justify-end">
+                <span
+                  class="font-sans text-[13px] font-semibold uppercase tracking-widest text-brand-obsidian group-hover:text-brand-primary flex items-center gap-2 transition-colors">
+                  Apply
+                  <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                    </path>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Role Item 2 -->
+          <a href="#"
+            class="role-item group flex flex-col md:flex-row md:items-center py-8 md:py-10 border-b-[1.5px] border-brand-obsidian/10 relative overflow-hidden opacity-0 translate-y-12">
+            <div
+              class="absolute inset-0 bg-white/40 backdrop-blur-md scale-y-0 origin-bottom transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-y-100 z-0 rounded-2xl">
+            </div>
+            <div class="relative z-10 flex flex-col md:flex-row w-full gap-6 md:gap-0 px-4">
+              <div class="md:w-1/4 flex items-center">
+                <span
+                  class="font-sans text-[11px] font-bold tracking-[0.2em] uppercase text-brand-primary">Partnerships</span>
+              </div>
+              <div class="md:w-5/12 flex items-center">
+                <h3
+                  class="font-display text-2xl md:text-3xl font-medium text-brand-obsidian tracking-tight group-hover:text-brand-primary transition-colors duration-300">
+                  Partner Success Manager
+                </h3>
+              </div>
+              <div class="md:w-1/4 flex items-center">
+                <span class="font-sans text-[14px] font-light text-gray-500 tracking-wide">EU / Amsterdam</span>
+              </div>
+              <div class="md:w-1/12 flex items-center justify-end">
+                <span
+                  class="font-sans text-[13px] font-semibold uppercase tracking-widest text-brand-obsidian group-hover:text-brand-primary flex items-center gap-2 transition-colors">
+                  Apply
+                  <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                    </path>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Role Item 3 -->
+          <a href="#"
+            class="role-item group flex flex-col md:flex-row md:items-center py-8 md:py-10 border-b-[1.5px] border-brand-obsidian/10 relative overflow-hidden opacity-0 translate-y-12">
+            <div
+              class="absolute inset-0 bg-white/40 backdrop-blur-md scale-y-0 origin-bottom transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-y-100 z-0 rounded-2xl">
+            </div>
+            <div class="relative z-10 flex flex-col md:flex-row w-full gap-6 md:gap-0 px-4">
+              <div class="md:w-1/4 flex items-center">
+                <span class="font-sans text-[11px] font-bold tracking-[0.2em] uppercase text-brand-primary">Data</span>
+              </div>
+              <div class="md:w-5/12 flex items-center">
+                <h3
+                  class="font-display text-2xl md:text-3xl font-medium text-brand-obsidian tracking-tight group-hover:text-brand-primary transition-colors duration-300">
+                  Data Analyst <span class="block text-lg font-medium text-brand-charcoal mt-1">— Residual Value
+                    Index</span>
+                </h3>
+              </div>
+              <div class="md:w-1/4 flex items-center">
+                <span class="font-sans text-[14px] font-light text-gray-500 tracking-wide">Dubai</span>
+              </div>
+              <div class="md:w-1/12 flex items-center justify-end">
+                <span
+                  class="font-sans text-[13px] font-semibold uppercase tracking-widest text-brand-obsidian group-hover:text-brand-primary flex items-center gap-2 transition-colors">
+                  Apply
+                  <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                    </path>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </a>
+
+          <!-- Role Item 4 -->
+          <a href="#"
+            class="role-item group flex flex-col md:flex-row md:items-center py-8 md:py-10 border-b-[1.5px] border-brand-obsidian/10 relative overflow-hidden opacity-0 translate-y-12">
+            <div
+              class="absolute inset-0 bg-white/40 backdrop-blur-md scale-y-0 origin-bottom transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-y-100 z-0 rounded-2xl">
+            </div>
+            <div class="relative z-10 flex flex-col md:flex-row w-full gap-6 md:gap-0 px-4">
+              <div class="md:w-1/4 flex items-center">
+                <span
+                  class="font-sans text-[11px] font-bold tracking-[0.2em] uppercase text-brand-primary">Product</span>
+              </div>
+              <div class="md:w-5/12 flex items-center">
+                <h3
+                  class="font-display text-2xl md:text-3xl font-medium text-brand-obsidian tracking-tight group-hover:text-brand-primary transition-colors duration-300">
+                  Product Manager <span class="block text-lg font-medium text-brand-charcoal mt-1">— Buyer
+                    Experience</span>
+                </h3>
+              </div>
+              <div class="md:w-1/4 flex items-center">
+                <span class="font-sans text-[14px] font-light text-gray-500 tracking-wide">Remote</span>
+              </div>
+              <div class="md:w-1/12 flex items-center justify-end">
+                <span
+                  class="font-sans text-[13px] font-semibold uppercase tracking-widest text-brand-obsidian group-hover:text-brand-primary flex items-center gap-2 transition-colors">
+                  Apply
+                  <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                    </path>
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- View All CTA -->
+        <div class="mt-16 flex justify-start role-cta opacity-0 translate-y-8">
+          <a href="#"
+            class="inline-flex items-center gap-3 bg-brand-obsidian text-white font-sans font-medium text-[15px] px-8 py-4 rounded-full hover:bg-brand-primary transition-all duration-300 shadow-lg shadow-black/10 hover:shadow-brand-primary/25 group">
+            View all open roles
+            <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FINAL CTA SECTION -->
+    <section id="final-cta"
+      class="relative py-24 lg:py-40 px-6 lg:px-12 bg-brand-bg flex justify-center perspective-1000">
+
+      <!-- Massive Dark Glass Enclosure -->
+      <div
+        class="cta-enclosure relative w-full max-w-[1400px] rounded-[3rem] md:rounded-[4rem] bg-brand-obsidian overflow-hidden opacity-0 shadow-[0_40px_80px_-20px_rgba(147,51,234,0.15)] transform-style-3d border border-white/5">
+
+        <!-- Immersive Aurora Background -->
+        <div class="absolute inset-0 z-0 pointer-events-none">
+          <!-- Dark gradient base -->
+          <div class="absolute inset-0 bg-gradient-to-b from-brand-obsidian via-[#150a21] to-brand-obsidian"></div>
+
+          <!-- Mesmerizing moving light orbs (Aurora effect) -->
+          <div
+            class="absolute top-[-30%] left-[-10%] w-[80vw] md:w-[800px] h-[80vw] md:h-[800px] bg-brand-primary/40 rounded-full blur-[140px] mix-blend-screen cta-aurora-1">
+          </div>
+          <div
+            class="absolute bottom-[-30%] right-[-10%] w-[60vw] md:w-[600px] h-[60vw] md:h-[600px] bg-brand-bright/30 rounded-full blur-[120px] mix-blend-screen cta-aurora-2">
+          </div>
+          <div
+            class="absolute top-[20%] left-[40%] w-[400px] h-[400px] bg-brand-mint/20 rounded-full blur-[100px] mix-blend-screen cta-aurora-3">
+          </div>
+
+          <!-- Fine architectural grid overlay -->
+          <div
+            class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)] cta-grid">
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative z-10 flex flex-col items-center text-center py-28 md:py-40 px-6 md:px-12">
+
+          <div class="overflow-hidden mb-6">
+            <h2
+              class="cta-heading font-display text-4xl md:text-5xl font-semibold text-white leading-[1.05] tracking-tight max-w-5xl translate-y-[110%]">
+              Want to learn more about NorthLadder?
+            </h2>
+          </div>
+
+          <div class="overflow-hidden mb-16">
+            <p class="cta-sub font-sans text-lg md:text-xl text-gray-300 font-light max-w-2xl translate-y-[110%]">
+              Talk to our team — partnerships, press, or general enquiry.
+            </p>
+          </div>
+
+          <!-- Buttons Container -->
+          <div class="cta-actions flex flex-col sm:flex-row items-center gap-6 opacity-0 translate-y-8">
+
+            <!-- Secondary Button (Glass) -->
+            <a href="#contact"
+              class="magnetic-btn relative px-10 py-4 md:py-5 rounded-full border border-white/20 bg-white/5 backdrop-blur-xl overflow-hidden group transition-all duration-500 hover:border-white/40 hover:bg-white/10">
+              <span class="relative z-10 font-sans text-[15px] font-medium text-white tracking-wide">Contact us</span>
+            </a>
+
+            <!-- Primary Button (Glowing Solid) -->
+            <a href="#demo"
+              class="magnetic-btn relative px-10 py-4 md:py-5 rounded-full bg-white overflow-hidden group transition-all duration-500 hover:scale-105 shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-[0_0_60px_rgba(147,51,234,0.4)]">
+              <div
+                class="absolute inset-0 bg-gradient-to-r from-brand-light via-brand-primary to-brand-light opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              </div>
+              <span
+                class="relative z-10 font-sans text-[15px] font-bold text-brand-obsidian group-hover:text-white tracking-wide transition-colors duration-500">Book
+                a demo</span>
+            </a>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer id="main-footer" class="relative z-30 bg-white overflow-hidden pt-32 pb-16">
+    <!-- Subtle top ambient separator & glow for depth -->
+    <div
+      class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-primary/15 to-transparent">
+    </div>
+    <div
+      class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand-primary/[0.02] blur-[120px] pointer-events-none">
+    </div>
+
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-8 mb-24">
+        <!-- Brand & Mission Column -->
+        <div class="col-span-1 md:col-span-5 pr-0 lg:pr-12">
+          <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+            class="h-6 w-auto brightness-0 mb-8 opacity-90" />
+          <p class="font-sans text-[13px] text-gray-500 font-light leading-[1.9] mb-10 max-w-sm">
+            Democratization Of Trade-ins. Powering the world's most advanced
+            circularity infrastructure for Grade-A inventory with absolute
+            neutrality.
+          </p>
+
+          <!-- Premium Language Pill with Hover State -->
+          <div class="inline-flex items-center relative group">
+            <div
+              class="absolute inset-0 bg-gray-50 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            </div>
+            <div
+              class="relative flex items-center bg-white border border-gray-100/80 rounded-full px-5 py-2.5 hover:border-gray-200 hover:shadow-[0_10px_20px_-10px_rgba(0,0,0,0.05)] transition-all duration-300">
+              <svg class="w-4 h-4 text-gray-400 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9">
+                </path>
+              </svg>
+              <select
+                class="bg-transparent text-[11px] font-sans font-medium tracking-wide text-brand-obsidian focus:outline-none pr-7 appearance-none cursor-pointer w-full select-arrow">
+                <option>English (Global)</option>
+                <option>العربية (Arabic)</option>
+                <option>Deutsch (German)</option>
+                <option>Español (Spanish)</option>
+                <option>Français (French)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ecosystem Links -->
+        <div class="col-span-1 md:col-span-2 md:col-start-7">
+          <h4 class="font-sans text-[9px] uppercase tracking-[0.25em] font-bold text-gray-400 mb-8">
+            Ecosystem
+          </h4>
+          <ul class="space-y-5 font-sans text-[13px] font-light text-gray-500">
+            <li>
+              <a href="#partners"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">For
+                Partners</a>
+            </li>
+            <li>
+              <a href="#buyers"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">For
+                Buyers</a>
+            </li>
+            <li>
+              <a href="#neutral-marketplace"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Neutral
+                Marketplace</a>
+            </li>
+            <li>
+              <a href="#insights"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Data
+                Insights</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Enterprise Links -->
+        <div class="col-span-1 md:col-span-2">
+          <h4 class="font-sans text-[9px] uppercase tracking-[0.25em] font-bold text-gray-400 mb-8">
+            Enterprise
+          </h4>
+          <ul class="space-y-5 font-sans text-[13px] font-light text-gray-500">
+            <li>
+              <a href="#about"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Inside
+                NorthLadder</a>
+            </li>
+            <li>
+              <a href="#careers"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Global
+                Careers</a>
+            </li>
+            <li>
+              <a href="#newsroom"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">News
+                & Media</a>
+            </li>
+            <li>
+              <a href="#contact"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Contact
+                Relations</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Refined Bottom Bar -->
+      <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-100/80">
+        <p class="font-sans text-[11px] font-medium tracking-wide text-gray-400">
+          © 2026 NorthLadder. All rights reserved.
+        </p>
+        <div class="flex gap-8 mt-6 md:mt-0">
+          <a href="#"
+            class="text-gray-400 hover:text-brand-obsidian transition-colors text-[11px] tracking-wide font-sans font-medium">Privacy
+            Policy</a>
+          <a href="#"
+            class="text-gray-400 hover:text-brand-obsidian transition-colors text-[11px] tracking-wide font-sans font-medium">Terms
+            of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      gsap.registerPlugin(ScrollTrigger);
+      navBar();
+      cursorLogic();
+      initHero();
+      initBuildersSection();
+      initCustomerStoriesSection();
+      initBuyerTestimonialSection();
+      initNewsroomSection();
+      initJoinTeamSection();
+      initOpenRolesSection();
+      initCTASection();
+    });
+
+    function navBar() {
+      window.addEventListener("scroll", () => {
+        const nav = document.getElementById("main-nav");
+        if (window.scrollY > 20) {
+          nav.classList.remove("w-full");
+          nav.classList.add("w-[90%]", "max-w-[1400px]", "top-2", "rounded-full", "shadow-sm", "border", "border-white/40");
+        } else {
+          nav.classList.add("w-full");
+          nav.classList.remove("w-[90%]", "max-w-[1400px]", "top-2", "rounded-full", "shadow-sm", "border", "border-white/40");
+        }
+      });
+
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener('click', () => {
+          mobileBtn.classList.toggle('menu-open');
+          mobileMenu.classList.toggle('active');
+          document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+        });
+      }
+    }
+
+    function cursorLogic() {
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (!prefersReducedMotion && window.matchMedia("(pointer: fine)").matches) {
+        const glow = document.getElementById("cursor-glow");
+        let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+        let gx = mx, gy = my;
+        window.addEventListener("mousemove", (e) => {
+          mx = e.clientX; my = e.clientY;
+        });
+        gsap.ticker.add(() => {
+          gx += (mx - gx) * 0.08;
+          gy += (my - gy) * 0.08;
+          gsap.set(glow, { x: gx, y: gy });
+        });
+      }
+    }
+
+    function initHero() {
+      // 1. Hero Entrance Animations
+      const heroTl = gsap.timeline({ defaults: { ease: "expo.out" } });
+
+      // Subtle scale-down of the background image
+      heroTl.to(".hero-bg-img", {
+        scale: 1,
+        duration: 2.5,
+        ease: "power2.out"
+      }, 0);
+
+      // Tag slides up from mask
+      heroTl.to(".hero-tag", {
+        y: 0,
+        duration: 1.2
+      }, 0.2);
+
+      // Staggered title lines reveal
+      heroTl.to(".hero-title-line", {
+        y: 0,
+        duration: 1.4,
+        stagger: 0.15
+      }, 0.3);
+
+      // Description fades and slides up
+      heroTl.to(".hero-desc", {
+        opacity: 1,
+        y: 0,
+        duration: 1.5,
+      }, 0.8);
+
+      // 2. "Inside NorthLadder" Scroll Animations
+      const storyTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#inside-northladder",
+          start: "top 70%",
+          end: "bottom bottom",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // Left column narrative sequence
+      storyTl.to(".story-tag", {
+        y: 0,
+        duration: 1,
+        ease: "power4.out"
+      }, 0)
+        .to(".story-title", {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          ease: "power4.out"
+        }, 0.1)
+        .to(".story-paragraphs p", {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          stagger: 0.15,
+          ease: "power3.out"
+        }, 0.3);
+
+      // Right column Data Axis animation
+      const dataTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".data-axis",
+          start: "top 75%",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // Draw the vertical axis line down
+      dataTl.to(".axis-line", {
+        height: "100%",
+        duration: 1.5,
+        ease: "power3.inOut"
+      }, 0);
+
+      // Fade and slide in the massive typographic data nodes
+      dataTl.to(".data-node", {
+        opacity: 1,
+        x: 0,
+        duration: 1.2,
+        stagger: 0.25,
+        ease: "power4.out"
+      }, 0.4);
+
+      // Fade in the backed-by section
+      dataTl.to(".backed-by-section", {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: "power3.out"
+      }, 1.2);
+
+      // Ambient Orb in the background
+      gsap.to(".orb-1", {
+        x: -150,
+        y: 100,
+        duration: 12,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+    }
+
+    function initBuildersSection() {
+      const buildersTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#the-builders",
+          start: "top 75%",
+          end: "bottom bottom",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // Typography Entrance
+      buildersTl.to(".builder-tag", {
+        y: 0,
+        duration: 1,
+        ease: "power4.out"
+      }, 0)
+        .to(".builder-title", {
+          y: 0,
+          duration: 1.2,
+          ease: "power4.out"
+        }, 0.1);
+
+      // Staggered Profiles Entrance
+      buildersTl.to(".builder-card", {
+        opacity: 1,
+        y: 0,
+        duration: 1.4,
+        stagger: 0.2,
+        ease: "power3.out"
+      }, 0.3);
+
+      // Cinematic Background Glow Movements
+      gsap.to(".builder-glow-1", {
+        x: 200,
+        y: 100,
+        scale: 1.2,
+        duration: 15,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      gsap.to(".builder-glow-2", {
+        x: -250,
+        y: -150,
+        scale: 1.1,
+        duration: 18,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+    }
+
+    function initCustomerStoriesSection() {
+      const storiesTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#customer-stories",
+          start: "top 75%",
+          end: "bottom bottom",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // Typography Entrance
+      storiesTl.to(".story-sec-tag", {
+        y: 0,
+        duration: 1,
+        ease: "power4.out"
+      }, 0)
+        .to(".story-sec-title", {
+          y: 0,
+          duration: 1.2,
+          ease: "power4.out"
+        }, 0.1);
+
+      // Staggered Cards Entrance
+      storiesTl.to(".testimonial-card", {
+        opacity: 1,
+        y: 0,
+        duration: 1.4,
+        stagger: 0.2,
+        ease: "power3.out"
+      }, 0.3);
+
+      // Cinematic Background Animations
+      gsap.to(".story-glow-1", {
+        x: 150,
+        y: -100,
+        scale: 1.1,
+        duration: 12,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      gsap.to(".story-glow-2", {
+        x: -200,
+        y: 150,
+        scale: 1.2,
+        duration: 16,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      // Slow pan for the light beam
+      gsap.to(".story-beam", {
+        x: "50%",
+        duration: 20,
+        repeat: -1,
+        yoyo: true,
+        ease: "linear"
+      });
+    }
+
+    function initBuyerTestimonialSection() {
+      const buyerTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#buyer-testimonial",
+          start: "top 75%",
+          end: "bottom bottom",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // Typography Entrance
+      buyerTl.to(".buyer-tag", {
+        y: 0,
+        duration: 1,
+        ease: "power4.out"
+      }, 0)
+        .to(".buyer-quote", {
+          opacity: 1,
+          y: 0,
+          duration: 1.4,
+          ease: "power4.out"
+        }, 0.1)
+        .to(".buyer-author", {
+          opacity: 1,
+          x: 0,
+          duration: 1.2,
+          ease: "power3.out"
+        }, 0.4);
+
+      // CTA Card 3D Entrance
+      buyerTl.to(".buyer-cta-card", {
+        opacity: 1,
+        y: 0,
+        rotationX: 0,
+        duration: 1.5,
+        ease: "power3.out"
+      }, 0.3);
+
+      // Subtle Parallax on the decorative quote mark
+      gsap.to(".quote-mark", {
+        y: -50,
+        scrollTrigger: {
+          trigger: "#buyer-testimonial",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1
+        }
+      });
+
+      // Cinematic Background Animations
+      gsap.to(".buyer-pulse-1", {
+        scale: 1.5,
+        opacity: 0.5,
+        duration: 4,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      gsap.to(".buyer-pulse-2", {
+        scale: 1.3,
+        x: 100,
+        duration: 6,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      gsap.to(".buyer-shard", {
+        x: "30%",
+        duration: 15,
+        repeat: -1,
+        yoyo: true,
+        ease: "linear"
+      });
+    }
+
+    function initNewsroomSection() {
+      const newsTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#newsroom",
+          start: "top 75%",
+          end: "bottom bottom",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // Left Column Typography Entrance
+      newsTl.to(".news-tag", {
+        y: 0,
+        duration: 1,
+        ease: "power4.out"
+      }, 0)
+        .to(".news-title", {
+          y: 0,
+          duration: 1.2,
+          ease: "power4.out"
+        }, 0.1)
+        .to(".news-contact", {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          ease: "power3.out"
+        }, 0.3);
+
+      // Right Column News Items Staggered Entrance
+      newsTl.to(".news-item", {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        stagger: 0.15,
+        ease: "power3.out"
+      }, 0.2);
+
+      // Full Newsroom CTA fade in
+      newsTl.to(".news-cta", {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: "power3.out"
+      }, 0.8);
+
+      // Cinematic Background Animations
+      gsap.to(".news-glow-1", {
+        x: -150,
+        y: 100,
+        scale: 1.2,
+        duration: 14,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      gsap.to(".news-glow-2", {
+        x: 200,
+        y: -100,
+        scale: 1.1,
+        duration: 18,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+    }
+    function initJoinTeamSection() {
+      const joinTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#join-team",
+          start: "top 75%",
+          end: "bottom bottom",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // Dark Container Entrance
+      joinTl.to(".join-container", {
+        opacity: 1,
+        y: 0,
+        duration: 1.5,
+        ease: "power4.out"
+      }, 0);
+
+      // Typography Entrance
+      joinTl.to(".join-tag", {
+        y: 0,
+        duration: 1,
+        ease: "power4.out"
+      }, 0.2)
+        .to(".join-title", {
+          y: 0,
+          duration: 1.2,
+          ease: "power4.out"
+        }, 0.3)
+        .to(".join-locations", {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          stagger: 0.1,
+          ease: "power3.out"
+        }, 0.5);
+
+      // Pillars Entrance
+      joinTl.to(".join-pillar", {
+        opacity: 1,
+        x: 0,
+        duration: 1.2,
+        stagger: 0.15,
+        ease: "power3.out"
+      }, 0.6);
+
+      // Cinematic Background Animations
+      gsap.to(".join-glow-1", {
+        x: -100,
+        y: 150,
+        scale: 1.2,
+        duration: 12,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      gsap.to(".join-glow-2", {
+        x: 150,
+        y: -100,
+        scale: 1.1,
+        duration: 15,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      // Light beam sweeping across the dark container continuously 
+      gsap.to(".join-beam", {
+        x: "300%",
+        duration: 2.5,
+        repeat: -1,
+        repeatDelay: 4,
+        ease: "power1.inOut"
+      });
+    }
+
+    function initOpenRolesSection() {
+      const rolesTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#open-roles",
+          start: "top 75%",
+          end: "bottom bottom",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // Typography Entrance
+      rolesTl.to(".role-sec-tag", {
+        y: 0,
+        duration: 1,
+        ease: "power4.out"
+      }, 0)
+        .to(".role-sec-title", {
+          y: 0,
+          duration: 1.2,
+          ease: "power4.out"
+        }, 0.1);
+
+      // Staggered Roles List Entrance
+      rolesTl.to(".role-item", {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        stagger: 0.15,
+        ease: "power3.out"
+      }, 0.3);
+
+      // CTA Entrance
+      rolesTl.to(".role-cta", {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: "power3.out"
+      }, 0.8);
+
+      // --- 3D Background Animations ---
+
+      // 3D Grid Parallax Drift
+      gsap.to(".role-grid", {
+        z: -100,
+        y: -50,
+        rotationX: 70, // Slight tilt variation
+        duration: 15,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      // Tumble and float the 3D frosted glass panes
+      gsap.to(".role-pane-1", {
+        rotationX: 40,
+        rotationY: -10,
+        z: -50,
+        y: -80,
+        duration: 12,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      gsap.to(".role-pane-2", {
+        rotationX: 10,
+        rotationY: 60,
+        z: -150,
+        x: 100,
+        duration: 16,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      gsap.to(".role-pane-3", {
+        rotationX: 15,
+        rotationY: 45,
+        z: 100,
+        x: -50,
+        y: 50,
+        duration: 14,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+    }
+
+    function initCTASection() {
+      const ctaTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#final-cta",
+          start: "top 80%",
+          end: "bottom bottom",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // 1. Enclosure Entrance (3D Scale & Fade)
+      ctaTl.fromTo(".cta-enclosure",
+        { opacity: 0, scale: 0.95, rotationX: -5 },
+        { opacity: 1, scale: 1, rotationX: 0, duration: 1.5, ease: "power4.out" }
+      );
+
+      // 2. Typography Entrance (Masked Slide-Up)
+      ctaTl.to(".cta-heading", {
+        y: 0,
+        duration: 1.2,
+        ease: "power4.out"
+      }, "-=1.0")
+        .to(".cta-sub", {
+          y: 0,
+          duration: 1.2,
+          ease: "power4.out"
+        }, "-=1.0");
+
+      // 3. Actions Entrance
+      ctaTl.to(".cta-actions", {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: "power3.out"
+      }, "-=0.8");
+
+      // 4. Cinematic Aurora Background Animations (Infinite)
+      gsap.to(".cta-aurora-1", {
+        x: "20%",
+        y: "10%",
+        scale: 1.2,
+        duration: 15,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      gsap.to(".cta-aurora-2", {
+        x: "-20%",
+        y: "-10%",
+        scale: 1.3,
+        duration: 18,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      gsap.to(".cta-aurora-3", {
+        x: "30%",
+        y: "-20%",
+        duration: 20,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      // Parallax the internal grid slowly
+      gsap.to(".cta-grid", {
+        y: 50,
+        scrollTrigger: {
+          trigger: "#final-cta",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1
+        }
+      });
+
+      // 5. Magnetic Button Effect (Premium Interactive Polish)
+      const magneticBtns = document.querySelectorAll(".magnetic-btn");
+
+      magneticBtns.forEach(btn => {
+        btn.addEventListener("mousemove", (e) => {
+          const rect = btn.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+
+          gsap.to(btn, {
+            x: x * 0.2,
+            y: y * 0.2,
+            duration: 0.6,
+            ease: "power3.out"
+          });
+        });
+
+        btn.addEventListener("mouseleave", () => {
+          gsap.to(btn, {
+            x: 0,
+            y: 0,
+            duration: 0.6,
+            ease: "elastic.out(1, 0.3)"
+          });
+        });
+      });
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorthLadder - The world's most advanced Trade-in solution</title>
+  <!-- Brand Approved Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- GSAP Core & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              950: "#3B0764",
+              900: "#581C87",
+              800: "#6B21A8",
+              700: "#7E22CE",
+              600: "#9333EA",
+              DEFAULT: "#9333EA",
+              500: "#A855F7",
+              400: "#C084FC",
+              300: "#D8B4FE",
+              200: "#E9D5FF",
+              100: "#F3E8FF",
+            },
+          },
+          fontFamily: {
+            sans: ["Poppins", "sans-serif"],
+            display: ["Montserrat", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Hide scrollbars */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    body {
+      background-color: #fff;
+      color: #3B0764;
+      overflow-x: hidden;
+    }
+
+    .apple-blur-light {
+      background: rgba(237, 238, 245, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    /* Ambient Breathing Glow */
+    @keyframes breathe {
+
+      0%,
+      100% {
+        transform: scale(1) translate(0, 0);
+        opacity: 0.4;
+      }
+
+      50% {
+        transform: scale(1.1) translate(20px, -20px);
+        opacity: 0.6;
+      }
+    }
+
+    #cursor-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 480px;
+      height: 480px;
+      margin-left: -240px;
+      margin-top: -240px;
+      background: radial-gradient(circle, rgba(216, 180, 254, 0.16) 0%, rgba(147, 51, 234, 0.05) 45%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    @media (max-width: 768px) {
+      #cursor-glow {
+        display: none;
+      }
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.035;
+      mix-blend-mode: multiply;
+    }
+
+    /* Interactive UI Utilities */
+    .select-arrow {
+      background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%23A1A1AA' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0 center;
+      background-size: 12px;
+    }
+
+    .mega-menu {
+      position: absolute;
+      left: 0;
+      top: 100%;
+      width: 100%;
+      background: rgba(237, 238, 245, 0.95);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 30px 60px -10px rgba(59, 7, 100, 0.05);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+      cursor: default;
+    }
+
+    .nav-group:hover .mega-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .mega-item {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-group:hover .mega-item {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .nav-group:hover .col-1 .mega-item:nth-child(1) {
+      transition-delay: 0.04s;
+    }
+
+    .nav-group:hover .col-1 .mega-item:nth-child(2) {
+      transition-delay: 0.08s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(1) {
+      transition-delay: 0.12s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(2) {
+      transition-delay: 0.16s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(3) {
+      transition-delay: 0.20s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(4) {
+      transition-delay: 0.24s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(5) {
+      transition-delay: 0.28s;
+    }
+
+    #mobile-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #EDEEF5;
+      z-index: 40;
+      padding-top: 85px;
+      padding-inline: 24px;
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0.4s, opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+
+    #mobile-menu.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .mobile-nav-item {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #mobile-menu.active .mobile-nav-item {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(1) {
+      transition-delay: 0.10s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(2) {
+      transition-delay: 0.14s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(3) {
+      transition-delay: 0.18s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(4) {
+      transition-delay: 0.22s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(5) {
+      transition-delay: 0.26s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(6) {
+      transition-delay: 0.30s;
+    }
+
+    .menu-line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform-origin: center;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+    }
+
+    .line-1 {
+      transform: translate(-50%, -6px);
+    }
+
+    .line-2 {
+      transform: translate(-50%, 0);
+    }
+
+    .line-3 {
+      transform: translate(-50%, 6px);
+    }
+
+    .menu-open .line-1 {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .menu-open .line-2 {
+      opacity: 0;
+    }
+
+    .menu-open .line-3 {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    .submenu-active #mobile-menu-slider {
+      transform: translateX(-100%);
+    }
+
+    .submenu-active #mobile-back-header {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .mobile-submenu a,
+    .mobile-submenu p {
+      opacity: 0;
+      transform: translateX(20px);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .submenu-active .mobile-submenu.active a,
+    .submenu-active .mobile-submenu.active p {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(1) {
+      transition-delay: 0.10s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(2) {
+      transition-delay: 0.14s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(3) {
+      transition-delay: 0.18s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(4) {
+      transition-delay: 0.22s;
+    }
+
+    .mobile-submenu a {
+      position: relative;
+      background-image: none !important;
+      padding-left: 0 !important;
+    }
+
+    .mobile-submenu a svg {
+      display: none !important;
+    }
+  </style>
+
+  <link rel="icon" type="image/x-icon" href="favicon.png" />
+</head>
+
+<body>
+  <!-- Grain texture -->
+  <svg class="grain" xmlns="http://www.w3.org/2000/svg">
+    <filter id="noiseFilter">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"></feTurbulence>
+      <feColorMatrix type="saturate" values="0"></feColorMatrix>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#noiseFilter)"></rect>
+  </svg>
+
+  <div id="cursor-glow"></div>
+
+  <!-- NAVBAR -->
+  <header id="main-nav"
+    class="fixed top-0 left-1/2 -translate-x-1/2 w-full z-50 apple-blur-light transition-all duration-500">
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+      <div class="flex items-center justify-between h-[72px]">
+        <a href="home.html" class="flex items-center gap-3 cursor-pointer">
+          <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+            class="h-6 w-auto brightness-0" />
+        </a>
+
+        <nav class="hidden md:flex space-x-8 lg:space-x-10 h-full">
+          <!-- 1. For Partners -->
+          <div class="nav-group h-full flex items-center">
+            <a href="partner-hub.html"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-gray-900 hover:text-primary-600 transition-colors">
+              For Partners
+              <svg class="w-3 h-3 opacity-70 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p
+                    class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-primary-600 mb-5">
+                    Explore</p>
+                  <a href="partner-hub.html"
+                    class="mega-item block font-display text-[26px] font-bold text-gray-900 hover:text-primary-600 transition-colors mb-3">Partner
+                    Hub</a>
+                </div>
+                <div class="col-2">
+                  <p
+                    class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-primary-600 mb-5">
+                    Solutions</p>
+                  <a href="#retailers"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors mb-3.5">For
+                    Retailers</a>
+                  <a href="partners/telcos-and-operators.html"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors mb-3.5">For
+                    Telcos & Operators</a>
+                  <a href="#oems"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors mb-3.5">For
+                    OEMs & Brands</a>
+                  <a href="#ecommerce"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors mb-3.5">For
+                    Ecommerce</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. For Buyers -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#buyers"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-gray-900 hover:text-primary-600 transition-colors">
+              For Buyers
+              <svg class="w-3 h-3 opacity-70 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p
+                    class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-primary-600 mb-5">
+                    Explore</p>
+                  <a href="buyer-hub.html"
+                    class="mega-item block font-display text-[26px] font-bold text-gray-900 hover:text-primary-600 transition-colors mb-3">Buyer
+                    Hub</a>
+                </div>
+                <div class="col-2">
+                  <p
+                    class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-primary-600 mb-5">
+                    Resources</p>
+                  <a href="buyers/how-auction-work.html"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors mb-3.5">How
+                    Auctions Work</a>
+                  <a href="#register"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors mb-3.5">Register
+                    as Buyer</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Neutral Marketplace -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#neutral-marketplace"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-gray-900 hover:text-primary-600 transition-colors">
+              Neutral Marketplace
+              <svg class="w-3 h-3 opacity-70 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p
+                    class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-primary-600 mb-5">
+                    Infrastructure</p>
+                  <a href="#platform"
+                    class="mega-item block font-display text-[26px] font-bold text-gray-900 hover:text-primary-600 transition-colors mb-4">The
+                    Platform</a>
+                  <a href="#ai-grading"
+                    class="mega-item block font-display text-[26px] font-bold text-gray-900 hover:text-primary-600 transition-colors mb-4">AI
+                    Grading</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Intelligence -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#insights"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-gray-900 hover:text-primary-600 transition-colors">
+              Insights
+              <svg class="w-3 h-3 opacity-70 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p
+                    class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-primary-600 mb-5">
+                    Data</p>
+                  <a href="#rv-index"
+                    class="mega-item block font-display text-[26px] font-bold text-gray-900 hover:text-primary-600 transition-colors mb-4">RV
+                    Index</a>
+                  <a href="#market-reports"
+                    class="mega-item block font-display text-[26px] font-bold text-gray-900 hover:text-primary-600 transition-colors mb-4">Market
+                    Reports</a>
+                </div>
+                <div class="col-2">
+                  <p
+                    class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-primary-600 mb-5">
+                    Editorial</p>
+                  <a href="#leaders"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors mb-3.5">60
+                    Seconds With Circularity Leaders</a>
+                  <a href="#blogs"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors mb-3.5">Blogs</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Company -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#company"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-gray-900 hover:text-primary-600 transition-colors">
+              Company
+              <svg class="w-3 h-3 opacity-70 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p
+                    class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-primary-600 mb-5">
+                    About</p>
+                  <a href="#inside"
+                    class="mega-item block font-display text-[26px] font-bold text-gray-900 hover:text-primary-600 transition-colors mb-4">Inside
+                    NorthLadder</a>
+                  <a href="#builders"
+                    class="mega-item block font-display text-[26px] font-bold text-gray-900 hover:text-primary-600 transition-colors mb-4">The
+                    Builders</a>
+                </div>
+                <div class="col-2">
+                  <p
+                    class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-primary-600 mb-5">
+                    Discover</p>
+                  <a href="#stories"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors mb-3.5">Customer
+                    Stories</a>
+                  <a href="#newsroom"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors mb-3.5">Newsroom</a>
+                  <a href="#join"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors mb-3.5">Join
+                    The Team</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Language Toggle & CTA (Navbar) -->
+        <div class="items-center space-x-8 hidden md:flex">
+          <div class="relative group">
+            <button
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-gray-900 hover:text-primary-600 transition-colors">
+              <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418">
+                </path>
+              </svg>
+              EN
+              <svg class="w-3 h-3 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            <!-- Dropdown -->
+            <div
+              class="absolute right-0 mt-4 w-32 bg-white/90 backdrop-blur-xl border border-gray-100 rounded-2xl shadow-[0_10px_40px_-10px_rgba(59,7,100,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden translate-y-2 group-hover:translate-y-0">
+              <div class="p-1.5 space-y-0.5">
+                <a href="#"
+                  class="block px-3 py-2 text-xs font-sans font-medium text-gray-900 bg-gray-50 rounded-lg">English</a>
+                <a href="#"
+                  class="block px-3 py-2 text-xs font-sans font-medium text-gray-600 hover:text-primary-600 hover:bg-gray-50 rounded-lg transition-colors">العربية
+                  (AR)</a>
+              </div>
+            </div>
+          </div>
+          <a href="#login"
+            class="text-[13px] font-sans font-medium text-gray-900 hover:text-primary-600 transition-colors">Log
+            in</a>
+          <a href="#contact"
+            class="text-[13px] font-sans font-medium text-white bg-gray-900 hover:bg-primary-600 px-6 py-2.5 rounded-full transition-all duration-300 shadow-lg shadow-black/10">Get
+            Started</a>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button id="mobile-menu-btn" class="md:hidden flex justify-center items-center w-8 h-8 z-50 relative"
+          aria-label="Toggle menu">
+          <span class="menu-line line-1 absolute w-5 h-[1.5px] bg-gray-900 rounded-full"></span>
+          <span class="menu-line line-2 absolute w-5 h-[1.5px] bg-gray-900 rounded-full"></span>
+          <span class="menu-line line-3 absolute w-5 h-[1.5px] bg-gray-900 rounded-full"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE FULLSCREEN MENU -->
+  <nav id="mobile-menu" class="md:hidden">
+    <div id="mobile-menu-slider"
+      class="relative w-full h-[calc(100%-80px)] flex transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] px-6">
+      <div id="mobile-level-1" class="w-full flex-shrink-0 flex flex-col space-y-7 pt-4">
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-gray-900 hover:text-primary-600 w-full text-left"
+          data-target="submenu-partners">
+          For Partners <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <!-- Similar buttons for other mobile nav items... -->
+        <div class="mobile-nav-item pt-8 border-t border-gray-300/50 mt-4 flex flex-col space-y-4">
+          <a href="#login" class="text-lg font-sans font-medium text-gray-900 hover:text-primary-600">Log in</a>
+          <a href="#contact" class="text-lg font-sans font-medium text-primary-600">Get Started</a>
+        </div>
+      </div>
+      <div id="mobile-level-2" class="absolute top-0 left-full w-full h-full pb-24 overflow-y-auto px-6 pt-4">
+        <div id="submenu-partners" class="mobile-submenu hidden flex-col space-y-6">
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-primary-600 mb-2">Explore</p>
+          <a href="partner-hub.html" class="text-xl font-display font-semibold text-gray-900 block mb-4">Partner
+            Hub</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section id="hero-shatter-section" class="relative w-full h-[100vh] z-[40] bg-transparent">
+
+      <!-- Container for dynamically generated background fragments -->
+      <div id="hero-bg-container" class="absolute inset-0 z-0 overflow-hidden pointer-events-none perspective-[1000px]">
+        <!-- JS fills this with .hero-bg-frag elements -->
+      </div>
+
+      <!-- Hero Content Overlay -->
+      <div
+        class="relative w-full h-full max-w-[1440px] mx-auto px-6 lg:px-12 flex flex-col justify-center items-start pt-16 lg:pt-20 z-10 pointer-events-none perspective-[1000px]">
+        <h1
+          class="font-display font-light text-4xl md:text-5xl !leading-[1.15] tracking-tight text-black mb-6 max-w-5xl">
+          <span class="frag-element inline-block">One</span>
+          <span class="frag-element inline-block">Platform.</span>
+          <br class="hidden sm:block" />
+          <span>
+            <span class="frag-element inline-block">Every</span>
+            <span class="frag-element inline-block">Stage</span>
+            <span class="frag-element inline-block">Of</span>
+          </span>
+          <br class="hidden sm:block" />
+          <span class="font-medium">
+            <span class="frag-element inline-block">The</span>
+            <span class="frag-element inline-block">Device</span>
+            <span class="frag-element inline-block">Lifecycle.</span>
+          </span>
+        </h1>
+
+        <p class="font-sans text-base md:text-xl text-gray-600 font-light leading-relaxed mb-10 max-w-3xl">
+          <span class="frag-element inline-block">AI grading,</span>
+          <span class="frag-element inline-block">live</span>
+          <span class="frag-element inline-block">auction</span>
+          <span class="frag-element inline-block">engine,</span>
+          <span class="frag-element inline-block">partner</span>
+          <span class="frag-element inline-block">integrations,</span>
+          <span class="frag-element inline-block">residual</span>
+          <span class="frag-element inline-block">value</span>
+          <span class="frag-element inline-block">intelligence,</span>
+          <span class="frag-element inline-block">compliance</span>
+          <span class="frag-element inline-block">—</span>
+          <span class="frag-element inline-block">the</span>
+          <span class="frag-element inline-block">full</span>
+          <span class="frag-element inline-block">infrastructure</span>
+          <span class="frag-element inline-block">layer</span>
+          <span class="frag-element inline-block">for</span>
+          <span class="frag-element inline-block">the</span>
+          <span class="frag-element inline-block">secondary</span>
+          <span class="frag-element inline-block">device</span>
+          <span class="frag-element inline-block">market,</span>
+          <span class="frag-element inline-block">available</span>
+          <span class="frag-element inline-block">via</span>
+          <span class="frag-element inline-block">API</span>
+          <span class="frag-element inline-block">or</span>
+          <span class="frag-element inline-block">portal.</span>
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 pointer-events-auto">
+          <a href="#demo"
+            class="frag-element inline-flex items-center justify-center font-sans font-bold text-white bg-black px-8 py-4 rounded-lg hover:bg-primary-500/90 transition-all shadow-[0_10px_30px_rgba(168,85,247,0.2)]">
+            Book a platform demo
+          </a>
+          <a href="#api"
+            class="frag-element inline-flex items-center justify-center font-sans font-semibold text-black bg-white/50 backdrop-blur-md border border-primary-950/10 px-8 py-4 rounded-lg hover:bg-white transition-all shadow-sm">
+            API documentation &rarr;
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- SECTION 2: ECOSYSTEM PROOF STRIP                          -->
+    <!-- ========================================================= -->
+
+    <section id="proof-strip"
+      class="relative w-full py-24 lg:py-32 bg-primary-100 overflow-hidden border-t border-gray-200/50 z-[20]">
+      <!-- Subtle Background Mesh -->
+      <div class="absolute inset-0 w-full h-full pointer-events-none opacity-20" style="
+      background-image: radial-gradient(rgba(59, 7, 100, 0.1) 1px, transparent 1px); background-size: 40px 40px;">
+      </div>
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent to-[#F3E8FF] pointer-events-none"></div>
+
+      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+        <!-- Animated Number Counters -->
+        <div
+          class="grid grid-cols-1 md:grid-cols-5 gap-16 lg:gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-300/50 mb-24">
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-primary-950 tracking-tighter mb-2">
+                <span class="counter" data-target="75">0</span><span class="text-primary">+</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              Tier-1 Partners
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-primary-950 tracking-tighter mb-2">
+                <span class="counter" data-target="20">0</span><span class="text-primary-300">+</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              Countries Served
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-primary-950 tracking-tighter mb-2">
+                <span class="counter" data-target="94">0</span><span class="text-primary">%</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              Auction Sell-Through
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-primary-950 tracking-tighter mb-2">
+                <span class="text-primary-950">&lt;</span><span class="counter" data-target="20">0</span><span
+                  class="text-primary-300">s</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              AR Grading Speed
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <h3
+              class="font-display font-light text-4xl lg:text-7xl leading-none text-primary-500 tracking-tighter mb-2 zero-text">
+              Zero
+            </h3>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-primary-500 uppercase font-bold mt-2">
+              Inventory Held
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- SECTION 3: PLATFORM CAPABILITIES (Sticky Index Layout)    -->
+    <!-- ========================================================= -->
+
+    <section id="capabilities-section" class="relative w-full py-24 lg:py-32 bg-white z-20">
+      <!-- Ambient background glows for depth -->
+      <div
+        class="absolute top-0 right-0 w-[40vw] h-[40vw] bg-primary/[0.02] rounded-full blur-[120px] pointer-events-none">
+      </div>
+      <div
+        class="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-primary-500/[0.02] rounded-full blur-[100px] pointer-events-none">
+      </div>
+
+      <div
+        class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+
+        <!-- LEFT: Sticky Narrative Header -->
+        <div class="lg:col-span-5 lg:sticky lg:top-32 capability-header z-10">
+          <div
+            class="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-gray-100 bg-gray-50/50 mb-8 backdrop-blur-sm">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></span>
+            <p class="font-sans text-[10px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-0.5">
+              Platform Capabilities
+            </p>
+          </div>
+          <h2 class="font-display font-light text-4xl md:text-5xl text-primary-950 tracking-tight !leading-[1.2]">
+            Everything the <br class="hidden lg:block" />
+            secondary device <br class="hidden lg:block" />
+            market needs, <br class="hidden lg:block" />
+            <span class="font-medium text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-400">built
+              neutral.</span>
+          </h2>
+        </div>
+
+        <!-- RIGHT: Scrolling Capability Modules -->
+        <div class="lg:col-span-7 flex flex-col gap-6 lg:gap-8 z-20">
+
+          <!-- Module 1: AI Grading -->
+          <div
+            class="capability-module group bg-white border border-gray-100 rounded-3xl p-8 lg:p-12 shadow-[0_10px_40px_-15px_rgba(59,7,100,0.05)] hover:shadow-[0_20px_50px_-15px_rgba(59,7,100,0.08)] hover:-translate-y-1 transition-all duration-500">
+            <div
+              class="w-12 h-12 rounded-2xl bg-primary-500/10 flex items-center justify-center text-primary-500 mb-6 transition-transform group-hover:scale-110 duration-500">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                </path>
+              </svg>
+            </div>
+            <h3 class="font-display font-semibold text-2xl lg:text-3xl text-primary-950 mb-4">AI grading engine</h3>
+            <p class="font-sans text-base text-gray-500 font-light leading-relaxed mb-8">
+              20-second AR video per device. Automated grade A-D assignment. Timestamp and IMEI confirmation. 40% fewer
+              disputes vs photo grading. Grade certificate issued per lot.
+            </p>
+            <a href="#"
+              class="inline-flex items-center font-sans text-sm font-semibold text-primary-500 hover:text-primary-950 transition-colors">
+              AI Grading in detail
+              <svg class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Module 2: Live Auction -->
+          <div
+            class="capability-module group bg-white border border-gray-100 rounded-3xl p-8 lg:p-12 shadow-[0_10px_40px_-15px_rgba(59,7,100,0.05)] hover:shadow-[0_20px_50px_-15px_rgba(59,7,100,0.08)] hover:-translate-y-1 transition-all duration-500">
+            <div
+              class="w-12 h-12 rounded-2xl bg-primary-400/10 flex items-center justify-center text-primary mb-6 transition-transform group-hover:scale-110 duration-500">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z">
+                </path>
+              </svg>
+            </div>
+            <h3 class="font-display font-semibold text-2xl lg:text-3xl text-primary-950 mb-4">Live auction engine
+            </h3>
+            <p class="font-sans text-base text-gray-500 font-light leading-relaxed">
+              Real-time bidding for all verified buyers simultaneously. Auto-bid. Countdown timer. Full bid history
+              visible. No reserve unless partner-specified. 24–48h typical window.
+            </p>
+          </div>
+
+          <!-- Module 3: Residual Value Index -->
+          <div
+            class="capability-module group bg-white border border-gray-100 rounded-3xl p-8 lg:p-12 shadow-[0_10px_40px_-15px_rgba(59,7,100,0.05)] hover:shadow-[0_20px_50px_-15px_rgba(59,7,100,0.08)] hover:-translate-y-1 transition-all duration-500">
+            <div
+              class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6 transition-transform group-hover:scale-110 duration-500">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                </path>
+              </svg>
+            </div>
+            <h3 class="font-display font-semibold text-2xl lg:text-3xl text-primary-950 mb-4">Residual Value Index
+            </h3>
+            <p class="font-sans text-base text-gray-500 font-light leading-relaxed mb-8">
+              Live pricing benchmarks updated from every auction. EU + GCC coverage. Filterable by model, grade, and
+              market. Partner access for programme design and subsidy modelling.
+            </p>
+            <a href="#"
+              class="inline-flex items-center font-sans text-sm font-semibold text-primary hover:text-primary-950 transition-colors">
+              RV Index access
+              <svg class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Module 4: API & Integrations -->
+          <div
+            class="capability-module group bg-white border border-gray-100 rounded-3xl p-8 lg:p-12 shadow-[0_10px_40px_-15px_rgba(59,7,100,0.05)] hover:shadow-[0_20px_50px_-15px_rgba(59,7,100,0.08)] hover:-translate-y-1 transition-all duration-500">
+            <div
+              class="w-12 h-12 rounded-2xl bg-primary-400/10 flex items-center justify-center text-primary-400 mb-6 transition-transform group-hover:scale-110 duration-500">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                </path>
+              </svg>
+            </div>
+            <h3 class="font-display font-semibold text-2xl lg:text-3xl text-primary-950 mb-4">API & integrations</h3>
+            <p class="font-sans text-base text-gray-500 font-light leading-relaxed">
+              REST API for partner integration into POS, checkout flow, or ERP. Webhook callbacks. Sandbox environment.
+              No-code portal access also available for smaller operations.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- SECTION 4: PLATFORM ARCHITECTURE (Premium 2D Stack)       -->
+    <!-- ========================================================= -->
+
+    <section id="architecture-section" class="relative w-full py-24 lg:py-32 bg-white overflow-hidden z-20">
+
+      <!-- Premium Ambient Background Glows -->
+      <div
+        class="absolute top-0 left-0 w-[50vw] h-[50vw] bg-primary/[0.02] rounded-full blur-[120px] pointer-events-none">
+      </div>
+      <div
+        class="absolute bottom-0 right-0 w-[40vw] h-[40vw] bg-primary-500/[0.02] rounded-full blur-[100px] pointer-events-none">
+      </div>
+
+      <div
+        class="max-w-[1440px] mx-auto px-6 lg:px-12 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-16 items-start">
+
+        <!-- LEFT: 2D Stacked Architecture View -->
+        <div class="lg:col-span-8 flex flex-col gap-5 lg:gap-6 w-full z-10">
+
+          <!-- LAYER 1: PARTNER LAYER (Top) -->
+          <div
+            class="arch-slab relative w-full bg-white/70 lg:bg-primary-500/[0.05] backdrop-blur-2xl border border-gray-100 lg:border-primary-500/30 rounded-3xl p-6 md:p-8 shadow-sm lg:shadow-[0_10px_30px_-10px_rgba(168,85,247,0.1)]">
+            <div class="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 mb-6">
+              <h3 class="font-sans text-[11px] uppercase tracking-[0.2em] font-bold text-primary-500 shrink-0">
+                Partner Layer
+              </h3>
+              <div class="h-[1px] w-full bg-primary-500/20"></div>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <span
+                class="arch-node bg-white border border-gray-100 text-gray-600 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm hover:-translate-y-1 transition-transform cursor-default">Partner
+                portal</span>
+              <span
+                class="arch-node bg-white border border-gray-100 text-gray-600 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm hover:-translate-y-1 transition-transform cursor-default">REST
+                API</span>
+              <span
+                class="arch-node bg-white border border-gray-100 text-gray-600 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm hover:-translate-y-1 transition-transform cursor-default">Webhook
+                callbacks</span>
+              <span
+                class="arch-node bg-white border border-gray-100 text-gray-600 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm hover:-translate-y-1 transition-transform cursor-default">POS
+                integration</span>
+              <span
+                class="arch-node bg-white border border-gray-100 text-gray-600 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm hover:-translate-y-1 transition-transform cursor-default">Checkout
+                embed</span>
+            </div>
+          </div>
+
+          <!-- LAYER 2: CORE PLATFORM (Dark Mode contrast layer) -->
+          <div
+            class="arch-slab relative w-full bg-primary-950 backdrop-blur-2xl border border-primary-900 rounded-3xl p-6 md:p-8 shadow-xl lg:shadow-[0_20px_40px_-10px_rgba(59,7,100,0.4)]">
+            <div class="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 mb-6">
+              <h3
+                class="font-sans text-[11px] uppercase tracking-[0.2em] font-bold text-white shrink-0 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-primary-300 animate-pulse"></span>
+                Core Platform
+              </h3>
+              <div class="h-[1px] w-full bg-primary-900"></div>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <span
+                class="arch-node bg-white/10 border border-white/20 text-white font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl backdrop-blur-md hover:-translate-y-1 hover:bg-white/20 transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] cursor-default">AI
+                Grading Engine</span>
+              <span
+                class="arch-node bg-primary-400/10 border border-primary-400/30 text-primary-400 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl backdrop-blur-md hover:-translate-y-1 hover:bg-primary-400/20 transition-all shadow-[inset_0_1px_0_rgba(192,132,252,0.2)] cursor-default">Auction
+                Engine</span>
+              <span
+                class="arch-node bg-primary/20 border border-primary/40 text-primary-300 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl backdrop-blur-md hover:-translate-y-1 hover:bg-primary/30 transition-all shadow-[inset_0_1px_0_rgba(147,51,234,0.2)] cursor-default">RV
+                Index</span>
+              <span
+                class="arch-node bg-white/10 border border-white/20 text-white font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl backdrop-blur-md hover:-translate-y-1 hover:bg-white/20 transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] cursor-default">Compliance
+                & KYB</span>
+              <span
+                class="arch-node bg-white/10 border border-white/20 text-white font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl backdrop-blur-md hover:-translate-y-1 hover:bg-white/20 transition-all shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] cursor-default">Settlement
+                Engine</span>
+            </div>
+          </div>
+
+          <!-- LAYER 3: BUYER LAYER -->
+          <div
+            class="arch-slab relative w-full bg-white/70 lg:bg-primary-400/[0.03] backdrop-blur-2xl border border-gray-100 lg:border-primary-400/30 rounded-3xl p-6 md:p-8 shadow-sm lg:shadow-[0_10px_30px_-10px_rgba(192,132,252,0.08)]">
+            <div class="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 mb-6">
+              <h3 class="font-sans text-[11px] uppercase tracking-[0.2em] font-bold text-primary shrink-0">
+                Buyer Layer
+              </h3>
+              <div class="h-[1px] w-full bg-primary-400/20"></div>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <span
+                class="arch-node bg-white border border-gray-100 text-gray-600 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm hover:-translate-y-1 transition-transform cursor-default">Buyer
+                portal</span>
+              <span
+                class="arch-node bg-white border border-gray-100 text-gray-600 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm hover:-translate-y-1 transition-transform cursor-default">Lot
+                browsing</span>
+              <span
+                class="arch-node bg-white border border-gray-100 text-gray-600 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm hover:-translate-y-1 transition-transform cursor-default">Live
+                bidding</span>
+              <span
+                class="arch-node bg-white border border-gray-100 text-gray-600 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm hover:-translate-y-1 transition-transform cursor-default">Auto-bid</span>
+              <span
+                class="arch-node bg-white border border-gray-100 text-gray-600 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm hover:-translate-y-1 transition-transform cursor-default">Lot
+                alerts</span>
+              <span
+                class="arch-node bg-white border border-gray-100 text-gray-600 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm hover:-translate-y-1 transition-transform cursor-default">API
+                access</span>
+            </div>
+          </div>
+
+          <!-- LAYER 4: DATA & INSIGHTS (Bottom) -->
+          <div
+            class="arch-slab relative w-full bg-white/70 lg:bg-primary/[0.03] backdrop-blur-2xl border border-gray-100 lg:border-primary/20 rounded-3xl p-6 md:p-8 shadow-sm lg:shadow-[0_10px_30px_-10px_rgba(147,51,234,0.08)]">
+            <div class="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 mb-6">
+              <h3 class="font-sans text-[11px] uppercase tracking-[0.2em] font-bold text-primary shrink-0">
+                Data & Insights
+              </h3>
+              <div class="h-[1px] w-full bg-primary/10"></div>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <span
+                class="arch-node bg-white border border-gray-100 text-gray-600 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm hover:-translate-y-1 transition-transform cursor-default">RV
+                Index feed</span>
+              <span
+                class="arch-node bg-white border border-gray-100 text-gray-600 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm hover:-translate-y-1 transition-transform cursor-default">Market
+                reports</span>
+              <span
+                class="arch-node bg-white border border-gray-100 text-gray-600 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm hover:-translate-y-1 transition-transform cursor-default">ESG
+                data</span>
+              <span
+                class="arch-node bg-white border border-gray-100 text-gray-600 font-sans text-xs md:text-sm font-medium px-4 py-2 rounded-xl shadow-sm hover:-translate-y-1 transition-transform cursor-default">Audit
+                logs</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: Sticky Narrative Context -->
+        <div class="lg:col-span-4 lg:sticky lg:top-32 flex flex-col z-20">
+          <div class="mb-10 arch-text-anim">
+            <p class="font-mono text-[10px] md:text-xs font-bold tracking-[0.2em] text-primary-500 uppercase mb-4">
+              Platform Architecture
+            </p>
+            <h2
+              class="font-display font-medium text-3xl md:text-4xl lg:text-5xl text-primary-950 tracking-tight leading-[1.1]">
+              Built to connect <br />
+              <span class="font-bold">both sides</span> of <br />
+              the market.
+            </h2>
+          </div>
+
+          <div
+            class="bg-white border border-gray-200 rounded-3xl p-8 shadow-[0_20px_50px_-15px_rgba(59,7,100,0.05)] arch-text-anim">
+            <h3 class="font-display font-bold text-xl text-primary-950 mb-4">
+              Why "neutral" matters in the architecture
+            </h3>
+            <p class="font-sans text-sm text-gray-600 leading-relaxed mb-6 font-light">
+              NorthLadder's platform is structurally incapable of buying inventory. There is no internal buyer account.
+              No allocation layer that bypasses auction.
+            </p>
+            <p class="font-sans text-sm text-gray-600 leading-relaxed mb-8 font-light">
+              The core platform runs open bidding — the same interface for every verified buyer — because the
+              architecture enforces neutrality, not just policy.
+            </p>
+            <a href="#neutrality"
+              class="inline-flex items-center font-sans text-sm font-semibold text-primary-500 hover:text-primary-950 transition-colors group">
+              How neutrality is enforced
+              <svg class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- SECTION 5: INTEGRATION OPTIONS (Premium Bento Grid)       -->
+    <!-- ========================================================= -->
+
+    <section id="integration-section" class="relative w-full py-24 lg:py-32 bg-white overflow-hidden z-20">
+
+      <!-- Tech Grid Background -->
+      <div class="absolute inset-0 w-full h-full pointer-events-none opacity-[0.03]"
+        style="background-image: linear-gradient(to right, #3B0764 1px, transparent 1px), linear-gradient(to bottom, #3B0764 1px, transparent 1px); background-size: 60px 60px;">
+      </div>
+
+      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+
+        <!-- Header -->
+        <div class="mb-12 lg:mb-16 integration-anim">
+          <p class="font-mono text-[10px] md:text-xs font-bold tracking-[0.2em] text-primary-500 uppercase mb-3">
+            Integration Options
+          </p>
+          <h2
+            class="font-display font-medium text-3xl md:text-5xl lg:text-6xl text-primary-950 tracking-tight leading-[1.05]">
+            Connect your <br class="hidden sm:block" />
+            operations <span
+              class="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-primary">in
+              days.</span>
+          </h2>
+        </div>
+
+        <!-- Bento Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+
+          <!-- Card 1: REST API (Spans slightly larger visually) -->
+          <div
+            class="integration-card group relative bg-white border border-gray-200 rounded-[2rem] p-8 lg:p-10 shadow-sm hover:shadow-[0_20px_60px_-15px_rgba(147,51,234,0.1)] transition-all duration-500 overflow-hidden flex flex-col justify-between min-h-[320px]">
+            <!-- Decorative Tech Asset -->
+            <div
+              class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+              <pre class="font-mono text-[8px] text-primary leading-tight">
+{
+  "status": "200 OK",
+  "endpoint": "/v1/bids",
+  "action": "stream"
+}
+              </pre>
+            </div>
+
+            <div>
+              <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                  </path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+              </div>
+              <h3 class="font-display font-semibold text-2xl text-primary-950 mb-3">REST API</h3>
+              <p class="font-sans text-sm md:text-base text-gray-500 font-light leading-relaxed mb-8 max-w-md">
+                Full programmatic access. Lot submission, auction monitoring, bid callbacks, settlement notifications.
+                Sandbox included.
+              </p>
+            </div>
+            <a href="#api"
+              class="inline-flex items-center font-sans text-sm font-semibold text-primary-500 hover:text-primary-950 transition-colors mt-auto w-max">
+              API docs + sandbox
+              <svg class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Card 2: Webhooks -->
+          <div
+            class="integration-card group relative bg-white border border-gray-200 rounded-[2rem] p-8 lg:p-10 shadow-sm hover:shadow-[0_20px_60px_-15px_rgba(168,85,247,0.1)] transition-all duration-500 flex flex-col justify-between min-h-[320px]">
+            <div>
+              <div
+                class="w-12 h-12 rounded-2xl bg-primary-500/10 flex items-center justify-center text-primary-500 mb-6">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                </svg>
+              </div>
+              <h3 class="font-display font-semibold text-2xl text-primary-950 mb-3">Webhooks</h3>
+              <p class="font-sans text-sm md:text-base text-gray-500 font-light leading-relaxed mb-8 max-w-md">
+                Real-time event callbacks for auction open, bid placed, auction close, settlement confirmed. Integrates
+                with any stack.
+              </p>
+            </div>
+            <a href="#webhooks"
+              class="inline-flex items-center font-sans text-sm font-semibold text-primary-500 hover:text-primary-950 transition-colors mt-auto w-max">
+              Webhook reference
+              <svg class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Card 3: Partner Portal -->
+          <div
+            class="integration-card group relative bg-white border border-gray-200 rounded-[2rem] p-8 lg:p-10 shadow-sm hover:shadow-[0_20px_60px_-15px_rgba(59,7,100,0.05)] transition-all duration-500 flex flex-col justify-between min-h-[320px]">
+            <div>
+              <div class="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center text-primary-950 mb-6">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                  </path>
+                </svg>
+              </div>
+              <h3 class="font-display font-semibold text-2xl text-primary-950 mb-3">Partner portal</h3>
+              <p class="font-sans text-sm md:text-base text-gray-500 font-light leading-relaxed mb-8 max-w-md">
+                No-code access. Upload lots via CSV or UI, monitor auction performance, download reports, and access RV
+                data.
+              </p>
+            </div>
+            <a href="#portal"
+              class="inline-flex items-center font-sans text-sm font-semibold text-primary-500 hover:text-primary-950 transition-colors mt-auto w-max">
+              Request portal access
+              <svg class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Card 4: Checkout Widget -->
+          <div
+            class="integration-card group relative bg-white border border-gray-200 rounded-[2rem] p-8 lg:p-10 shadow-sm hover:shadow-[0_20px_60px_-15px_rgba(192,132,252,0.1)] transition-all duration-500 flex flex-col justify-between min-h-[320px]">
+            <div>
+              <div
+                class="w-12 h-12 rounded-2xl bg-primary-400/10 flex items-center justify-center text-primary-400 mb-6">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                  </path>
+                </svg>
+              </div>
+              <h3 class="font-display font-semibold text-2xl text-primary-950 mb-3">Checkout widget</h3>
+              <p class="font-sans text-sm md:text-base text-gray-500 font-light leading-relaxed mb-8 max-w-md">
+                Embed trade-in valuation widget directly in your ecommerce checkout. Paste-in JS. Fully white-label
+                available.
+              </p>
+            </div>
+            <a href="#widget"
+              class="inline-flex items-center font-sans text-sm font-semibold text-primary-500 hover:text-primary-950 transition-colors mt-auto w-max">
+              See widget demo
+              <svg class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- SECTION 6: THE MAGNETIC ISLAND CTA                        -->
+    <!-- ========================================================= -->
+
+    <section id="demo-cta-section" class="relative w-full py-16 lg:py-24 bg-white overflow-hidden z-20">
+      <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
+
+        <!-- The Floating Island Card -->
+        <div id="cta-island"
+          class="relative w-full bg-primary-950 rounded-[2.5rem] lg:rounded-[4rem] overflow-hidden p-10 lg:p-20 shadow-[0_40px_80px_-20px_rgba(59,7,100,0.5)] flex flex-col md:flex-row items-center justify-between gap-10">
+
+          <!-- Cinematic Ambient Glows inside the card -->
+          <div
+            class="absolute -top-1/2 -left-1/4 w-[80%] h-[150%] bg-primary/30 rounded-full blur-[100px] pointer-events-none">
+          </div>
+          <div
+            class="absolute -bottom-1/2 -right-1/4 w-[80%] h-[150%] bg-primary-500/20 rounded-full blur-[100px] pointer-events-none">
+          </div>
+
+          <!-- Subtle Grid Overlay -->
+          <div class="absolute inset-0 w-full h-full pointer-events-none opacity-10"
+            style="background-image: radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px); background-size: 30px 30px;">
+          </div>
+
+          <!-- Text Content -->
+          <div class="relative z-10 text-center md:text-left">
+            <h2
+              class="font-display font-medium text-4xl md:text-5xl lg:text-6xl text-white tracking-tight leading-[1.1] mb-4">
+              See the platform <br class="hidden sm:block" />
+              <span class="font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-white">in
+                action.</span>
+            </h2>
+            <p class="font-sans text-base lg:text-lg text-gray-400 font-light max-w-sm mx-auto md:mx-0">
+              Live demo with our partnerships team. 30 minutes.
+            </p>
+          </div>
+
+          <!-- Premium CTA Button -->
+          <div class="relative z-10 shrink-0">
+            <!-- Pulsing outer ring -->
+            <div
+              class="absolute inset-0 bg-primary-500 blur-xl opacity-40 rounded-full animate-pulse pointer-events-none">
+            </div>
+
+            <a href="#book-demo"
+              class="relative inline-flex items-center justify-center font-sans font-bold text-primary-950 bg-primary-100 px-8 py-4 lg:px-10 lg:py-5 rounded-full text-base lg:text-lg hover:bg-white hover:scale-105 transition-all duration-300 shadow-[inset_0_-2px_10px_rgba(59,7,100,0.2)] group">
+              Book a platform demo
+              <svg class="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer id="main-footer" class="relative z-30 bg-white overflow-hidden pt-32 pb-16">
+    <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/15 to-transparent">
+    </div>
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-8 mb-24">
+        <div class="col-span-1 md:col-span-5 pr-0 lg:pr-12">
+          <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+            class="h-6 w-auto brightness-0 mb-8 opacity-90" />
+          <p class="font-sans text-[13px] text-gray-500 font-light leading-[1.9] mb-10 max-w-sm">
+            Democratization Of Trade-ins. Powering the world's most advanced circularity infrastructure for Grade-A
+            inventory with absolute neutrality.
+          </p>
+        </div>
+        <div class="col-span-1 md:col-span-2 md:col-start-7">
+          <h4 class="font-sans text-[9px] uppercase tracking-[0.25em] font-bold text-gray-400 mb-8">Ecosystem</h4>
+          <ul class="space-y-5 font-sans text-[13px] font-light text-gray-500">
+            <li><a href="#partners" class="hover:text-primary transition-colors duration-300">For Partners</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-100/80">
+        <p class="font-sans text-[11px] font-medium tracking-wide text-gray-400">© 2026 NorthLadder. All rights
+          reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      cursorLogic();
+      navBar();
+      initHeroShatter();
+      proofStrip();
+      initCapabilities();
+      initArchitecture2D();
+      initIntegrationsAndCTA();
+    });
+
+    function initHeroShatter() {
+      const heroSection = document.getElementById("hero-shatter-section");
+      const bgContainer = document.getElementById("hero-bg-container");
+
+      if (!heroSection || !bgContainer) return;
+
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // 1. Generate Optimized CSS Grid Fragments
+      const cols = Math.max(10, Math.floor(window.innerWidth / 80));
+      const rows = Math.max(8, Math.floor(window.innerHeight / 80));
+      const fragW = 100 / cols;
+      const fragH = 100 / rows;
+
+      const imgUrl = 'https://images.unsplash.com/photo-1759588071814-59ec64e569ba?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+
+      let fragmentsHtml = '';
+      for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+          const bgPosX = j * (100 / (cols - 1 || 1));
+          const bgPosY = i * (100 / (rows - 1 || 1));
+          fragmentsHtml += `
+            <div class="hero-bg-frag absolute" style="
+              width: calc(${fragW}% + 1.5px);
+              height: calc(${fragH}% + 1.5px);
+              top: ${i * fragH}%;
+              left: ${j * fragW}%;
+              background-image: linear-gradient(
+                rgba(255, 255, 255, 0.65),
+                rgba(255, 255, 255, 0.65)
+              ), url('${imgUrl}');
+              backdrop-filter: blur(8px);
+              -webkit-backdrop-filter: blur(8px);
+              background-size: ${cols * 100}% ${rows * 100}%;
+              background-position: ${bgPosX}% ${bgPosY}%;
+              will-change: transform, opacity;
+            "></div>
+          `;
+        }
+      }
+      bgContainer.innerHTML = fragmentsHtml;
+
+      gsap.set(".hero-bg-frag, .frag-element", { force3D: true, transformPerspective: 1000 });
+
+      // 2. CRITICAL FIX: Initial Entrance Animation 
+      // We animate the PARENT wrappers so ScrollTrigger has exclusive control over the fragments
+      if (!prefersReducedMotion) {
+        gsap.from(bgContainer, { opacity: 0, duration: 1.5, ease: "power2.out" });
+
+        // Grab the container holding the text
+        const contentOverlay = heroSection.querySelector(".z-10.pointer-events-none");
+        if (contentOverlay) {
+          gsap.from(contentOverlay, { y: 30, opacity: 0, duration: 1.2, ease: "power3.out", delay: 0.3 });
+        }
+      }
+
+      // 3. Scroll-Linked Dissolve Effect
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: heroSection,
+          start: "top top",
+          end: "+=120%",
+          scrub: 0.5,
+          pin: true,
+          pinSpacing: false
+        }
+      });
+
+      if (prefersReducedMotion) {
+        tl.to(heroSection, { opacity: 0, ease: "none" });
+        return;
+      }
+
+      // Background: Scatters and scales out perfectly, restoring to 0 state on scroll back
+      tl.fromTo(".hero-bg-frag",
+        { x: 0, y: 0, z: 0, rotationX: 0, rotationY: 0, rotationZ: 0, autoAlpha: 1, scale: 1 },
+        {
+          x: () => gsap.utils.random(-250, 250),
+          y: () => gsap.utils.random(-250, 250),
+          z: () => gsap.utils.random(-150, 300),
+          rotationX: () => gsap.utils.random(-45, 45),
+          rotationY: () => gsap.utils.random(-45, 45),
+          rotationZ: () => gsap.utils.random(-30, 30),
+          autoAlpha: 0,
+          scale: 0,
+          ease: "power2.inOut",
+          stagger: { amount: 0.5, from: "edges" }
+        }, 0
+      );
+
+      // Typography: Scatters and vanishes
+      tl.fromTo(".frag-element",
+        { x: 0, y: 0, z: 0, rotationX: 0, rotationY: 0, rotationZ: 0, autoAlpha: 1, scale: 1 },
+        {
+          x: () => gsap.utils.random(-100, 100),
+          y: () => gsap.utils.random(-150, -50),
+          z: () => gsap.utils.random(50, 200),
+          rotationX: () => gsap.utils.random(-30, 30),
+          rotationY: () => gsap.utils.random(-30, 30),
+          rotationZ: () => gsap.utils.random(-15, 15),
+          autoAlpha: 0,
+          scale: () => gsap.utils.random(1.1, 1.3),
+          ease: "power2.inOut",
+          stagger: { amount: 0.3, from: "start" }
+        }, 0.1
+      );
+    }
+    function proofStrip() {
+      const statBlocks = gsap.utils.toArray(".stat-block");
+      if (statBlocks.length > 0) {
+        gsap.fromTo(
+          statBlocks,
+          { y: 50, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.2,
+            stagger: 0.2,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: "#proof-strip",
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
+          },
+        );
+
+        const counters = document.querySelectorAll(".counter");
+        counters.forEach((counter) => {
+          const target = parseInt(counter.getAttribute("data-target"));
+          ScrollTrigger.create({
+            trigger: counter,
+            start: "top 85%",
+            onEnter: () => {
+              gsap.to(counter, {
+                innerHTML: target,
+                duration: 2.5,
+                ease: "power2.out",
+                snap: { innerHTML: 1 },
+                onUpdate: function () {
+                  counter.innerHTML = Math.round(this.targets()[0].innerHTML);
+                },
+              });
+            },
+            once: true,
+          });
+        });
+
+        gsap.fromTo(
+          ".zero-text",
+          { opacity: 0, scale: 0.9, filter: "blur(10px)" },
+          {
+            opacity: 1,
+            scale: 1,
+            filter: "blur(0px)",
+            duration: 1.5,
+            delay: 0.4,
+            ease: "power2.out",
+            scrollTrigger: { trigger: "#proof-strip", start: "top 80%" },
+          },
+        );
+      }
+    }
+
+    function initCapabilities() {
+      const capSection = document.getElementById("capabilities-section");
+      if (!capSection) return;
+
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (prefersReducedMotion) return;
+
+      // 1. Reveal Sticky Narrative Header
+      gsap.fromTo(".capability-header",
+        { opacity: 0, x: -30 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 1.2,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: capSection,
+            start: "top 75%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+
+      // 2. Individually Reveal Each Scrolling Module
+      const modules = gsap.utils.toArray(".capability-module");
+
+      modules.forEach((mod) => {
+        gsap.fromTo(mod,
+          { opacity: 0, y: 60, scale: 0.98 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: mod,
+              start: "top 85%", // Triggers exactly when each card enters the viewport
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      });
+    }
+
+    function initArchitecture2D() {
+      const archSection = document.getElementById("architecture-section");
+      if (!archSection) return;
+
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (prefersReducedMotion) return;
+
+      // 1. Elegant Fade-Up for the architectural slabs
+      gsap.fromTo(".arch-slab",
+        { y: 60, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          stagger: 0.15,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: archSection,
+            start: "top 75%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+
+      // 2. Subtle pop-in for the pill nodes inside the slabs
+      gsap.fromTo(".arch-node",
+        { y: 15, opacity: 0, scale: 0.95 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.6,
+          stagger: 0.02,
+          ease: "back.out(1.5)",
+          scrollTrigger: {
+            trigger: archSection,
+            start: "top 70%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+
+      // 3. Narrative Text Reveal
+      gsap.fromTo(".arch-text-anim",
+        { y: 30, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          stagger: 0.2,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: archSection,
+            start: "top 75%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+    }
+
+    function initIntegrationsAndCTA() {
+      // --- SECTION 5: INTEGRATIONS BENTO GRID ---
+      const integrationSection = document.getElementById("integration-section");
+      if (integrationSection) {
+        // Fade in header
+        gsap.fromTo(".integration-anim",
+          { y: 30, opacity: 0 },
+          {
+            y: 0, opacity: 1, duration: 1, ease: "power3.out",
+            scrollTrigger: {
+              trigger: integrationSection,
+              start: "top 80%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+
+        // Staggered pop-in for the Bento Cards
+        gsap.fromTo(".integration-card",
+          { y: 50, opacity: 0, scale: 0.98 },
+          {
+            y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.15, ease: "power2.out",
+            scrollTrigger: {
+              trigger: ".integration-card", // Triggers when the first card hits the viewport
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
+
+      // --- SECTION 6: MAGNETIC ISLAND CTA ---
+      const ctaSection = document.getElementById("demo-cta-section");
+      const island = document.getElementById("cta-island");
+
+      if (ctaSection && island) {
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        // 1. Enter Animation (Scales up beautifully as it enters)
+        gsap.fromTo(island,
+          { y: 60, opacity: 0, scale: 0.95 },
+          {
+            y: 0, opacity: 1, scale: 1, duration: 1.2, ease: "power3.out",
+            scrollTrigger: {
+              trigger: ctaSection,
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+
+        // 2. Continuous Scroll Parallax
+        if (!prefersReducedMotion) {
+          gsap.to(island, {
+            y: -20, // Gentle upward float
+            ease: "none",
+            scrollTrigger: {
+              trigger: ctaSection,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true
+            }
+          });
+        }
+      }
+    }
+
+    function cursorLogic() {
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (!prefersReducedMotion && window.matchMedia("(pointer: fine)").matches) {
+        const glow = document.getElementById("cursor-glow");
+        let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+        let gx = mx, gy = my;
+        window.addEventListener("mousemove", (e) => {
+          mx = e.clientX; my = e.clientY;
+        });
+        gsap.ticker.add(() => {
+          gx += (mx - gx) * 0.08;
+          gy += (my - gy) * 0.08;
+          gsap.set(glow, { x: gx, y: gy });
+        });
+      }
+    }
+
+    function navBar() {
+      window.addEventListener("scroll", () => {
+        const nav = document.getElementById("main-nav");
+        if (window.scrollY > 20) {
+          nav.classList.remove("w-full");
+          nav.classList.add("w-[90%]", "max-w-[1400px]", "top-2", "rounded-full", "shadow-sm", "border", "border-white/40");
+        } else {
+          nav.classList.add("w-full");
+          nav.classList.remove("w-[90%]", "max-w-[1400px]", "top-2", "rounded-full", "shadow-sm", "border", "border-white/40");
+        }
+      });
+
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener('click', () => {
+          mobileBtn.classList.toggle('menu-open');
+          mobileMenu.classList.toggle('active');
+          document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+        });
+      }
+    }
+  </script>
+</body>
+
+</html>
