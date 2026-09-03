@@ -1047,12 +1047,15 @@
       <div class="sticky top-0 w-full h-[100dvh] overflow-hidden">
 
         <!-- Background Video -->
-        <video id="hero-video" class="absolute top-0 left-0 w-full h-full object-cover z-0"
+        <video id="hero-video" class="absolute block md:hidden top-0 left-0 w-full h-full object-cover z-0"
+          src="assets/main-hero-mobile-video.mp4" playsinline autoplay muted loop preload="auto">
+        </video>
+        <video id="hero-video" class="absolute hidden md:block top-0 left-0 w-full h-full object-cover z-0"
           src="assets/hero-video-home.mp4" playsinline autoplay muted loop preload="auto">
         </video>
 
         <!-- Center gradient: ensures dark text is always readable in the center -->
-        <div class="absolute inset-0 bg-white/30 z-10 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-white/50 z-10 pointer-events-none"></div>
 
         <!-- Typography & UI -->
         <div
@@ -1063,13 +1066,13 @@
             <!-- Headline (Letter-by-letter reveal) -->
             <h1
               class="hero-title text-ink font-sans font-light text-4xl md:text-7xl !leading-[1.15] tracking-tight m-0 md:pt-10">
-              <span class="block pb-2">
+              <span class="block">
                 <span class="typewriter-line block">The World's</span>
               </span>
-              <span class="block pb-2">
+              <span class="block">
                 <span class="typewriter-line block font-medium">Leading AI-Powered</span>
               </span>
-              <span class="block pb-2">
+              <span class="block">
                 <span class="typewriter-line block">Circularity Marketplace.</span>
               </span>
             </h1>

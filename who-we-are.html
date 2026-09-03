@@ -926,8 +926,9 @@
 
   <main>
     <!-- HERO SECTION -->
-    <section id="company-hero" class="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden bg-brand-bg">
-      <!-- Premium Background Imagery (Abstract Light Architecture/Glass) -->
+    <!-- HERO SECTION -->
+    <section id="company-hero" class="relative min-h-screen flex items-center pt-32 pb-16 overflow-hidden bg-brand-bg">
+      <!-- Ambient Background Glows for the section (replaces the full-width image) -->
       <div class="absolute inset-0 z-0">
         <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop"
           alt="Abstract Architecture" class="hero-bg-img w-full h-full object-cover opacity-[0.35]"
@@ -938,32 +939,60 @@
       </div>
 
       <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 w-full">
-        <!-- Masked Tag -->
-        <div class="overflow-hidden mb-8">
-          <p
-            class="hero-tag font-sans text-[11px] uppercase tracking-[0.3em] font-bold text-brand-primary translate-y-full">
-            Company
-          </p>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+
+          <!-- Left Column: Typography -->
+          <div class="flex flex-col justify-center max-w-xl z-10">
+            <!-- Masked Tag -->
+            <div class="overflow-hidden mb-8">
+              <p
+                class="hero-tag font-sans text-[11px] uppercase tracking-[0.3em] font-bold text-brand-primary translate-y-full flex items-center gap-4">
+                Company
+              </p>
+            </div>
+
+            <!-- Masked Heading Lines -->
+            <h1
+              class="font-display text-4xl md:text-5xl font-medium text-brand-obsidian !leading-[1.25] tracking-tight mb-10">
+              <div class="overflow-hidden">
+                <span class="hero-title-line block translate-y-full">
+                  We didn't improve
+                </span>
+              </div>
+              <div class="overflow-hidden">
+                <span class="hero-title-line block translate-y-full">
+                  the secondary <br /> device market.
+                </span>
+              </div>
+              <div class="overflow-hidden">
+                <span class="hero-title-line block translate-y-full text-brand-primary font-semibold">
+                  We rebuilt it.
+                </span>
+              </div>
+            </h1>
+
+            <!-- Description -->
+            <p
+              class="hero-desc font-sans text-lg md:text-xl text-brand-charcoal font-light leading-[1.8] opacity-0 translate-y-8">
+              NorthLadder was founded on the belief that a neutral marketplace — one that structurally cannot take a
+              side — would change how the secondary device market works. It did.
+            </p>
+          </div>
+
+          <!-- Right Column: Isolated Team Image -->
+          <div
+            class="relative w-full aspect-[4/5] lg:aspect-square rounded-[2rem] overflow-hidden shadow-2xl opacity-0 translate-x-12 hero-image-container">
+            <!-- Subtle styling to make the photo feel premium and editorial -->
+            <img src="./assets/northladder-team-two.jpeg" alt="NorthLadder Team"
+              class="w-full h-full object-cover grayscale-[20%] contrast-110 hero-image"
+              style="transform: scale(1.15);" />
+            <!-- Dark luxury overlay to balance the bright room -->
+            <div class="absolute inset-0 bg-brand-obsidian/10 mix-blend-multiply pointer-events-none"></div>
+            <!-- Inner border for a polished glass edge -->
+            <div class="absolute inset-0 border border-white/40 rounded-[2rem] pointer-events-none"></div>
+          </div>
+
         </div>
-
-        <!-- Masked Heading Lines -->
-        <h1
-          class="font-display text-4xl md:text-5xl lg:text-6xl font-medium text-brand-obsidian leading-[1.05] tracking-tight mb-10 max-w-5xl">
-          <div class="overflow-hidden py-1"><span class="hero-title-line block translate-y-full">We didn't improve
-              the</span></div>
-          <div class="overflow-hidden py-1"><span class="hero-title-line block translate-y-full">secondary device
-              market.</span></div>
-          <div class="overflow-hidden py-1"><span
-              class="hero-title-line block translate-y-full text-brand-primary font-semibold">We
-              rebuilt it.</span></div>
-        </h1>
-
-        <!-- Description -->
-        <p
-          class="hero-desc font-sans text-lg md:text-xl text-brand-charcoal font-light leading-[1.8] max-w-2xl opacity-0 translate-y-8">
-          NorthLadder was founded on the belief that a neutral marketplace — one that structurally cannot take a side —
-          would change how the secondary device market works. It did.
-        </p>
       </div>
     </section>
 
@@ -1242,7 +1271,8 @@
                 <p class="font-sans text-[11px] tracking-widest font-medium uppercase text-gray-500">Fewer disputes</p>
               </div>
               <div>
-                <h4 class="font-display text-xl text-3xl font-semibold md:font-bold text-brand-primary mb-1">&lt;48h</h4>
+                <h4 class="font-display text-xl text-3xl font-semibold md:font-bold text-brand-primary mb-1">&lt;48h
+                </h4>
                 <p class="font-sans text-[11px] tracking-widest font-medium uppercase text-gray-500">Settlement</p>
               </div>
             </div>
@@ -1273,15 +1303,21 @@
             <div class="relative z-10 grid grid-cols-3 gap-4 pt-8 border-t border-brand-obsidian/10">
               <div>
                 <h4 class="font-display text-xl text-3xl font-semibold md:font-bold text-brand-mint mb-1">+15%</h4>
-                <p class="font-sans text-[11px] tracking-widest font-medium uppercase text-gray-500 overflow-hidden text-wrap">Attach rate</p>
+                <p
+                  class="font-sans text-[11px] tracking-widest font-medium uppercase text-gray-500 overflow-hidden text-wrap">
+                  Attach rate</p>
               </div>
               <div>
                 <h4 class="font-display text-xl text-3xl font-semibold md:font-bold text-brand-mint mb-1">3 days</h4>
-                <p class="font-sans text-[11px] tracking-widest font-medium uppercase text-gray-500 overflow-hidden text-wrap">Integration</p>
+                <p
+                  class="font-sans text-[11px] tracking-widest font-medium uppercase text-gray-500 overflow-hidden text-wrap">
+                  Integration</p>
               </div>
               <div>
                 <h4 class="font-display text-xl text-3xl font-semibold md:font-bold text-brand-mint mb-1">+18%</h4>
-                <p class="font-sans text-[11px] tracking-widest font-medium uppercase text-gray-500 overflow-hidden text-wrap">Revenue</p>
+                <p
+                  class="font-sans text-[11px] tracking-widest font-medium uppercase text-gray-500 overflow-hidden text-wrap">
+                  Revenue</p>
               </div>
             </div>
           </div>
@@ -2144,14 +2180,7 @@
 
     function initHero() {
       // 1. Hero Entrance Animations
-      const heroTl = gsap.timeline({ defaults: { ease: "expo.out" } });
-
-      // Subtle scale-down of the background image
-      heroTl.to(".hero-bg-img", {
-        scale: 1,
-        duration: 2.5,
-        ease: "power2.out"
-      }, 0);
+      const heroTl = gsap.timeline({ defaults: { ease: "power4.out" } });
 
       // Tag slides up from mask
       heroTl.to(".hero-tag", {
@@ -2170,10 +2199,27 @@
       heroTl.to(".hero-desc", {
         opacity: 1,
         y: 0,
-        duration: 1.5,
+        duration: 1.2,
       }, 0.8);
 
-      // 2. "Inside NorthLadder" Scroll Animations
+      // Right Column: Image container slides in and fades
+      heroTl.to(".hero-image-container", {
+        opacity: 1,
+        x: 0,
+        duration: 1.5,
+        ease: "power3.out"
+      }, 0.6);
+
+      // Right Column: Image subtle scale-down effect (cinematic feel)
+      heroTl.to(".hero-image", {
+        scale: 1,
+        duration: 3,
+        ease: "power2.out"
+      }, 0.6);
+
+      // --------------------------------------------------------
+      // 2. "Inside NorthLadder" Scroll Animations (UNCHANGED)
+      // --------------------------------------------------------
       const storyTl = gsap.timeline({
         scrollTrigger: {
           trigger: "#inside-northladder",

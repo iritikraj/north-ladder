@@ -624,7 +624,7 @@
             <span class="frag-element inline-block">Of</span>
           </span>
           <br class="hidden sm:block" />
-          <span class="font-medium">
+          <span class="font-semibold">
             <span class="frag-element inline-block">The</span>
             <span class="frag-element inline-block">Device</span>
             <span class="frag-element inline-block">Lifecycle.</span>
@@ -1328,43 +1328,61 @@
 
       if (!heroSection || !bgContainer) return;
 
-      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
 
-      // 1. Generate Optimized CSS Grid Fragments
-      const cols = Math.max(10, Math.floor(window.innerWidth / 80));
-      const rows = Math.max(8, Math.floor(window.innerHeight / 80));
+      // Use mobile hero image on mobile devices
+      const isMobile = window.matchMedia("(max-width: 767px)").matches;
+
+      const imgUrl = isMobile
+        ? './assets/northladder-transparent-hero-mobile-preview.png'
+        : './assets/northladder-transparent-hero.png';
+
+      // Generate optimized CSS Grid Fragments
+      const cols = Math.max(
+        10,
+        Math.floor(window.innerWidth / 80)
+      );
+
+      const rows = Math.max(
+        8,
+        Math.floor(window.innerHeight / 80)
+      );
+
       const fragW = 100 / cols;
       const fragH = 100 / rows;
 
-      const imgUrl = 'https://images.unsplash.com/photo-1759588071814-59ec64e569ba?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
-
       let fragmentsHtml = '';
+
       for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
           const bgPosX = j * (100 / (cols - 1 || 1));
           const bgPosY = i * (100 / (rows - 1 || 1));
+
           fragmentsHtml += `
-            <div class="hero-bg-frag absolute" style="
-              width: calc(${fragW}% + 1.5px);
-              height: calc(${fragH}% + 1.5px);
-              top: ${i * fragH}%;
-              left: ${j * fragW}%;
-              background-image: linear-gradient(
-                rgba(255, 255, 255, 0.65),
-                rgba(255, 255, 255, 0.65)
-              ), url('${imgUrl}');
-              backdrop-filter: blur(8px);
-              -webkit-backdrop-filter: blur(8px);
-              background-size: ${cols * 100}% ${rows * 100}%;
-              background-position: ${bgPosX}% ${bgPosY}%;
-              will-change: transform, opacity;
-            "></div>
-          `;
+        <div class="hero-bg-frag absolute" style="
+          width: calc(${fragW}% + 1.5px);
+          height: calc(${fragH}% + 1.5px);
+          top: ${i * fragH}%;
+          left: ${j * fragW}%;
+          background-image:linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url('${imgUrl}');
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          background-size: ${cols * 100}% ${rows * 100}%;
+          background-position: ${bgPosX}% ${bgPosY}%;
+          will-change: transform, opacity;
+        "></div>
+      `;
         }
       }
+
       bgContainer.innerHTML = fragmentsHtml;
 
-      gsap.set(".hero-bg-frag, .frag-element", { force3D: true, transformPerspective: 1000 });
+      gsap.set(".hero-bg-frag, .frag-element", {
+        force3D: true,
+        transformPerspective: 1000
+      });
 
       // 2. CRITICAL FIX: Initial Entrance Animation 
       // We animate the PARENT wrappers so ScrollTrigger has exclusive control over the fragments
@@ -1429,6 +1447,7 @@
         }, 0.1
       );
     }
+
     function proofStrip() {
       const statBlocks = gsap.utils.toArray(".stat-block");
       if (statBlocks.length > 0) {
