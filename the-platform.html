@@ -603,81 +603,59 @@
   </nav>
 
   <main>
-    <section id="hero-shatter-section" class="relative w-full h-[100vh] z-[40] bg-transparent">
+    <section id="hero-section"
+      class="relative w-full min-h-[90vh] lg:min-h-screen bg-white overflow-hidden flex items-start md:items-center pt-24 lg:pt-0">
 
-      <!-- Container for dynamically generated background fragments -->
-      <div id="hero-bg-container" class="absolute inset-0 z-0 overflow-hidden pointer-events-none perspective-[1000px]">
-        <!-- JS fills this with .hero-bg-frag elements -->
+      <div
+        class="absolute bottom-0 right-0 w-full h-full flex items-end justify-center lg:justify-end z-0 pointer-events-none">
+
+        <!-- Optional: Soft blue gradient glow to mimic the Razorpay background -->
+        <div
+          class="absolute inset-0 bg-gradient-to-tr from-blue-50/40 to-transparent mix-blend-multiply right-0 w-full lg:w-1/2">
+        </div>
+        <img src="./assets/northladder-transparent-hero.png" alt="NorthLadder Platform"
+          class="hidden md:block hero-fade-up w-auto h-auto max-h-[50vh] lg:max-h-[85vh] object-cover object-bottom lg:object-right-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)]" />
+
+        <img src="./assets/northladder-transparent-hero-mobile-preview.png" alt="NorthLadder Platform"
+          class="block md:hidden hero-fade-up w-full h-auto object-contain object-bottom-right drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)]" />
       </div>
 
-      <!-- Hero Content Overlay -->
-      <div
-        class="relative w-full h-full max-w-[1440px] mx-auto px-6 lg:px-12 flex flex-col justify-center items-start pt-16 lg:pt-20 z-10 pointer-events-none perspective-[1000px]">
-        <h1
-          class="font-display font-light text-4xl md:text-5xl !leading-[1.15] tracking-tight text-black mb-6 max-w-5xl">
-          <span class="frag-element inline-block">One</span>
-          <span class="frag-element inline-block">Platform.</span>
-          <br class="hidden sm:block" />
-          <span>
-            <span class="frag-element inline-block">Every</span>
-            <span class="frag-element inline-block">Stage</span>
-            <span class="frag-element inline-block">Of</span>
-          </span>
-          <br class="hidden sm:block" />
-          <span class="font-semibold">
-            <span class="frag-element inline-block">The</span>
-            <span class="frag-element inline-block">Device</span>
-            <span class="frag-element inline-block">Lifecycle.</span>
-          </span>
-        </h1>
+      <div class="relative w-full flex flex-col justify-center z-10 h-full">
 
-        <p class="font-sans text-base md:text-xl text-gray-600 font-light leading-relaxed mb-10 max-w-3xl">
-          <span class="frag-element inline-block">AI grading,</span>
-          <span class="frag-element inline-block">live</span>
-          <span class="frag-element inline-block">auction</span>
-          <span class="frag-element inline-block">engine,</span>
-          <span class="frag-element inline-block">partner</span>
-          <span class="frag-element inline-block">integrations,</span>
-          <span class="frag-element inline-block">residual</span>
-          <span class="frag-element inline-block">value</span>
-          <span class="frag-element inline-block">intelligence,</span>
-          <span class="frag-element inline-block">compliance</span>
-          <span class="frag-element inline-block">—</span>
-          <span class="frag-element inline-block">the</span>
-          <span class="frag-element inline-block">full</span>
-          <span class="frag-element inline-block">infrastructure</span>
-          <span class="frag-element inline-block">layer</span>
-          <span class="frag-element inline-block">for</span>
-          <span class="frag-element inline-block">the</span>
-          <span class="frag-element inline-block">secondary</span>
-          <span class="frag-element inline-block">device</span>
-          <span class="frag-element inline-block">market,</span>
-          <span class="frag-element inline-block">available</span>
-          <span class="frag-element inline-block">via</span>
-          <span class="frag-element inline-block">API</span>
-          <span class="frag-element inline-block">or</span>
-          <span class="frag-element inline-block">portal.</span>
-        </p>
+        <div class="hero-fade-up w-full lg:max-w-[65%] px-4 md:px-24 flex flex-col justify-center pb-12 lg:pb-0">
 
-        <div class="flex flex-col sm:flex-row gap-4 pointer-events-auto">
-          <a href="#demo"
-            class="frag-element inline-flex items-center justify-center font-sans font-bold text-white bg-black px-8 py-4 rounded-lg hover:bg-primary-500/90 transition-all shadow-[0_10px_30px_rgba(168,85,247,0.2)]">
-            Book a platform demo
-          </a>
-          <a href="#api"
-            class="frag-element inline-flex items-center justify-center font-sans font-semibold text-black bg-white/50 backdrop-blur-md border border-primary-950/10 px-8 py-4 rounded-lg hover:bg-white transition-all shadow-sm">
-            API documentation &rarr;
-          </a>
+          <h1 class="font-display font-medium text-3xl lg:text-5xl !leading-[1.2] tracking-tight text-black mb-6">
+            <span class="text-primary">One Platform.</span><br />
+            Every Stage Of<br />
+            <span class="font-semibold">The Device Lifecycle.</span>
+          </h1>
+
+          <p class="font-sans text-sm md:text-xl text-gray-600 font-light leading-relaxed mb-10 max-w-lg">
+            AI grading, live auction engine, partner integrations, residual value intelligence, compliance — the full
+            infrastructure layer for the secondary device market.
+          </p>
+
+          <div class="flex md:flex-row gap-4 pointer-events-auto">
+            <a href="#demo"
+              class="inline-flex text-sm items-center justify-center font-sans font-light md:font-bold text-white bg-primary-800 px-2 md:px-8 py-4 rounded-lg hover:bg-primary-900 transition-all shadow-md hover:shadow-xl backdrop-blur-sm">
+              Book a platform demo
+            </a>
+            <a href="#api"
+              class="inline-flex text-sm items-center justify-center font-sans font-light md:font-semibold text-primary bg-white/80 backdrop-blur-md border border-gray-200 px-2 md:px-8 py-4 rounded-lg hover:bg-white transition-all shadow-sm hover:shadow-md">
+              API documentation &rarr;
+            </a>
+          </div>
+
         </div>
       </div>
+
     </section>
 
     <!-- ========================================================= -->
     <!-- SECTION 2: ECOSYSTEM PROOF STRIP                          -->
     <!-- ========================================================= -->
 
-    <section id="proof-strip"
-      class="relative w-full py-24 lg:py-32 bg-primary-100 overflow-hidden border-t border-gray-200/50 z-[20]">
+    <section id="proof-strip" class="relative w-full py-24 lg:py-32 overflow-hidden z-[20]">
       <!-- Subtle Background Mesh -->
       <div class="absolute inset-0 w-full h-full pointer-events-none opacity-20" style="
       background-image: radial-gradient(rgba(59, 7, 100, 0.1) 1px, transparent 1px); background-size: 40px 40px;">
@@ -1315,137 +1293,38 @@
 
       cursorLogic();
       navBar();
-      initHeroShatter();
+      initHero();
       proofStrip();
       initCapabilities();
       initArchitecture2D();
       initIntegrationsAndCTA();
     });
 
-    function initHeroShatter() {
-      const heroSection = document.getElementById("hero-shatter-section");
-      const bgContainer = document.getElementById("hero-bg-container");
+    function initHero() {
+      const elements = document.querySelectorAll('.hero-fade-up');
 
-      if (!heroSection || !bgContainer) return;
+      if (elements.length === 0) return;
 
-      const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
-
-      // Use mobile hero image on mobile devices
-      const isMobile = window.matchMedia("(max-width: 767px)").matches;
-
-      const imgUrl = isMobile
-        ? './assets/northladder-transparent-hero-mobile-preview.png'
-        : './assets/northladder-transparent-hero.png';
-
-      // Generate optimized CSS Grid Fragments
-      const cols = Math.max(
-        10,
-        Math.floor(window.innerWidth / 80)
-      );
-
-      const rows = Math.max(
-        8,
-        Math.floor(window.innerHeight / 80)
-      );
-
-      const fragW = 100 / cols;
-      const fragH = 100 / rows;
-
-      let fragmentsHtml = '';
-
-      for (let i = 0; i < rows; i++) {
-        for (let j = 0; j < cols; j++) {
-          const bgPosX = j * (100 / (cols - 1 || 1));
-          const bgPosY = i * (100 / (rows - 1 || 1));
-
-          fragmentsHtml += `
-        <div class="hero-bg-frag absolute" style="
-          width: calc(${fragW}% + 1.5px);
-          height: calc(${fragH}% + 1.5px);
-          top: ${i * fragH}%;
-          left: ${j * fragW}%;
-          background-image:linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url('${imgUrl}');
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
-          background-size: ${cols * 100}% ${rows * 100}%;
-          background-position: ${bgPosX}% ${bgPosY}%;
-          will-change: transform, opacity;
-        "></div>
-      `;
-        }
-      }
-
-      bgContainer.innerHTML = fragmentsHtml;
-
-      gsap.set(".hero-bg-frag, .frag-element", {
-        force3D: true,
-        transformPerspective: 1000
-      });
-
-      // 2. CRITICAL FIX: Initial Entrance Animation 
-      // We animate the PARENT wrappers so ScrollTrigger has exclusive control over the fragments
-      if (!prefersReducedMotion) {
-        gsap.from(bgContainer, { opacity: 0, duration: 1.5, ease: "power2.out" });
-
-        // Grab the container holding the text
-        const contentOverlay = heroSection.querySelector(".z-10.pointer-events-none");
-        if (contentOverlay) {
-          gsap.from(contentOverlay, { y: 30, opacity: 0, duration: 1.2, ease: "power3.out", delay: 0.3 });
-        }
-      }
-
-      // 3. Scroll-Linked Dissolve Effect
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: heroSection,
-          start: "top top",
-          end: "+=120%",
-          scrub: 0.5,
-          pin: true,
-          pinSpacing: false
-        }
-      });
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       if (prefersReducedMotion) {
-        tl.to(heroSection, { opacity: 0, ease: "none" });
+        // If user prefers no motion, just show elements instantly
+        elements.forEach(el => {
+          el.classList.remove('opacity-0', 'translate-y-8');
+          el.classList.add('opacity-100', 'translate-y-0');
+        });
         return;
       }
 
-      // Background: Scatters and scales out perfectly, restoring to 0 state on scroll back
-      tl.fromTo(".hero-bg-frag",
-        { x: 0, y: 0, z: 0, rotationX: 0, rotationY: 0, rotationZ: 0, autoAlpha: 1, scale: 1 },
-        {
-          x: () => gsap.utils.random(-250, 250),
-          y: () => gsap.utils.random(-250, 250),
-          z: () => gsap.utils.random(-150, 300),
-          rotationX: () => gsap.utils.random(-45, 45),
-          rotationY: () => gsap.utils.random(-45, 45),
-          rotationZ: () => gsap.utils.random(-30, 30),
-          autoAlpha: 0,
-          scale: 0,
-          ease: "power2.inOut",
-          stagger: { amount: 0.5, from: "edges" }
-        }, 0
-      );
-
-      // Typography: Scatters and vanishes
-      tl.fromTo(".frag-element",
-        { x: 0, y: 0, z: 0, rotationX: 0, rotationY: 0, rotationZ: 0, autoAlpha: 1, scale: 1 },
-        {
-          x: () => gsap.utils.random(-100, 100),
-          y: () => gsap.utils.random(-150, -50),
-          z: () => gsap.utils.random(50, 200),
-          rotationX: () => gsap.utils.random(-30, 30),
-          rotationY: () => gsap.utils.random(-30, 30),
-          rotationZ: () => gsap.utils.random(-15, 15),
-          autoAlpha: 0,
-          scale: () => gsap.utils.random(1.1, 1.3),
-          ease: "power2.inOut",
-          stagger: { amount: 0.3, from: "start" }
-        }, 0.1
-      );
+      // Simple entrance animation using GSAP (No ScrollTrigger)
+      gsap.to('.hero-fade-up', {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        ease: "power3.out",
+        stagger: 0.2, // Text loads first, then image slightly after
+        delay: 0.1
+      });
     }
 
     function proofStrip() {
