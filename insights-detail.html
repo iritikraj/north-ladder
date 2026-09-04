@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Report Detail — NorthLadder</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
+    rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: "#EDEEF5",
+              obsidian: "#0A0A0B",
+              charcoal: "#2D2D32",
+              primary: "#3B0764",
+              light: "#9333EA",
+              bright: "#C084FC",
+              mint: "#A855F7",
+            },
+            primary: {
+              950: "#3B0764",
+              900: "#581C87",
+              800: "#6B21A8",
+              700: "#7E22CE",
+              600: "#9333EA",
+              DEFAULT: "#9333EA",
+              500: "#A855F7",
+              400: "#C084FC",
+              300: "#D8B4FE",
+              200: "#E9D5FF",
+              100: "#F3E8FF",
+            },
+          },
+          fontFamily: {
+            sans: ["Poppins", "sans-serif"],
+            display: ["Montserrat", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- GSAP for cursor glow -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    body {
+      background-color: #EDEEF5;
+      /* bg-brand-bg */
+      color: #2D2D32;
+    }
+
+    /* Grain Texture */
+    .grain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+      mix-blend-mode: multiply;
+    }
+
+    /* Cursor Glow */
+    #cursor-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(147, 51, 234, 0.08) 0%, rgba(147, 51, 234, 0) 70%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 9998;
+      mix-blend-mode: multiply;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #cursor-glow {
+        display: none;
+      }
+    }
+
+    /* Clean typography styles for the article body */
+    .article-body p {
+      margin-bottom: 2rem;
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.035;
+      mix-blend-mode: multiply;
+    }
+  </style>
+</head>
+
+<body class="antialiased overflow-x-hidden">
+
+  <!-- Grain & Cursor -->
+  <svg class="grain" xmlns="http://www.w3.org/2000/svg">
+    <filter id="noiseFilter">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"></feTurbulence>
+      <feColorMatrix type="saturate" values="0"></feColorMatrix>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#noiseFilter)"></rect>
+  </svg>
+  <div id="cursor-glow"></div>
+  <article>
+    <!-- HERO SECTION -->
+    <header class="relative w-full h-[65vh] min-h-[500px] flex flex-col items-center justify-center overflow-hidden">
+      <!-- Background Image -->
+      <img src="https://images.unsplash.com/photo-1487017159836-4e23ece2e4cf?q=80&w=871&auto=format&fit=crop"
+        alt="Market Intelligence Report" class="absolute inset-0 w-full h-full object-cover scale-105" />
+
+      <!-- Dark Overlays for Text Readability -->
+      <div class="absolute inset-0 bg-brand-obsidian/30 mix-blend-multiply"></div>
+      <!-- <div class="absolute inset-0 bg-gradient-to-t from-brand-bg via-transparent to-transparent opacity-90"></div> -->
+
+      <!-- Hero Content -->
+      <div class="relative z-10 text-center px-6 max-w-4xl mx-auto mt-16">
+        <p
+          class="font-sans text-[11px] font-bold tracking-[0.3em] text-brand-mint uppercase mb-6 flex items-center justify-center gap-3">
+          <span class="w-8 h-[1px] bg-brand-mint"></span>
+          Q3 2026 · EU & GCC Market Report
+          <span class="w-8 h-[1px] bg-brand-mint"></span>
+        </p>
+
+        <h1
+          class="font-display font-medium text-4xl md:text-5xl lg:text-6xl text-white !leading-[1.15] tracking-tight drop-shadow-lg mb-8">
+          Secondary Device Pricing Intelligence
+        </h1>
+
+        <div
+          class="font-sans text-white/70 text-sm flex items-center justify-center gap-4 uppercase tracking-wider font-semibold">
+          <span>By NorthLadder Insights</span>
+          <span class="w-1.5 h-1.5 bg-brand-primary rounded-full"></span>
+          <span>12 Min Read</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN ARTICLE CONTENT -->
+    <!-- max-w-[800px] ensures the perfect character length per line for comfortable reading -->
+    <main class="relative z-20 w-full max-w-6xl mx-auto px-6 py-16 md:py-24 article-body">
+
+      <!-- DROP CAP PARAGRAPH -->
+      <!-- Tailwind's first-letter pseudo class handles the enlarged drop cap -->
+      <p
+        class="first-letter:font-display first-letter:text-6xl first-letter:font-semibold first-letter:text-primary-900 first-letter:float-left first-letter:mr-4 first-letter:mt-[-0.25rem] first-letter:leading-[0.8] font-sans text-lg md:text-xl text-brand-obsidian font-light leading-[1.8]">
+        The secondary device market has reached a critical inflection point entering the second half of 2026. With the
+        introduction of stringent regulatory frameworks across the European Union and the rapid maturation of B2B
+        procurement in the GCC region, pricing dynamics are shifting faster than traditional spreadsheet models can
+        track.
+      </p>
+
+      <p class="font-sans text-lg text-brand-charcoal font-light leading-[1.8]">
+        Historically, the gulf between "Grade A" and "Grade B" inventory was highly subjective, leading to localized
+        price variations of up to 14%. However, the advent of AI-driven, video-based grading mechanisms is establishing
+        a universal ground truth for device condition. As trust increases, we are witnessing unprecedented cross-border
+        liquidity.
+      </p>
+
+      <!-- INLINE IMAGE WITH CAPTION -->
+      <figure class="my-16">
+        <div
+          class="rounded-[2rem] overflow-hidden shadow-2xl border border-gray-200/50 mb-6 bg-gray-100 relative group">
+          <!-- Subtle hover zoom on image -->
+          <img src="https://images.unsplash.com/photo-1526406915894-7bcd65f60845?q=80&w=1200&auto=format&fit=crop"
+            alt="Data analysis showing pricing convergence"
+            class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.19,1,0.22,1)]" />
+        </div>
+
+        <!-- Piccaption / The line about the image -->
+        <figcaption class="relative max-w-[90%] mx-auto text-center">
+          <!-- Decorative top line -->
+          <div class="w-12 h-[1px] bg-primary-300 mx-auto mb-4"></div>
+          <p class="font-sans text-sm text-gray-500 italic leading-relaxed">
+            Figure 1.0: Apple iPhone 15 vs Samsung Galaxy S24 residual value retention curves over a 12-month period,
+            demonstrating an accelerated convergence in depreciation rates across GCC markets.
+          </p>
+        </figcaption>
+      </figure>
+
+      <!-- CONTINUOUS PARAGRAPHS & SUBHEADINGS -->
+      <h2 class="font-display font-medium text-3xl md:text-4xl text-brand-obsidian mt-20 mb-8 tracking-tight">
+        The Liquidity Premium
+      </h2>
+
+      <p class="font-sans text-lg text-brand-charcoal font-light leading-[1.8]">
+        Retailers and OEMs utilizing closed-loop or preferred-buyer models are systematically undervaluing their
+        inventory. Data extracted from the NorthLadder auction engine between January and June 2026 reveals a "Liquidity
+        Premium"—an average 9.4% increase in the final hammer price when lots are exposed to a geographically diverse
+        pool of over 75 verified buyers.
+      </p>
+
+      <p class="font-sans text-lg text-brand-charcoal font-light leading-[1.8]">
+        The impact is most pronounced in the tablet and wearable segments, where domestic demand can be highly volatile.
+        By routing this inventory to markets with structural deficits in supply—such as routing surplus European stock
+        to emerging Asian hubs—sellers eliminate markdown risks entirely.
+      </p>
+
+      <!-- QUOTE BLOCK -->
+      <blockquote
+        class="my-16 relative p-8 md:p-12 bg-white/50 backdrop-blur-2xl border border-white/80 rounded-[2rem] shadow-[0_30px_60px_-15px_rgba(59,7,100,0.08)] overflow-hidden group">
+
+        <!-- Decorative Glass Glows (Behind the text) -->
+        <div class="absolute -top-12 -right-12 w-48 h-48 bg-primary-300/20 rounded-full blur-3xl pointer-events-none">
+        </div>
+        <div class="absolute -bottom-12 -left-12 w-48 h-48 bg-brand-mint/10 rounded-full blur-3xl pointer-events-none">
+        </div>
+
+        <!-- Gradient Left Accent Line -->
+        <div
+          class="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-brand-primary via-primary-500 to-brand-mint opacity-80">
+        </div>
+
+        <!-- Oversized Faded Quote Icon -->
+        <svg
+          class="absolute top-6 left-8 w-20 h-20 text-primary-600/5 -z-10 transform -rotate-6 transition-transform group-hover:scale-110 duration-700"
+          fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+        </svg>
+
+        <!-- Quote Text -->
+        <p
+          class="font-display font-medium text-xl md:text-[1.75rem] text-brand-obsidian leading-snug relative z-10 pl-2 md:pl-6">
+          "The days of selling used inventory to the same three local wholesalers in a WhatsApp group are over. If you
+          aren't plugging into a global pricing algorithm, you are leaving millions on the table."
+        </p>
+
+        <!-- Optional Attribution Footer -->
+        <footer class="mt-6 pl-2 md:pl-6 relative z-10 flex items-center gap-4">
+          <div class="w-10 h-[1px] bg-brand-primary/40"></div>
+          <span class="font-sans text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase text-primary-800">
+            Market Intelligence Report
+          </span>
+        </footer>
+
+      </blockquote>
+
+      <p class="font-sans text-lg text-brand-charcoal font-light leading-[1.8]">
+        Looking ahead to Q4, the focus will shift entirely toward API-driven integrations. The most successful B2B
+        buyers are no longer manually bidding; they are utilizing NorthLadder's programmatic infrastructure to execute
+        strategic purchasing parameters instantly.
+      </p>
+
+      <!-- Tags / Footer of Article -->
+      <div class="mt-20 pt-8 border-t border-brand-obsidian/10 flex flex-wrap gap-3">
+        <span
+          class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-xs font-sans font-bold text-gray-500 uppercase tracking-widest">Market
+          Data</span>
+        <span
+          class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-xs font-sans font-bold text-gray-500 uppercase tracking-widest">EU
+          Region</span>
+        <span
+          class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-xs font-sans font-bold text-gray-500 uppercase tracking-widest">Pricing</span>
+      </div>
+
+    </main>
+  </article>
+
+  <!-- Sticky CTA for Reports -->
+  <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-[90%] max-w-sm pointer-events-none">
+    <a href="#"
+      class="pointer-events-auto flex items-center justify-between bg-brand-obsidian text-white p-4 rounded-2xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.3)] hover:scale-[1.02] transition-transform duration-300">
+      <div class="flex flex-col">
+        <span class="font-sans text-[10px] font-bold tracking-widest uppercase text-brand-bright">Full Report</span>
+        <span class="font-display font-semibold text-sm">Download PDF (48 pages)</span>
+      </div>
+      <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+        </svg>
+      </div>
+    </a>
+  </div>
+
+  <!-- Cursor Logic -->
+  <script>
+    function initCursorGlow() {
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!prefersReducedMotion && window.matchMedia("(pointer: fine)").matches) {
+        const glow = document.getElementById("cursor-glow");
+        let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+        let gx = mx, gy = my;
+
+        window.addEventListener("mousemove", (e) => {
+          mx = e.clientX;
+          my = e.clientY;
+        });
+
+        gsap.ticker.add(() => {
+          gx += (mx - gx) * 0.08;
+          gy += (my - gy) * 0.08;
+          gsap.set(glow, { x: gx, y: gy });
+        });
+      }
+    }
+
+    // Initialize
+    document.addEventListener("DOMContentLoaded", initCursorGlow);
+  </script>
+</body>
+
+</html>

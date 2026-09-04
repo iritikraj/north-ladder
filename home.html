@@ -1035,7 +1035,56 @@
             class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For Ecommerce</a>
         </div>
 
-        <!-- Remaining Submenus (Buyers, Marketplace, Intelligence, Company) go here, exact same pristine format... -->
+        <!-- Submenu: Buyers -->
+        <div id="submenu-buyers" class="mobile-submenu hidden flex-col space-y-6">
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mb-2">Explore</p>
+          <a href="buyer-hub.html" class="text-xl font-display font-semibold text-brand-obsidian block mb-4">Buyer
+            Hub</a>
+
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mt-6 mb-2">Resources</p>
+          <a href="buyers/how-auction-work.html"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">How Auctions Work</a>
+          <a href="#register"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">Register as Buyer</a>
+        </div>
+
+        <!-- Submenu: Marketplace -->
+        <div id="submenu-marketplace" class="mobile-submenu hidden flex-col space-y-6">
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mb-2">Infrastructure</p>
+          <a href="the-platform.html" class="text-xl font-display font-semibold text-brand-obsidian block mb-4">The
+            Platform</a>
+          <a href="#ai-grading" class="text-xl font-display font-semibold text-brand-obsidian block mb-4">AI Grading</a>
+        </div>
+
+        <!-- Submenu: Intelligence (Insights) -->
+        <div id="submenu-intelligence" class="mobile-submenu hidden flex-col space-y-6">
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mb-2">Data</p>
+          <a href="insights.html" class="text-xl font-display font-semibold text-brand-obsidian block mb-4">RV Index</a>
+          <a href="#market-reports" class="text-xl font-display font-semibold text-brand-obsidian block mb-4">Market
+            Reports</a>
+
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mt-6 mb-2">Editorial</p>
+          <a href="#leaders" class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">60
+            Seconds With Circularity Leaders</a>
+          <a href="#blogs"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">Blogs</a>
+        </div>
+
+        <!-- Submenu: Company -->
+        <div id="submenu-company" class="mobile-submenu hidden flex-col space-y-6">
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mb-2">About</p>
+          <a href="who-we-are.html" class="text-xl font-display font-semibold text-brand-obsidian block mb-4">Inside
+            NorthLadder</a>
+          <a href="#builders" class="text-xl font-display font-semibold text-brand-obsidian block mb-4">The Builders</a>
+
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mt-6 mb-2">Discover</p>
+          <a href="#stories"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">Customer Stories</a>
+          <a href="#newsroom"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">Newsroom</a>
+          <a href="#join" class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">Join
+            The Team</a>
+        </div>
 
       </div>
     </div>
@@ -1076,18 +1125,6 @@
                 <span class="typewriter-line block">Circularity Marketplace.</span>
               </span>
             </h1>
-
-            <!-- Subheadline -->
-            <h2
-              class="hero-subtitle font-sans text-base md:text-xl font-light text-ink leading-[1.4] tracking-tight mt-8 max-w-lg">
-              <span class="block overflow-hidden pb-1"><span
-                  class="anim-line block text-gray-700 translate-y-[120%] rotate-[2deg] transform-origin-bottom-left">Where
-                  reverse auctions unlock true value</span></span>
-              <span class="block overflow-hidden pb-1"><span
-                  class="anim-line block text-gray-700 translate-y-[120%] rotate-[2deg] transform-origin-bottom-left">across
-                  every device trade-in.</span></span>
-            </h2>
-
           </div>
 
           <!-- Scroll Indicator (Centered) -->
@@ -1121,16 +1158,16 @@
       <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
         <!-- Animated Number Counters -->
         <div
-          class="grid grid-cols-1 md:grid-cols-3 gap-16 lg:gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-300/50 mb-24">
+          class="grid grid-cols-1 md:grid-cols-4 gap-16 lg:gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-300/50 mb-24">
           <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
             <div class="relative">
               <h3
                 class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
-                <span class="counter" data-target="75">0</span><span class="text-brand-primary">+</span>
+                <span class="counter" data-target="700">0</span><span class="text-brand-primary">+</span>
               </h3>
             </div>
             <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
-              Tier-1 Partners
+              buyers bidding live
             </p>
           </div>
 
@@ -1138,21 +1175,33 @@
             <div class="relative">
               <h3
                 class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
-                <span class="counter" data-target="20">0</span><span class="text-brand-bright">+</span>
+                <span class="counter" data-target="75">0</span><span class="text-brand-bright">+</span>
               </h3>
             </div>
             <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
-              Countries Live
+              partners
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
+                <span class="counter" data-target="25">0</span><span class="text-brand-primary">+</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              countries
             </p>
           </div>
 
           <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
             <h3
               class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-mint tracking-tighter mb-2 zero-text">
-              Zero
+              8
             </h3>
             <p class="font-sans text-[11px] tracking-[0.25em] text-brand-mint uppercase font-bold mt-2">
-              Inventory Held
+              Languages
             </p>
           </div>
         </div>
@@ -1176,17 +1225,38 @@
             <!-- Infinite Track -->
             <div class="marquee-track flex items-center gap-24 pr-24">
               <!-- Set 1 -->
-              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">AMAZON</span>
-              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">VODAFONE</span>
-              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">MMS</span>
-              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">VIVO</span>
-              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">SAMSUNG</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Amazon</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Samsung</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Vodafone</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Jarir</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">MediaMarkt</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">DU</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Carrefour</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Lulu</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Noon</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">bol</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">eXtra</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Xcite</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">e&</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Omantel</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">iStyle</span>
+
               <!-- Set 2 (Duplicated for seamless loop) -->
-              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">AMAZON</span>
-              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">VODAFONE</span>
-              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">MMS</span>
-              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">VIVO</span>
-              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">SAMSUNG</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Amazon</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Samsung</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Vodafone</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Jarir</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">MediaMarkt</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">DU</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Carrefour</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Lulu</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Noon</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">bol</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">eXtra</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Xcite</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">e&</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">Omantel</span>
+              <span class="font-display text-3xl font-bold tracking-widest text-brand-obsidian/80">iStyle</span>
             </div>
           </div>
         </div>
@@ -1237,13 +1307,11 @@
             </div>
             <h2
               class="font-display font-semibold md:font-bold text-4xl md:text-6xl text-brand-obsidian leading-[1.05] tracking-tight mb-6">
-              Limitless <br />
-              Ingestion.
+              Easy Plug-in
             </h2>
             <p class="font-sans text-sm md:text-lg text-gray-500 font-light leading-relaxed mb-10 max-w-md">
-              We integrate seamlessly with OEMs, distributors, and Telcos. Millions of
-              devices flow into the ecosystem with absolute zero inventory risk to
-              you.
+              We integrate seamlessly with OEMs, telcos, and retailers, connecting every device channel into one
+              marketplace. Millions of devices flow in with zero inventory risk to our partners.
             </p>
             <div
               class="relative w-full max-w-[420px] rounded-[32px] bg-gradient-to-br from-white/90 to-white/40 backdrop-blur-2xl border border-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05),inset_0_2px_10px_rgba(255,255,255,0.8)] p-8">
@@ -1300,8 +1368,8 @@
               AI Grading.
             </h2>
             <p class="font-sans text-sm md:text-lg text-gray-500 font-light leading-relaxed mx-auto mb-10 max-w-md">
-              Every device is instantly analyzed by our proprietary intelligence
-              engine. We remove human bias, creating a universal standard of trust.
+              Every smartphone is instantly graded by our proprietary AI engine, built on Apple's own diagnostics for
+              iOS and proprietary models for Android, removing human bias and setting a universal standard of trust.
             </p>
 
             <div
@@ -1351,12 +1419,12 @@
             </div>
             <h2
               class="font-display font-semibold md:font-bold text-4xl md:text-6xl text-brand-obsidian leading-[1.05] tracking-tight mb-6">
-              Global Yield, <br />
-              Maximized.
+              Competition <br />
+              Sets the Price
             </h2>
             <p class="font-sans text-sm md:text-lg text-gray-500 font-light leading-relaxed ml-auto mb-10 max-w-md">
-              A real-time, multi-buyer auction dynamically matches supply with demand
-              globally. Devices find their highest value in milliseconds.
+              A live, multi-buyer reverse auction matches supply with demand globally, pushing competition down to the
+              SKU level and turning every submission into its truest value in seconds.
             </p>
 
             <div
@@ -1583,9 +1651,12 @@
             <span class="text-[#64748B] font-medium">Of Trade-ins</span>
           </h1>
 
-          <p class="hero-anim font-sans text-base md:text-lg text-[#64748B] max-w-[480px] leading-relaxed mb-8">
-            Connecting millions of Grade-A devices directly to vetted B2B buyers through our real-time, global auction
-            engine.
+          <p class="hero-anim font-sans text-base md:text-lg text-[#64748B] max-w-[480px] leading-relaxed mb-4">
+            Millions of Grade-A devices reach vetted B2B buyers of every size, not just the largest players. This direct
+            access levels the playing field for last-mile buyers, driving stronger price competition across the board.
+          </p>
+          <p class="italic mb-8 hero-anim font-sans text-base md:text-lg max-w-[480px] leading-relaxed">
+            Trade-in access built for a more sustainable, circular future of the secondary device market.
           </p>
 
           <div class="hero-anim flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
@@ -1765,7 +1836,7 @@
           <h2
             class="bpg-anim font-display font-light text-3xl md:text-4xl lg:text-5xl text-white tracking-tight leading-[1.05] mb-12">
             Best Price <br />
-            <span class="font-medium text-white">Guarantee.</span>
+            <span class="font-medium text-white">Always</span>
           </h2>
 
           <!-- Staggered Value Props -->
@@ -1855,16 +1926,18 @@
               <p class="font-sans text-[10px] tracking-[0.25em] text-white/80 uppercase font-bold mb-2">
                 For Partners
               </p>
-              <h3 class="font-display font-bold text-6xl text-white mb-6 leading-tight">
-                Maximise <br /> Value.
+              <h3 class="font-display font-bold text-5xl text-white mb-6 leading-tight">
+                Maximize
+                <br /> Revenue.
               </h3>
-              <p class="font-sans text-white/90 font-light text-base max-w-[280px] mx-auto mb-8">
-                Retailers, Telcos, and OEMs. Offload risk and plug directly into the world's most aggressive bidding
-                algorithms.
+              <p class="font-sans text-white/90 font-light text-base max-w-[320px] mx-auto mb-8">
+                For retailers, telcos, and OEMs, our highest-value live auction pricing powers your mobile phone
+                exchange offer programs, cashing customers straight into their next upgrade. Available in-store or
+                online, with the same best-in-class customer experience across every channel.
               </p>
               <a href="partner-hub.html"
                 class="inline-flex items-center w-max font-sans font-semibold text-brand-primary bg-white px-8 py-3.5 text-base rounded-full hover:scale-105 transition-transform shadow-xl">
-                Join 75+ partners
+                Join Our 75+ Partners
               </a>
             </div>
           </div>
@@ -1885,15 +1958,17 @@
               <p class="font-sans text-[10px] tracking-[0.25em] text-brand-obsidian/60 uppercase font-bold mb-2">
                 For Buyers
               </p>
-              <h3 class="font-display font-bold text-6xl text-brand-obsidian mb-6 leading-tight">
-                Access <br /> Auctions.
+              <h3 class="font-display font-bold text-5xl text-brand-obsidian mb-6 leading-tight">
+                Bid at <br /> The Source
               </h3>
               <p class="font-sans text-brand-obsidian/80 font-light text-base max-w-[280px] mx-auto mb-8">
-                Vetted B2B buyers. Source Grade-A inventory directly from origin without intermediaries.
+                For B2B buyers, our transparent, neutral auction sources Grade-A pre-owned mobile inventory directly
+                from origin. Every buyer competes on equal footing, regardless of size, with full visibility into
+                pricing and no hidden allocation.
               </p>
               <a href="#buyers"
                 class="inline-flex items-center w-max font-sans font-semibold text-white bg-brand-obsidian px-8 py-3.5 text-base rounded-full hover:scale-105 transition-transform shadow-xl">
-                Register for free
+                Register for Free
               </a>
             </div>
           </div>
@@ -1918,7 +1993,7 @@
         <div class="flex flex-col gap-6">
           <!-- Mobile Card 1: Partners -->
           <div
-            class="relative w-full rounded-[2rem] overflow-hidden p-8 py-12 flex flex-col items-center text-center shadow-xl border border-white/20 mobile-eclipse-anim opacity-0 translate-y-8">
+            class="relative w-full !rounded-[2rem] overflow-hidden [-webkit-mask-image:-webkit-radial-gradient(white,black)] p-8 py-12 flex flex-col items-center text-center shadow-xl border border-white/20 mobile-eclipse-anim opacity-0 translate-y-8">
             <video autoplay loop muted playsinline
               class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-multiply">
               <source src="https://cdn.coverr.co/videos/coverr-robot-vacuum-cleaner-8823/720p.mp4" type="video/mp4" />
@@ -1939,7 +2014,7 @@
 
           <!-- Mobile Card 2: Buyers -->
           <div
-            class="relative w-full rounded-[2rem] overflow-hidden p-8 py-12 flex flex-col items-center text-center shadow-xl border border-brand-obsidian/10 mobile-eclipse-anim opacity-0 translate-y-8">
+            class="relative w-full !rounded-[2rem] overflow-hidden [-webkit-mask-image:-webkit-radial-gradient(white,black)] p-8 py-12 flex flex-col items-center text-center shadow-xl border border-brand-obsidian/10 mobile-eclipse-anim opacity-0 translate-y-8">
             <video autoplay loop muted playsinline
               class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-multiply">
               <source src="https://cdn.coverr.co/videos/coverr-analyzing-cryptocurrency-trends-3453/720p.mp4"
