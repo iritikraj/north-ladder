@@ -1,0 +1,2473 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorthLadder - The world's most advanced Trade-in solution</title>
+  <!-- Brand Approved Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- GSAP Core & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: "#EDEEF5",
+              obsidian: "#0A0A0B",
+              charcoal: "#2D2D32",
+              primary: "#3B0764",
+              light: "#9333EA",
+              bright: "#C084FC",
+              mint: "#A855F7",
+            },
+            primary: {
+              950: "#3B0764",
+              900: "#581C87",
+              800: "#6B21A8",
+              700: "#7E22CE",
+              600: "#9333EA",
+              DEFAULT: "#9333EA",
+              500: "#A855F7",
+              400: "#C084FC",
+              300: "#D8B4FE",
+              200: "#E9D5FF",
+              100: "#F3E8FF",
+            },
+            ink: "#0A0F1C",       // Deepest navy/black for high-contrast text
+            surface: "#FFFFFF",   // Pure white for foregrounds
+          },
+          fontFamily: {
+            sans: ["Poppins", "sans-serif"],
+            display: ["Montserrat", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Hide scrollbars */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    body {
+      background-color: #edeef5;
+      color: #0a0a0b;
+      overflow-x: hidden;
+    }
+
+    .apple-blur-light {
+      background: rgba(237, 238, 245, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    /* Fixed CSS Animations for Hero Load */
+    .hero-element {
+      opacity: 0;
+      animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .delay-1 {
+      animation-delay: 0.1s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.3s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.5s;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Ambient Breathing Glow */
+    @keyframes breathe {
+
+      0%,
+      100% {
+        transform: scale(1) translate(0, 0);
+        opacity: 0.4;
+      }
+
+      50% {
+        transform: scale(1.1) translate(20px, -20px);
+        opacity: 0.6;
+      }
+    }
+
+    .ambient-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle,
+          rgba(181, 153, 250, 0.4) 0%,
+          rgba(78, 0, 142, 0.1) 40%,
+          transparent 70%);
+      filter: blur(60px);
+      border-radius: 50%;
+      z-index: 0;
+      animation: breathe 10s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* Horizontal Line Styles */
+    .journey-line-container {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 300vw;
+      height: 400px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .journey-line-active {
+      stroke-dasharray: 4000;
+      stroke-dashoffset: 4000;
+    }
+
+    /* Premium Glass Cards */
+    .info-card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow:
+        0 20px 40px -10px rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    #cursor-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 480px;
+      height: 480px;
+      margin-left: -240px;
+      margin-top: -240px;
+      background: radial-gradient(circle,
+          rgba(181, 153, 250, 0.16) 0%,
+          rgba(78, 0, 142, 0.05) 45%,
+          transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    @media (max-width: 768px) {
+      #cursor-glow {
+        display: none;
+      }
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.035;
+      mix-blend-mode: multiply;
+    }
+
+    .panel-index {
+      -webkit-text-stroke: 1.5px rgba(10, 10, 11, 0.08);
+      color: transparent;
+    }
+
+    /* Infinite Marquee Animation */
+    .marquee-track {
+      width: max-content;
+      animation: marqueeScroll 25s linear infinite;
+      will-change: transform;
+    }
+
+    @keyframes marqueeScroll {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Pause marquee on hover for better UX */
+    .marquee-track:hover {
+      animation-play-state: paused;
+    }
+
+    /* Circular Split Mechanics */
+    .orb-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      /* Removed CSS transform so GSAP can handle it without jumping */
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.15),
+        inset 0 2px 10px rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      will-change: transform;
+    }
+
+    @media (min-width: 1024px) {
+      .orb-container {
+        width: 550px;
+        height: 550px;
+      }
+    }
+
+    /* Connection Line that draws between the orbs */
+    #orb-connector {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 2px;
+      background: linear-gradient(90deg, #4e008e, #48b48d);
+      width: 0px;
+      /* Expands via GSAP */
+      z-index: 0;
+      opacity: 0;
+    }
+
+    /* Residual Value Chart Animations */
+    #rv-chart-line {
+      stroke-dasharray: 1500;
+      stroke-dashoffset: 1500;
+    }
+
+    #rv-chart-fill {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .select-arrow {
+      background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%23A1A1AA' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0 center;
+      background-size: 12px;
+    }
+
+    /* Premium Apple-Style Navbar Dropdown Animations */
+    .nav-group {
+      position: static;
+    }
+
+    /* Critical: allows menu to span full width of header */
+    .mega-menu {
+      position: absolute;
+      left: 0;
+      top: 100%;
+      width: 100%;
+      background: rgba(237, 238, 245, 0.95);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.05);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+      cursor: default;
+    }
+
+    .nav-group:hover .mega-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Staggered items inside the menu */
+    .mega-item {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-group:hover .mega-item {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .nav-group:hover .col-1 .mega-item:nth-child(1) {
+      transition-delay: 0.04s;
+    }
+
+    .nav-group:hover .col-1 .mega-item:nth-child(2) {
+      transition-delay: 0.08s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(1) {
+      transition-delay: 0.12s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(2) {
+      transition-delay: 0.16s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(3) {
+      transition-delay: 0.20s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(4) {
+      transition-delay: 0.24s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(5) {
+      transition-delay: 0.28s;
+    }
+
+    /* Mobile Apple-style Navigation */
+    #mobile-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #EDEEF5;
+      z-index: 40;
+      padding-top: 85px;
+      padding-inline: 24px;
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0.4s, opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+
+    #mobile-menu.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .mobile-nav-item {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #mobile-menu.active .mobile-nav-item {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Mobile Menu Cascading Delays */
+    #mobile-menu.active .mobile-nav-item:nth-child(1) {
+      transition-delay: 0.10s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(2) {
+      transition-delay: 0.14s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(3) {
+      transition-delay: 0.18s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(4) {
+      transition-delay: 0.22s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(5) {
+      transition-delay: 0.26s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(6) {
+      transition-delay: 0.30s;
+    }
+
+    /* Hamburger Icon Animation */
+    .menu-line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform-origin: center;
+      transition:
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.2s ease;
+    }
+
+    .line-1 {
+      transform: translate(-50%, -6px);
+    }
+
+    .line-2 {
+      transform: translate(-50%, 0);
+    }
+
+    .line-3 {
+      transform: translate(-50%, 6px);
+    }
+
+    .menu-open .line-1 {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .menu-open .line-2 {
+      opacity: 0;
+    }
+
+    .menu-open .line-3 {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    /* Mobile Drilldown Enhancements */
+    #mobile-menu {
+      overflow-x: hidden;
+    }
+
+    .submenu-active #mobile-menu-slider {
+      transform: translateX(-100%);
+    }
+
+    .submenu-active #mobile-back-header {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .mobile-submenu a,
+    .mobile-submenu p {
+      opacity: 0;
+      transform: translateX(20px);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .submenu-active .mobile-submenu.active a,
+    .submenu-active .mobile-submenu.active p {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Stagger sub-items for premium cascade */
+    .submenu-active .mobile-submenu.active *:nth-child(1) {
+      transition-delay: 0.10s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(2) {
+      transition-delay: 0.14s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(3) {
+      transition-delay: 0.18s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(4) {
+      transition-delay: 0.22s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(5) {
+      transition-delay: 0.26s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(6) {
+      transition-delay: 0.30s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(7) {
+      transition-delay: 0.34s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(8) {
+      transition-delay: 0.38s;
+    }
+
+    /* Clean up any rogue arrows in the mobile submenu */
+    .mobile-submenu a {
+      position: relative;
+      background-image: none !important;
+      padding-left: 0 !important;
+    }
+
+    .mobile-submenu a svg {
+      display: none !important;
+      /* Forces any stray SVGs inside these specific links to hide */
+    }
+
+    /* Cinematic Tab Transitions (Motion Blur & Scale Wipe) */
+    .modal-form {
+      transition: opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1),
+        transform 0.8s cubic-bezier(0.19, 1, 0.22, 1),
+        filter 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+      will-change: transform, opacity, filter;
+    }
+
+    .form-hidden-left {
+      opacity: 0;
+      transform: translateX(-80px) scale(0.95);
+      filter: blur(12px);
+    }
+
+    .form-hidden-right {
+      opacity: 0;
+      transform: translateX(80px) scale(0.95);
+      filter: blur(12px);
+    }
+
+    .form-active {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      filter: blur(0px);
+    }
+
+    .cinematic-grid {
+      background-image:
+        linear-gradient(to right, rgba(147, 51, 234, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(147, 51, 234, 0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 80%);
+      mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 80%);
+      animation: gridDrift 20s linear infinite;
+    }
+
+    @keyframes gridDrift {
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(60px);
+      }
+    }
+
+    /* Hover enhancement for the CTA button arrow */
+    .cta-btn:hover .cta-arrow {
+      transform: translateX(4px);
+    }
+
+    /* Enable 3D space for the background elements */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+
+    /* Ensure horizontal scrolling on mobile for filters stays clean */
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+
+  <link rel="icon" type="image/x-icon" href="favicon.png" />
+</head>
+
+<body>
+  <!-- Grain texture -->
+  <svg class="grain" xmlns="http://www.w3.org/2000/svg">
+    <filter id="noiseFilter">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"></feTurbulence>
+      <feColorMatrix type="saturate" values="0"></feColorMatrix>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#noiseFilter)"></rect>
+  </svg>
+
+  <div id="cursor-glow"></div>
+
+  <!-- NAVBAR -->
+  <header id="main-nav"
+    class="fixed top-0 left-1/2 -translate-x-1/2 w-full z-50 apple-blur-light transition-all duration-500 bg-transparent">
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+      <div class="flex items-center justify-between h-[72px]">
+        <a href="home.html" class="flex items-center gap-3 cursor-pointer">
+          <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+            class="h-6 w-auto brightness-0" />
+        </a>
+
+        <nav class="hidden md:flex space-x-8 lg:space-x-10 h-full">
+          <!-- 1. For Partners -->
+          <div class="nav-group h-full flex items-center">
+            <a href="partner-hub.html"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              For Partners
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <!-- Apple-style Primary Column -->
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Explore</p>
+                  <a href="partner-hub.html"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-3">Partner
+                    Hub</a>
+                </div>
+                <!-- Apple-style Secondary Column -->
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Solutions</p>
+                  <a href="#retailers"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Retailers</a>
+                  <a href="partners/telcos-and-operators.html"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Telcos & Operators</a>
+                  <a href="#oems"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    OEMs & Brands</a>
+                  <a href="#ecommerce"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Ecommerce</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. For Buyers -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#buyers"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              For Buyers
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Explore</p>
+                  <a href="buyer-hub.html"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-mint transition-colors mb-3">Buyer
+                    Hub</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Resources</p>
+                  <a href="buyers/how-auction-work.html"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">How
+                    Auctions Work</a>
+                  <a href="#register"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Register
+                    as Buyer</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Neutral Marketplace -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#neutral-marketplace"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Neutral Marketplace
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Infrastructure</p>
+                  <a href="the-platform.html"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">The
+                    Platform</a>
+                  <a href="#ai-grading"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">AI
+                    Grading</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Intelligence -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#insights"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Insights
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Data</p>
+                  <a href="#rv-index"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">RV
+                    Index</a>
+                  <a href="#market-reports"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">Market
+                    Reports</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Editorial</p>
+                  <a href="#leaders"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">60
+                    Seconds With Circularity Leaders</a>
+                  <a href="#blogs"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Blogs</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Company -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#company"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Company
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    About</p>
+                  <a href="#inside"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">Inside
+                    NorthLadder</a>
+                  <a href="#builders"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">The
+                    Builders</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Discover</p>
+                  <a href="#stories"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Customer
+                    Stories</a>
+                  <a href="#newsroom"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Newsroom</a>
+                  <a href="#join"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Join
+                    The Team</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Language Toggle (Navbar) -->
+        <div class="relative group hidden md:block">
+          <button
+            class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418">
+              </path>
+            </svg>
+            EN
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+
+          <!-- Dropdown -->
+          <div
+            class="absolute right-0 mt-4 w-32 bg-white/90 backdrop-blur-xl border border-gray-100 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden translate-y-2 group-hover:translate-y-0">
+            <div class="p-1.5 space-y-0.5">
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-brand-obsidian bg-gray-50 rounded-lg">English</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">العربية
+                (AR)</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Deutsch</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Español</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Français</a>
+            </div>
+          </div>
+        </div>
+        <div class="items-center space-x-8">
+          <button id="mobile-menu-btn" class="md:hidden flex justify-center items-center w-8 h-8 z-50 relative"
+            aria-label="Toggle menu">
+            <span class="menu-line line-1 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+            <span class="menu-line line-2 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+            <span class="menu-line line-3 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+          </button>
+          <div class="flex justify-center items-center space-x-8">
+            <a href="#login"
+              class="hidden md:flex text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">Log
+              in</a>
+            <a href="#contact"
+              class="hidden md:flex text-[13px] font-sans font-medium text-white bg-brand-obsidian hover:bg-brand-primary px-6 py-2.5 rounded-full transition-all duration-300 shadow-lg shadow-black/10">
+              Get Started
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE APPLE-STYLE FULLSCREEN MENU -->
+  <nav id="mobile-menu" class="md:hidden">
+    <!-- Menu Slider Container -->
+    <div id="mobile-menu-slider"
+      class="relative w-full h-[calc(100%-80px)] flex transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] px-6">
+
+      <!-- LEVEL 1: MAIN MENU -->
+      <div id="mobile-level-1" class="w-full flex-shrink-0 flex flex-col space-y-7 pt-4">
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-partners">
+          For Partners
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-buyers">
+          For Buyers
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-marketplace">
+          Neutral Marketplace
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-intelligence">
+          Insights
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-company">
+          Company
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+
+        <div class="mobile-nav-item pt-8 border-t border-gray-300/50 mt-4 flex flex-col space-y-4">
+          <a href="#login" class="text-lg font-sans font-medium text-brand-charcoal">Log in</a>
+          <a href="#contact" class="text-lg font-sans font-medium text-brand-primary">Get Started</a>
+        </div>
+      </div>
+
+      <!-- LEVEL 2: SUBMENUS -->
+      <div id="mobile-level-2" class="absolute top-0 left-full w-full h-full pb-24 overflow-y-auto px-6 pt-4">
+
+        <!-- Submenu: Partners -->
+        <div id="submenu-partners" class="mobile-submenu hidden flex-col space-y-6">
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mb-2">Explore</p>
+          <a href="partner-hub.html" class="text-xl font-display font-semibold text-brand-obsidian block mb-4">Partner
+            Hub</a>
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mt-6 mb-2">Solutions</p>
+          <a href="#retailers"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For Retailers</a>
+          <a href="partners/telcos-and-operators.html"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For
+            Telcos & Operators</a>
+          <a href="#oems" class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For
+            OEMs & Brands</a>
+          <a href="#ecommerce"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For Ecommerce</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- CUSTOMER STORIES HERO SECTION -->
+    <section id="stories-hero"
+      class="relative pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden bg-brand-bg perspective-1000">
+
+      <!-- Ambient Cinematic Background -->
+      <div class="absolute inset-0 z-0 pointer-events-none flex items-center justify-center">
+        <!-- Breathing Orbs -->
+        <div
+          class="absolute top-[10%] left-[15%] w-[50vw] max-w-[600px] h-[50vw] max-h-[600px] bg-brand-mint/15 rounded-full blur-[120px] mix-blend-multiply stories-orb-1">
+        </div>
+        <div
+          class="absolute bottom-[20%] right-[10%] w-[60vw] max-w-[800px] h-[60vw] max-h-[800px] bg-brand-primary/10 rounded-full blur-[150px] mix-blend-multiply stories-orb-2">
+        </div>
+
+        <!-- Architectural Grid Overlay -->
+        <div
+          class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.4)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.4)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_70%)] opacity-30">
+        </div>
+      </div>
+
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 w-full flex flex-col items-center">
+
+        <!-- 1. Header & Typography -->
+        <div class="flex flex-col items-center text-center max-w-4xl mb-20 lg:mb-28">
+
+          <!-- Masked Tag -->
+          <div class="overflow-hidden mb-8">
+            <p
+              class="insight-elem block font-sans text-xs md:text-sm font-semibold tracking-[0.4em] text-primary-600 uppercase mb-6">
+              <!-- <span class="w-8 h-[1px] bg-brand-primary block"></span> -->
+              Customer Stories
+              <!-- <span class="w-8 h-[1px] bg-brand-primary block"></span> -->
+            </p>
+          </div>
+
+          <!-- Masked Title (Using requested text-3xl lg:text-5xl) -->
+          <h1
+            class="font-display text-3xl lg:text-5xl font-medium text-brand-obsidian leading-[1.15] tracking-tight mb-8">
+            <div class="overflow-hidden py-1">
+              <span class="stories-title-line block translate-y-[110%]">What the market</span>
+            </div>
+            <div class="overflow-hidden py-1">
+              <span class="stories-title-line block translate-y-[110%] text-brand-primary font-semibold">actually
+                delivers.</span>
+            </div>
+          </h1>
+
+          <!-- Description -->
+          <p
+            class="stories-desc font-sans text-[16px] md:text-lg text-brand-charcoal font-light leading-[1.8] max-w-2xl opacity-0 translate-y-8">
+            Every story on this page is a measured outcome — attach rates, sell-through, settlement times — from
+            partners and buyers operating on NorthLadder today.
+          </p>
+        </div>
+
+        <!-- 2. The Glass Stats Array -->
+        <div class="w-full grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6 mb-8 lg:mb-12 relative z-20">
+
+          <!-- Stat 1 -->
+          <div
+            class="stories-stat opacity-0 translate-y-12 bg-white/40 backdrop-blur-xl border border-white/60 rounded-[1.5rem] p-6 lg:p-8 flex flex-col items-center text-center shadow-[0_20px_40px_-15px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-transform duration-500">
+            <h3 class="font-display text-4xl lg:text-5xl font-bold text-brand-obsidian mb-2">75<span
+                class="text-brand-primary">+</span></h3>
+            <p class="font-sans text-[11px] uppercase tracking-[0.2em] font-bold text-gray-500">Partner companies</p>
+          </div>
+
+          <!-- Stat 2 -->
+          <div
+            class="stories-stat opacity-0 translate-y-12 bg-white/40 backdrop-blur-xl border border-white/60 rounded-[1.5rem] p-6 lg:p-8 flex flex-col items-center text-center shadow-[0_20px_40px_-15px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-transform duration-500">
+            <h3 class="font-display text-4xl lg:text-5xl font-bold text-brand-obsidian mb-2">94<span
+                class="text-brand-primary">%</span></h3>
+            <p class="font-sans text-[11px] uppercase tracking-[0.2em] font-bold text-gray-500">Avg sell-through</p>
+          </div>
+
+          <!-- Stat 3 -->
+          <div
+            class="stories-stat opacity-0 translate-y-12 bg-white/40 backdrop-blur-xl border border-white/60 rounded-[1.5rem] p-6 lg:p-8 flex flex-col items-center text-center shadow-[0_20px_40px_-15px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-transform duration-500">
+            <h3 class="font-display text-4xl lg:text-5xl font-bold text-brand-obsidian mb-2">40<span
+                class="text-brand-primary">%</span></h3>
+            <p class="font-sans text-[11px] uppercase tracking-[0.2em] font-bold text-gray-500">Fewer disputes</p>
+          </div>
+
+          <!-- Stat 4 -->
+          <div
+            class="stories-stat opacity-0 translate-y-12 bg-white/40 backdrop-blur-xl border border-white/60 rounded-[1.5rem] p-6 lg:p-8 flex flex-col items-center text-center shadow-[0_20px_40px_-15px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-transform duration-500">
+            <h3 class="font-display text-4xl lg:text-5xl font-bold text-brand-obsidian mb-2"><span
+                class="text-brand-primary text-3xl lg:text-4xl align-top">&lt;</span>48<span
+                class="text-brand-primary text-3xl lg:text-4xl align-top">h</span></h3>
+            <p class="font-sans text-[11px] uppercase tracking-[0.2em] font-bold text-gray-500">Settlement</p>
+          </div>
+
+        </div>
+
+        <!-- 3. Immersive Testimonial Container -->
+        <div
+          class="stories-imagery-container opacity-0 w-full relative rounded-[2rem] lg:rounded-[3rem] overflow-hidden shadow-2xl bg-brand-obsidian transform-style-3d">
+
+          <!-- Cinematic Image Background (Replace src with actual partner photo) -->
+          <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32d7?q=80&w=2564&auto=format&fit=crop"
+              alt="Partner Office" class="w-full h-full object-cover grayscale-[40%] opacity-40 stories-bg-img"
+              style="transform: scale(1.15);" />
+            <!-- Luxury Gradient Overlays for text readability -->
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0A0A0B] via-[#0A0A0B]/60 to-transparent"></div>
+            <div class="absolute inset-0 bg-brand-primary/10 mix-blend-color"></div>
+          </div>
+
+          <!-- Testimonial Content -->
+          <div
+            class="relative z-10 flex flex-col lg:flex-row items-end justify-between p-8 md:p-12 lg:p-20 min-h-[400px] lg:min-h-[500px] gap-12">
+
+            <!-- Left: Quote -->
+            <div class="lg:w-7/12">
+              <div class="mb-6">
+                <svg class="w-10 h-10 text-brand-mint opacity-80" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
+              </div>
+              <h2
+                class="font-display text-2xl md:text-3xl lg:text-4xl font-medium text-white leading-[1.3] tracking-tight mb-8">
+                "We moved our programme to NorthLadder and could finally prove to our CFO we were getting fair market
+                value."
+              </h2>
+            </div>
+
+            <!-- Right: Highlight Badge -->
+            <div class="lg:w-4/12 flex lg:justify-end w-full">
+              <!-- Premium Floating Glass Badge -->
+              <div
+                class="stories-badge bg-white/10 backdrop-blur-2xl border border-white/20 p-6 lg:p-8 rounded-[1.5rem] flex flex-col items-start shadow-[0_20px_40px_rgba(0,0,0,0.3)] w-full sm:w-auto relative overflow-hidden group">
+                <!-- Inner flare effect -->
+                <div
+                  class="absolute top-0 right-0 w-32 h-32 bg-brand-mint/20 rounded-full blur-[40px] pointer-events-none group-hover:scale-150 transition-transform duration-700">
+                </div>
+
+                <h3 class="font-display text-5xl font-bold text-white mb-2 relative z-10">+22<span
+                    class="text-brand-mint">%</span></h3>
+                <p class="font-sans text-[12px] uppercase tracking-[0.2em] font-bold text-gray-300 relative z-10">Attach
+                  rate lift</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="featured-story" class="relative pb-24 pt-5 lg:pb-32 md:pt-12 overflow-hidden bg-brand-bg">
+
+      <!-- Ambient Glow -->
+      <div class="absolute inset-0 z-0 pointer-events-none">
+        <div
+          class="absolute top-[30%] left-[20%] w-[500px] h-[500px] bg-brand-primary/5 rounded-full blur-[100px] mix-blend-multiply featured-glow">
+        </div>
+      </div>
+
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 w-full">
+
+        <!-- 1. Filters & Sorting -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-16 lg:mb-20">
+
+          <!-- Filter Pills (Scrollable on mobile) -->
+          <div
+            class="filters-container flex overflow-x-auto pb-4 md:pb-0 hide-scrollbar w-full md:w-auto gap-3 opacity-0 translate-y-4">
+            <button
+              class="flex-shrink-0 px-6 py-2.5 rounded-full bg-brand-obsidian text-white font-sans text-[13px] font-medium transition-transform hover:scale-105">
+              All <span class="opacity-50 ml-1">24</span>
+            </button>
+            <button
+              class="flex-shrink-0 px-6 py-2.5 rounded-full bg-white/50 border border-gray-200 text-brand-charcoal hover:bg-white hover:border-gray-300 font-sans text-[13px] font-medium transition-all">
+              Telcos <span class="text-gray-400 ml-1">8</span>
+            </button>
+            <button
+              class="flex-shrink-0 px-6 py-2.5 rounded-full bg-white/50 border border-gray-200 text-brand-charcoal hover:bg-white hover:border-gray-300 font-sans text-[13px] font-medium transition-all">
+              Retailers <span class="text-gray-400 ml-1">7</span>
+            </button>
+            <button
+              class="flex-shrink-0 px-6 py-2.5 rounded-full bg-white/50 border border-gray-200 text-brand-charcoal hover:bg-white hover:border-gray-300 font-sans text-[13px] font-medium transition-all">
+              OEMs <span class="text-gray-400 ml-1">4</span>
+            </button>
+            <button
+              class="flex-shrink-0 px-6 py-2.5 rounded-full bg-white/50 border border-gray-200 text-brand-charcoal hover:bg-white hover:border-gray-300 font-sans text-[13px] font-medium transition-all">
+              Leasing & DaaS <span class="text-gray-400 ml-1">3</span>
+            </button>
+            <button
+              class="flex-shrink-0 px-6 py-2.5 rounded-full bg-white/50 border border-gray-200 text-brand-charcoal hover:bg-white hover:border-gray-300 font-sans text-[13px] font-medium transition-all">
+              Buyers & Traders <span class="text-gray-400 ml-1">9</span>
+            </button>
+          </div>
+
+          <!-- Sort Dropdown -->
+          <div class="sort-container opacity-0 translate-y-4 flex-shrink-0">
+            <div
+              class="relative flex items-center bg-white/50 border border-gray-200 rounded-full px-5 py-2.5 hover:bg-white transition-all cursor-pointer group">
+              <span class="font-sans text-[13px] text-gray-500 mr-2">Sort:</span>
+              <select
+                class="bg-transparent text-[13px] font-sans font-medium text-brand-obsidian focus:outline-none pr-6 appearance-none cursor-pointer select-arrow">
+                <option>Most recent</option>
+                <option>Highest volume</option>
+                <option>Attach rate lift</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Featured Story Card -->
+        <div
+          class="featured-card opacity-0 translate-y-16 bg-white/40 backdrop-blur-2xl border border-white/60 rounded-[2rem] lg:rounded-[3rem] p-2 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)]">
+          <div
+            class="grid grid-cols-1 lg:grid-cols-12 gap-0 bg-white/30 rounded-[1.8rem] lg:rounded-[2.8rem] overflow-hidden">
+
+            <!-- Left: Image & Category -->
+            <div class="lg:col-span-5 relative min-h-[300px] lg:min-h-full overflow-hidden group">
+              <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=2564&auto=format&fit=crop"
+                alt="Telco Executive"
+                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <!-- Gradient Overlay for tag readability -->
+              <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent"></div>
+
+              <!-- Top Tags -->
+              <div class="absolute top-6 left-6 right-6 flex justify-between items-start z-10">
+                <div
+                  class="bg-brand-primary text-white text-[9px] uppercase tracking-widest font-bold px-3 py-1.5 rounded-full shadow-lg">
+                  Featured Story
+                </div>
+                <div
+                  class="bg-white/90 backdrop-blur-md text-brand-obsidian text-[10px] font-sans font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg">
+                  <svg class="w-3 h-3 text-brand-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  Verified Result
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Content & Data -->
+            <div class="lg:col-span-7 p-8 flex flex-col justify-between">
+
+              <div class="mb-4">
+                <p
+                  class="font-sans text-[11px] uppercase tracking-[0.3em] font-bold text-gray-400 mb-6 flex items-center gap-3">
+                  <span class="w-6 h-[1px] bg-gray-300 block"></span>
+                  Telco & Operator
+                </p>
+
+                <h3
+                  class="font-display !text-lg md:!text-xl font-medium text-brand-obsidian leading-[1.3] tracking-tight mb-8">
+                  "The RV Index alone justified the integration. We were subsidising upgrades based on guesswork. Now we
+                  price them against real auction data — and we've reduced our subsidy cost by 18% without touching
+                  attach rates."
+                </h3>
+
+                <div class="flex flex-col">
+                  <p class="font-sans font-semibold text-[15px] text-brand-obsidian">Head of Device Programmes</p>
+                  <p class="font-sans text-[13px] text-gray-500 font-light">Tier-1 Mobile Operator · Western Europe ·
+                    Anonymised</p>
+                </div>
+              </div>
+
+              <!-- Measured Outcomes Grid -->
+              <div class="border-t border-gray-200/60 pt-4">
+                <div class="flex items-center justify-between mb-6">
+                  <p class="font-sans text-[10px] uppercase tracking-[0.2em] font-bold text-brand-primary">Measured
+                    Outcomes</p>
+                  <p
+                    class="font-sans text-[10px] uppercase tracking-wider text-gray-400 border border-gray-200 px-2 py-1 rounded-md">
+                    Partner-anonymised</p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 mb-10">
+                  <div
+                    class="measured-metric bg-white border border-gray-100 rounded-xl p-4 shadow-sm opacity-0 translate-y-4">
+                    <p class="font-display text-2xl font-bold text-brand-mint mb-1">+22%</p>
+                    <p class="font-sans text-[11px] text-gray-500 font-medium">Upgrade attach rate</p>
+                  </div>
+                  <div
+                    class="measured-metric bg-white border border-gray-100 rounded-xl p-4 shadow-sm opacity-0 translate-y-4">
+                    <p class="font-display text-2xl font-bold text-brand-primary mb-1">−18%</p>
+                    <p class="font-sans text-[11px] text-gray-500 font-medium">Subsidy cost reduction</p>
+                  </div>
+                  <div
+                    class="measured-metric bg-white border border-gray-100 rounded-xl p-4 shadow-sm opacity-0 translate-y-4">
+                    <p class="font-display text-2xl font-bold text-brand-obsidian mb-1">−40%</p>
+                    <p class="font-sans text-[11px] text-gray-500 font-medium">Grading disputes</p>
+                  </div>
+                  <div
+                    class="measured-metric bg-white border border-gray-100 rounded-xl p-4 shadow-sm opacity-0 translate-y-4">
+                    <p class="font-display text-2xl font-bold text-brand-obsidian mb-1">11 <span
+                        class="text-sm font-medium">days</span></p>
+                    <p class="font-sans text-[11px] text-gray-500 font-medium">Time to first auction</p>
+                  </div>
+                  <div
+                    class="measured-metric bg-white border border-gray-100 rounded-xl p-4 shadow-sm opacity-0 translate-y-4">
+                    <p class="font-display text-2xl font-bold text-brand-obsidian mb-1"><span
+                        class="text-lg align-top">&lt;</span>48<span class="text-lg align-top">h</span></p>
+                    <p class="font-sans text-[11px] text-gray-500 font-medium">Settlement average</p>
+                  </div>
+                </div>
+
+                <!-- CTA -->
+                <a href="#case-study"
+                  class="inline-flex items-center gap-3 text-brand-obsidian font-sans font-semibold text-[14px] hover:text-brand-primary transition-colors group">
+                  Read full case study
+                  <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                    </path>
+                  </svg>
+                </a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PARTNER STORIES SECTION -->
+    <section id="partner-stories" class="relative py-24 lg:py-32 bg-brand-bg">
+
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 w-full">
+
+        <!-- Section Header -->
+        <div
+          class="flex flex-col md:flex-row justify-between items-end gap-6 mb-16 lg:mb-20 border-b border-brand-obsidian/10 pb-6">
+          <div class="overflow-hidden">
+            <h2
+              class="stories-list-title font-display text-4xl md:text-5xl font-bold text-brand-obsidian leading-[1.1] translate-y-[110%]">
+              Partner stories
+            </h2>
+          </div>
+          <div class="stories-list-cta opacity-0 translate-y-4">
+            <a href="#all-stories"
+              class="inline-flex items-center gap-3 text-brand-obsidian font-sans font-semibold text-[14px] hover:text-brand-primary transition-colors group">
+              View all 15
+              <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Stories Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+
+          <!-- Card 1: Retailer & Ecommerce -->
+          <div
+            class="partner-card opacity-0 translate-y-16 relative flex flex-col bg-brand-obsidian rounded-[2rem] overflow-hidden group shadow-[0_20px_50px_-15px_rgba(0,0,0,0.2)] border border-white/5 transition-transform duration-500 hover:-translate-y-2">
+            <div class="relative h-56 lg:h-64 overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=2564&auto=format&fit=crop"
+                alt="Retail Store"
+                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-60 grayscale-[30%] mix-blend-luminosity" />
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-obsidian via-brand-obsidian/40 to-transparent">
+              </div>
+              <div class="absolute top-6 left-6 right-6 flex justify-between items-start">
+                <span
+                  class="font-sans text-[10px] uppercase tracking-[0.2em] font-bold text-white bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">Retailer
+                  & Ecommerce</span>
+              </div>
+            </div>
+            <div class="p-8 lg:p-10 flex flex-col flex-grow relative z-10 -mt-10">
+              <h4 class="font-display text-xl lg:text-2xl font-medium text-white leading-[1.4] mb-8 flex-grow">
+                "Our trade-in attach rate went from 12% to 27% in eight weeks. The checkout widget took three days to
+                embed."
+              </h4>
+              <div class="mb-8">
+                <p class="font-sans text-[13px] text-white font-semibold">Head of Ecommerce</p>
+                <p class="font-sans text-[12px] text-gray-400 font-light mt-1">Electronics Retailer · UK / EU ·
+                  Anonymised</p>
+              </div>
+              <div class="grid grid-cols-3 gap-4 border-t border-white/10 pt-6 mb-8">
+                <div>
+                  <p class="font-display text-2xl font-bold text-brand-mint mb-1">+15%</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Attach rate</p>
+                </div>
+                <div>
+                  <p class="font-display text-2xl font-bold text-white mb-1">3 days</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Integration</p>
+                </div>
+                <div>
+                  <p class="font-display text-2xl font-bold text-white mb-1">94%</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Sell-through</p>
+                </div>
+              </div>
+              <a href="#"
+                class="inline-flex items-center gap-3 text-brand-mint font-sans text-[12px] font-bold uppercase tracking-[0.1em] group-hover:text-white transition-colors">
+                Read case study <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                  </path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 2: OEM & Brand -->
+          <div
+            class="partner-card opacity-0 translate-y-16 relative flex flex-col bg-brand-obsidian rounded-[2rem] overflow-hidden group shadow-[0_20px_50px_-15px_rgba(0,0,0,0.2)] border border-white/5 transition-transform duration-500 hover:-translate-y-2">
+            <div class="relative h-56 lg:h-64 overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?q=80&w=2564&auto=format&fit=crop"
+                alt="Smartphone Design"
+                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-60 grayscale-[30%] mix-blend-luminosity" />
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-obsidian via-brand-obsidian/40 to-transparent">
+              </div>
+              <div class="absolute top-6 left-6 right-6 flex justify-between items-start">
+                <span
+                  class="font-sans text-[10px] uppercase tracking-[0.2em] font-bold text-white bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">OEM
+                  & Brand</span>
+              </div>
+            </div>
+            <div class="p-8 lg:p-10 flex flex-col flex-grow relative z-10 -mt-10">
+              <h4 class="font-display text-xl lg:text-2xl font-medium text-white leading-[1.4] mb-8 flex-grow">
+                "NorthLadder gives us a benchmark for our own buyback pricing in every market we operate in — we've
+                stopped guessing."
+              </h4>
+              <div class="mb-8">
+                <p class="font-sans text-[13px] text-white font-semibold">VP Device Lifecycle</p>
+                <p class="font-sans text-[12px] text-gray-400 font-light mt-1">Global Smartphone OEM · APAC / EU ·
+                  Anonymised</p>
+              </div>
+              <div class="grid grid-cols-3 gap-4 border-t border-white/10 pt-6 mb-8">
+                <div>
+                  <p class="font-display text-2xl font-bold text-brand-primary mb-1">6</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Markets active
+                  </p>
+                </div>
+                <div>
+                  <p class="font-display text-2xl font-bold text-white mb-1">RV Index</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Pricing anchor
+                  </p>
+                </div>
+                <div>
+                  <p class="font-display text-2xl font-bold text-white mb-1">24h</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Settlement avg
+                  </p>
+                </div>
+              </div>
+              <a href="#"
+                class="inline-flex items-center gap-3 text-brand-primary font-sans text-[12px] font-bold uppercase tracking-[0.1em] group-hover:text-white transition-colors">
+                Read case study <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                  </path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 3: Leasing & DaaS -->
+          <div
+            class="partner-card opacity-0 translate-y-16 relative flex flex-col bg-brand-obsidian rounded-[2rem] overflow-hidden group shadow-[0_20px_50px_-15px_rgba(0,0,0,0.2)] border border-white/5 transition-transform duration-500 hover:-translate-y-2">
+            <div class="relative h-56 lg:h-64 overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1553413077-834f3b7ebde4?q=80&w=2564&auto=format&fit=crop"
+                alt="Enterprise Office"
+                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-60 grayscale-[30%] mix-blend-luminosity" />
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-obsidian via-brand-obsidian/40 to-transparent">
+              </div>
+              <div class="absolute top-6 left-6 right-6 flex justify-between items-start">
+                <span
+                  class="font-sans text-[10px] uppercase tracking-[0.2em] font-bold text-white bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">Leasing
+                  & DaaS</span>
+              </div>
+            </div>
+            <div class="p-8 lg:p-10 flex flex-col flex-grow relative z-10 -mt-10">
+              <h4 class="font-display text-xl lg:text-2xl font-medium text-white leading-[1.4] mb-8 flex-grow">
+                "End-of-lease used to be a six-week process — chasing buyers, fighting disputes. Now it's a batch upload
+                and 48-hour settlement."
+              </h4>
+              <div class="mb-8">
+                <p class="font-sans text-[13px] text-white font-semibold">Operations Director</p>
+                <p class="font-sans text-[12px] text-gray-400 font-light mt-1">Enterprise Device Leasing · Netherlands ·
+                  Anonymised</p>
+              </div>
+              <div class="grid grid-cols-3 gap-4 border-t border-white/10 pt-6 mb-8">
+                <div>
+                  <p class="font-display text-xl lg:text-2xl font-bold text-brand-mint mb-1">6wks→48h</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Process time</p>
+                </div>
+                <div>
+                  <p class="font-display text-2xl font-bold text-white mb-1">Batch</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">CSV upload</p>
+                </div>
+                <div>
+                  <p class="font-display text-2xl font-bold text-white mb-1">Zero</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Disputes</p>
+                </div>
+              </div>
+              <a href="#"
+                class="inline-flex items-center gap-3 text-brand-mint font-sans text-[12px] font-bold uppercase tracking-[0.1em] group-hover:text-white transition-colors">
+                Read case study <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                  </path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 4: Telco & Operator -->
+          <div
+            class="partner-card opacity-0 translate-y-16 relative flex flex-col bg-brand-obsidian rounded-[2rem] overflow-hidden group shadow-[0_20px_50px_-15px_rgba(0,0,0,0.2)] border border-white/5 transition-transform duration-500 hover:-translate-y-2">
+            <div class="relative h-56 lg:h-64 overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=2564&auto=format&fit=crop"
+                alt="Data Network"
+                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-60 grayscale-[30%] mix-blend-luminosity" />
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-obsidian via-brand-obsidian/40 to-transparent">
+              </div>
+              <div class="absolute top-6 left-6 right-6 flex justify-between items-start">
+                <span
+                  class="font-sans text-[10px] uppercase tracking-[0.2em] font-bold text-white bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">Telco
+                  & Operator</span>
+              </div>
+            </div>
+            <div class="p-8 lg:p-10 flex flex-col flex-grow relative z-10 -mt-10">
+              <h4 class="font-display text-xl lg:text-2xl font-medium text-white leading-[1.4] mb-8 flex-grow">
+                "The grading video is the feature nobody talks about enough. Every dispute used to be 'my photo versus
+                yours.' Now there's a 20-second objective record."
+              </h4>
+              <div class="mb-8">
+                <p class="font-sans text-[13px] text-white font-semibold">Trade-in Programme Lead</p>
+                <p class="font-sans text-[12px] text-gray-400 font-light mt-1">Mobile Operator · Central Europe ·
+                  Anonymised</p>
+              </div>
+              <div class="grid grid-cols-3 gap-4 border-t border-white/10 pt-6 mb-8">
+                <div>
+                  <p class="font-display text-2xl font-bold text-brand-primary mb-1">−40%</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Disputes</p>
+                </div>
+                <div>
+                  <p class="font-display text-2xl font-bold text-white mb-1">AR video</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Grading</p>
+                </div>
+                <div>
+                  <p class="font-display text-2xl font-bold text-white mb-1">SLA</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Grade-backed</p>
+                </div>
+              </div>
+              <a href="#"
+                class="inline-flex items-center gap-3 text-brand-primary font-sans text-[12px] font-bold uppercase tracking-[0.1em] group-hover:text-white transition-colors">
+                Read case study <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                  </path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 5: Retailer & Ecommerce -->
+          <div
+            class="partner-card opacity-0 translate-y-16 relative flex flex-col bg-brand-obsidian rounded-[2rem] overflow-hidden group shadow-[0_20px_50px_-15px_rgba(0,0,0,0.2)] border border-white/5 transition-transform duration-500 hover:-translate-y-2">
+            <div class="relative h-56 lg:h-64 overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1601597111158-2fceff292cdc?q=80&w=2564&auto=format&fit=crop"
+                alt="Retail Boxes"
+                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-60 grayscale-[30%] mix-blend-luminosity" />
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-obsidian via-brand-obsidian/40 to-transparent">
+              </div>
+              <div class="absolute top-6 left-6 right-6 flex justify-between items-start">
+                <span
+                  class="font-sans text-[10px] uppercase tracking-[0.2em] font-bold text-white bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">Retailer
+                  & Ecommerce</span>
+              </div>
+            </div>
+            <div class="p-8 lg:p-10 flex flex-col flex-grow relative z-10 -mt-10">
+              <h4 class="font-display text-xl lg:text-2xl font-medium text-white leading-[1.4] mb-8 flex-grow">
+                "Before NorthLadder, we had one buyer who knew it and priced accordingly. Now we have fourteen. The
+                difference per unit is material."
+              </h4>
+              <div class="mb-8">
+                <p class="font-sans text-[13px] text-white font-semibold">Returns Manager</p>
+                <p class="font-sans text-[12px] text-gray-400 font-light mt-1">Electronics Chain · GCC · Anonymised</p>
+              </div>
+              <div class="grid grid-cols-3 gap-4 border-t border-white/10 pt-6 mb-8">
+                <div>
+                  <p class="font-display text-2xl font-bold text-brand-mint mb-1">14</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Buyers vs 1</p>
+                </div>
+                <div>
+                  <p class="font-display text-2xl font-bold text-white mb-1">+23%</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Recovery</p>
+                </div>
+                <div>
+                  <p class="font-display text-2xl font-bold text-white mb-1">300/mo</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Units cleared
+                  </p>
+                </div>
+              </div>
+              <a href="#"
+                class="inline-flex items-center gap-3 text-brand-mint font-sans text-[12px] font-bold uppercase tracking-[0.1em] group-hover:text-white transition-colors">
+                Read case study <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                  </path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 6: OEM & Brand -->
+          <div
+            class="partner-card opacity-0 translate-y-16 relative flex flex-col bg-brand-obsidian rounded-[2rem] overflow-hidden group shadow-[0_20px_50px_-15px_rgba(0,0,0,0.2)] border border-white/5 transition-transform duration-500 hover:-translate-y-2">
+            <div class="relative h-56 lg:h-64 overflow-hidden">
+              <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2564&auto=format&fit=crop"
+                alt="Circuit Board"
+                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-60 grayscale-[30%] mix-blend-luminosity" />
+              <div class="absolute inset-0 bg-gradient-to-t from-brand-obsidian via-brand-obsidian/40 to-transparent">
+              </div>
+              <div class="absolute top-6 left-6 right-6 flex justify-between items-start">
+                <span
+                  class="font-sans text-[10px] uppercase tracking-[0.2em] font-bold text-white bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">OEM
+                  & Brand</span>
+              </div>
+            </div>
+            <div class="p-8 lg:p-10 flex flex-col flex-grow relative z-10 -mt-10">
+              <h4 class="font-display text-xl lg:text-2xl font-medium text-white leading-[1.4] mb-8 flex-grow">
+                "We were running a buyback programme that was effectively a discount on new hardware. NorthLadder turned
+                it into a revenue stream."
+              </h4>
+              <div class="mb-8">
+                <p class="font-sans text-[13px] text-white font-semibold">Circular Economy Lead</p>
+                <p class="font-sans text-[12px] text-gray-400 font-light mt-1">Consumer Electronics OEM · EU HQ ·
+                  Anonymised</p>
+              </div>
+              <div class="grid grid-cols-3 gap-4 border-t border-white/10 pt-6 mb-8">
+                <div>
+                  <p class="font-display text-2xl font-bold text-brand-primary mb-1">Revenue</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">vs cost before
+                  </p>
+                </div>
+                <div>
+                  <p class="font-display text-2xl font-bold text-white mb-1">EU CEA</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Compliant</p>
+                </div>
+                <div>
+                  <p class="font-display text-2xl font-bold text-white mb-1">Open bid</p>
+                  <p class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Auction type</p>
+                </div>
+              </div>
+              <a href="#"
+                class="inline-flex items-center gap-3 text-brand-primary font-sans text-[12px] font-bold uppercase tracking-[0.1em] group-hover:text-white transition-colors">
+                Read case study <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                  </path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- BUYER & TRADER STORIES SECTION -->
+    <section id="buyer-stories" class="relative py-24 lg:py-32 bg-brand-bg overflow-hidden">
+
+      <!-- Subtle Ambient Glow -->
+      <div class="absolute inset-0 z-0 pointer-events-none">
+        <div
+          class="absolute top-1/2 right-[-10%] w-[600px] h-[600px] bg-brand-primary/5 rounded-full blur-[120px] mix-blend-multiply transform -translate-y-1/2 buyer-glow">
+        </div>
+      </div>
+
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 w-full">
+
+        <!-- Section Header -->
+        <div
+          class="flex flex-col md:flex-row justify-between items-end gap-6 mb-16 lg:mb-20 border-b border-brand-obsidian/10 pb-6">
+          <div class="overflow-hidden">
+            <h2
+              class="buyer-list-title font-display text-4xl md:text-5xl font-bold text-brand-obsidian leading-[1.1] translate-y-[110%]">
+              Buyer & trader stories
+            </h2>
+          </div>
+          <div class="buyer-list-cta opacity-0 translate-y-4">
+            <a href="#all-buyers"
+              class="inline-flex items-center gap-3 text-brand-obsidian font-sans font-semibold text-[14px] hover:text-brand-primary transition-colors group">
+              View all 9
+              <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Editorial Wide Cards Container -->
+        <div class="space-y-12 lg:space-y-16">
+
+          <!-- Story 1: Dubai Buyer -->
+          <div
+            class="buyer-card opacity-0 translate-y-16 bg-white/50 backdrop-blur-xl border border-white/80 rounded-[2rem] lg:rounded-[3rem] overflow-hidden shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)] hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] transition-all duration-500 hover:-translate-y-1">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
+
+              <!-- Image (Left) -->
+              <div class="lg:col-span-5 relative min-h-[350px] lg:min-h-full overflow-hidden group">
+                <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2564&auto=format&fit=crop"
+                  alt="Dubai Business District"
+                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 buyer-img" />
+                <div
+                  class="absolute inset-0 bg-brand-obsidian/10 mix-blend-multiply transition-opacity duration-500 group-hover:opacity-0">
+                </div>
+                <!-- Top Tag -->
+                <div class="absolute top-6 left-6 z-10">
+                  <span
+                    class="font-sans text-[10px] uppercase tracking-[0.2em] font-bold text-brand-obsidian bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg">Buyer
+                    · Dubai</span>
+                </div>
+              </div>
+
+              <!-- Content (Right) -->
+              <div class="lg:col-span-7 p-8 md:p-12 lg:p-16 flex flex-col justify-between">
+                <div class="mb-10 lg:mb-12">
+                  <h3
+                    class="font-display text-lg md:text-xl font-medium text-brand-obsidian leading-[1.3] tracking-tight mb-6">
+                    "I moved 60% of my EU sourcing to NorthLadder within six months. The open bidding means I'm not
+                    competing against a preferred buyer at a different price."
+                  </h3>
+                  <p class="font-sans text-[15px] text-brand-charcoal font-light leading-[1.8] opacity-80">
+                    A Dubai-based EU device distributor sourcing Grade A and B iPhones for resale into GCC and East
+                    Africa. Switched from a platform with exclusive buyer relationships to NorthLadder's open auction —
+                    saw both volume and margin improve within the first quarter.
+                  </p>
+                </div>
+
+                <div class="mb-10 border-l-2 border-brand-primary pl-5">
+                  <p class="font-sans text-[14px] font-bold text-brand-obsidian">Head of Procurement</p>
+                  <p class="font-sans text-[12px] text-gray-500 font-medium uppercase tracking-wider mt-1">Device
+                    Distributor · Dubai, UAE · Anonymised</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 border-t border-brand-obsidian/10 pt-8">
+                  <div>
+                    <p class="font-display text-3xl font-bold text-brand-primary mb-2">60%</p>
+                    <p class="font-sans text-[12px] font-bold text-brand-obsidian mb-1">EU sourcing via NorthLadder</p>
+                    <p class="font-sans text-[12px] text-gray-500 font-light">Within 6 months of joining</p>
+                  </div>
+                  <div>
+                    <p class="font-display text-3xl font-bold text-brand-obsidian mb-2">Open bid</p>
+                    <p class="font-sans text-[12px] font-bold text-brand-obsidian mb-1">No preferred buyer access</p>
+                    <p class="font-sans text-[12px] text-gray-500 font-light">Every buyer sees every bid</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Story 2: German Buyer (Alternating Layout) -->
+          <div
+            class="buyer-card opacity-0 translate-y-16 bg-white/50 backdrop-blur-xl border border-white/80 rounded-[2rem] lg:rounded-[3rem] overflow-hidden shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)] hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] transition-all duration-500 hover:-translate-y-1">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-0">
+
+              <!-- Content (Left on Desktop) -->
+              <div class="lg:col-span-7 p-8 md:p-12 lg:p-16 flex flex-col justify-between order-2 lg:order-1">
+                <div class="mb-10 lg:mb-12">
+                  <h3
+                    class="font-display text-lg md:text-xl font-medium text-brand-obsidian leading-[1.3] tracking-tight mb-6">
+                    "The grading certificates are what convinced me. I can show my buyers the AR video. That
+                    traceability goes all the way down the chain — my customers trust the grade because I can prove it."
+                  </h3>
+                  <p class="font-sans text-[15px] text-brand-charcoal font-light leading-[1.8] opacity-80">
+                    A European refurbishment company buying Grade B and C devices via NorthLadder to refurbish and
+                    resell into a certified pre-owned retail channel. The AR grading certificate traceability has become
+                    a downstream selling point.
+                  </p>
+                </div>
+
+                <div class="mb-10 border-l-2 border-brand-mint pl-5">
+                  <p class="font-sans text-[14px] font-bold text-brand-obsidian">Founder</p>
+                  <p class="font-sans text-[12px] text-gray-500 font-medium uppercase tracking-wider mt-1">Certified
+                    Refurbishment Business · Germany · Anonymised</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 border-t border-brand-obsidian/10 pt-8">
+                  <div>
+                    <p class="font-display text-3xl font-bold text-brand-mint mb-2">AR cert</p>
+                    <p class="font-sans text-[12px] font-bold text-brand-obsidian mb-1">Resold as proof of grade</p>
+                    <p class="font-sans text-[12px] text-gray-500 font-light">Differentiates retail offer</p>
+                  </div>
+                  <div>
+                    <p class="font-display text-3xl font-bold text-brand-obsidian mb-2">Grade B–C</p>
+                    <p class="font-sans text-[12px] font-bold text-brand-obsidian mb-1">Primary buying grade</p>
+                    <p class="font-sans text-[12px] text-gray-500 font-light">Weekly EU origin auctions</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Image (Right on Desktop) -->
+              <div class="lg:col-span-5 relative min-h-[350px] lg:min-h-full overflow-hidden group order-1 lg:order-2">
+                <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=2564&auto=format&fit=crop"
+                  alt="Refurbishment Lab"
+                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 buyer-img" />
+                <div
+                  class="absolute inset-0 bg-brand-obsidian/10 mix-blend-multiply transition-opacity duration-500 group-hover:opacity-0">
+                </div>
+                <!-- Top Tag -->
+                <div class="absolute top-6 left-6 z-10">
+                  <span
+                    class="font-sans text-[10px] uppercase tracking-[0.2em] font-bold text-brand-obsidian bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg">Buyer
+                    · Germany</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- INDUSTRY VERTICALS GRAPH SECTION -->
+    <section id="industry-verticals" class="relative py-24 lg:py-32 bg-brand-bg overflow-hidden">
+
+      <!-- Ambient Background Glow -->
+      <div class="absolute inset-0 z-0 pointer-events-none">
+        <div
+          class="absolute top-1/2 left-[10%] w-[500px] h-[500px] bg-brand-mint/10 rounded-full blur-[120px] mix-blend-multiply transform -translate-y-1/2 vertical-glow">
+        </div>
+      </div>
+
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+
+          <!-- Left Column: Typography -->
+          <div class="lg:col-span-5 flex flex-col justify-center z-10">
+            <div class="overflow-hidden mb-6">
+              <p
+                class="vertical-tag font-sans text-[11px] uppercase tracking-[0.4em] font-bold text-brand-primary translate-y-full flex items-center gap-4">
+                <span class="w-8 h-[1px] bg-brand-primary block"></span>
+                Stories by Industry Vertical
+              </p>
+            </div>
+            <h2
+              class="vertical-title font-display text-4xl md:text-5xl font-medium text-brand-obsidian leading-[1.1] tracking-tight mb-6 opacity-0 translate-y-8">
+              Proven across the <span class="text-brand-primary font-semibold">entire ecosystem.</span>
+            </h2>
+            <p
+              class="vertical-desc font-sans text-[15px] md:text-[16px] text-brand-charcoal font-light leading-[1.8] opacity-0 translate-y-8">
+              From global OEMs to independent traders, our neutral infrastructure drives measurable outcomes at every
+              node of the secondary device market.
+            </p>
+          </div>
+
+          <!-- Right Column: Minimal Premium Graph -->
+          <div class="lg:col-span-7 z-10">
+            <div
+              class="vertical-graph-container bg-white/40 backdrop-blur-2xl border border-white/60 rounded-[2rem] p-8 md:p-12 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)] opacity-0 translate-y-12">
+
+              <div class="space-y-8">
+
+                <!-- Buyers -->
+                <div class="graph-row group">
+                  <div class="flex justify-between items-end mb-3">
+                    <span class="font-sans text-[15px] font-bold text-brand-obsidian">Buyers</span>
+                    <span class="font-display text-xl font-bold text-brand-primary">9 <span
+                        class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-medium ml-1">stories</span></span>
+                  </div>
+                  <!-- Track -->
+                  <div class="w-full h-2 bg-brand-obsidian/5 rounded-full overflow-hidden">
+                    <!-- Bar (Data-width represents percentage relative to max value 9) -->
+                    <div
+                      class="graph-bar h-full bg-gradient-to-r from-brand-primary to-brand-mint w-0 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.4)] transition-all duration-300 group-hover:opacity-80"
+                      data-width="100%"></div>
+                  </div>
+                </div>
+
+                <!-- Retailers -->
+                <div class="graph-row group">
+                  <div class="flex justify-between items-end mb-3">
+                    <span class="font-sans text-[15px] font-bold text-brand-obsidian">Retailers</span>
+                    <span class="font-display text-xl font-bold text-brand-primary">7 <span
+                        class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-medium ml-1">stories</span></span>
+                  </div>
+                  <div class="w-full h-2 bg-brand-obsidian/5 rounded-full overflow-hidden">
+                    <div
+                      class="graph-bar h-full bg-gradient-to-r from-brand-primary to-brand-mint w-0 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.4)] transition-all duration-300 group-hover:opacity-80"
+                      data-width="77%"></div>
+                  </div>
+                </div>
+
+                <!-- OEMs -->
+                <div class="graph-row group">
+                  <div class="flex justify-between items-end mb-3">
+                    <span class="font-sans text-[15px] font-bold text-brand-obsidian">OEMs</span>
+                    <span class="font-display text-xl font-bold text-brand-primary">4 <span
+                        class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-medium ml-1">stories</span></span>
+                  </div>
+                  <div class="w-full h-2 bg-brand-obsidian/5 rounded-full overflow-hidden">
+                    <div
+                      class="graph-bar h-full bg-gradient-to-r from-brand-primary to-brand-mint w-0 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.4)] transition-all duration-300 group-hover:opacity-80"
+                      data-width="44%"></div>
+                  </div>
+                </div>
+
+                <!-- Leasing -->
+                <div class="graph-row group">
+                  <div class="flex justify-between items-end mb-3">
+                    <span class="font-sans text-[15px] font-bold text-brand-obsidian">Leasing</span>
+                    <span class="font-display text-xl font-bold text-brand-primary">3 <span
+                        class="font-sans text-[10px] uppercase tracking-wider text-gray-500 font-medium ml-1">stories</span></span>
+                  </div>
+                  <div class="w-full h-2 bg-brand-obsidian/5 rounded-full overflow-hidden">
+                    <div
+                      class="graph-bar h-full bg-gradient-to-r from-brand-primary to-brand-mint w-0 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.4)] transition-all duration-300 group-hover:opacity-80"
+                      data-width="33%"></div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA SECTION (CUSTOMER STORIES) -->
+    <section id="stories-cta"
+      class="relative py-24 lg:py-40 px-6 lg:px-12 bg-brand-bg flex justify-center perspective-1000">
+
+      <!-- Massive Dark Glass Enclosure -->
+      <div
+        class="cta-enclosure relative w-full max-w-[1400px] rounded-[3rem] md:rounded-[4rem] bg-brand-obsidian overflow-hidden opacity-0 shadow-[0_40px_80px_-20px_rgba(147,51,234,0.15)] transform-style-3d border border-white/5">
+
+        <!-- Immersive Aurora Background -->
+        <div class="absolute inset-0 z-0 pointer-events-none">
+          <!-- Dark gradient base -->
+          <div class="absolute inset-0 bg-gradient-to-b from-brand-obsidian via-[#150a21] to-brand-obsidian"></div>
+
+          <!-- Mesmerizing moving light orbs -->
+          <div
+            class="absolute top-[-30%] left-[-10%] w-[80vw] md:w-[800px] h-[80vw] md:h-[800px] bg-brand-primary/40 rounded-full blur-[140px] mix-blend-screen cta-orb-1">
+          </div>
+          <div
+            class="absolute bottom-[-30%] right-[-10%] w-[60vw] md:w-[600px] h-[60vw] md:h-[600px] bg-brand-mint/20 rounded-full blur-[120px] mix-blend-screen cta-orb-2">
+          </div>
+
+          <!-- Fine architectural grid overlay -->
+          <div
+            class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_80%)] cta-grid">
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative z-10 flex flex-col items-center text-center py-24 md:py-32 lg:py-40 px-6 md:px-12">
+
+          <div class="overflow-hidden mb-6">
+            <h2
+              class="cta-heading font-display text-4xl md:text-6xl lg:text-[5rem] font-bold text-white leading-[1.05] tracking-tight max-w-4xl translate-y-[110%]">
+              Ready to generate results <br class="hidden md:block" />
+              <span class="text-brand-mint">like these?</span>
+            </h2>
+          </div>
+
+          <div class="overflow-hidden mb-16">
+            <p
+              class="cta-sub font-sans text-lg md:text-xl text-gray-300 font-light max-w-2xl translate-y-[110%] leading-[1.8]">
+              Connect your trade-in programme or register as a buyer. <br class="hidden sm:block" />
+              <span class="font-medium text-white">Onboarding in days, not months.</span>
+            </p>
+          </div>
+
+          <!-- Buttons Container -->
+          <div
+            class="cta-actions flex flex-col sm:flex-row items-center gap-4 sm:gap-6 opacity-0 translate-y-8 w-full sm:w-auto">
+
+            <!-- Primary Button (Enterprise Demo) -->
+            <a href="#demo"
+              class="magnetic-btn w-full sm:w-auto relative px-8 lg:px-10 py-4 md:py-5 rounded-full bg-white overflow-hidden group transition-all duration-500 hover:scale-105 shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-[0_0_60px_rgba(168,85,247,0.4)] flex justify-center items-center">
+              <div
+                class="absolute inset-0 bg-gradient-to-r from-brand-mint via-brand-primary to-brand-mint opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              </div>
+              <span
+                class="relative z-10 font-sans text-[15px] font-bold text-brand-obsidian group-hover:text-white tracking-wide transition-colors duration-500 flex items-center gap-2">
+                Request Enterprise Demo
+                <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none"
+                  stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                  </path>
+                </svg>
+              </span>
+            </a>
+
+            <!-- Secondary Button (Register Buyer - Glass) -->
+            <a href="#register"
+              class="magnetic-btn w-full sm:w-auto relative px-8 lg:px-10 py-4 md:py-5 rounded-full border border-white/20 bg-white/5 backdrop-blur-xl overflow-hidden group transition-all duration-500 hover:border-white/40 hover:bg-white/10 flex justify-center items-center">
+              <span class="relative z-10 font-sans text-[15px] font-medium text-white tracking-wide">Register as
+                Buyer</span>
+            </a>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer id="main-footer" class="relative z-30 bg-white overflow-hidden pt-32 pb-16">
+    <!-- Subtle top ambient separator & glow for depth -->
+    <div
+      class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-primary/15 to-transparent">
+    </div>
+    <div
+      class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand-primary/[0.02] blur-[120px] pointer-events-none">
+    </div>
+
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-8 mb-24">
+        <!-- Brand & Mission Column -->
+        <div class="col-span-1 md:col-span-5 pr-0 lg:pr-12">
+          <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+            class="h-6 w-auto brightness-0 mb-8 opacity-90" />
+          <p class="font-sans text-[13px] text-gray-500 font-light leading-[1.9] mb-10 max-w-sm">
+            Democratization Of Trade-ins. Powering the world's most advanced
+            circularity infrastructure for Grade-A inventory with absolute
+            neutrality.
+          </p>
+
+          <!-- Premium Language Pill with Hover State -->
+          <div class="inline-flex items-center relative group">
+            <div
+              class="absolute inset-0 bg-gray-50 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            </div>
+            <div
+              class="relative flex items-center bg-white border border-gray-100/80 rounded-full px-5 py-2.5 hover:border-gray-200 hover:shadow-[0_10px_20px_-10px_rgba(0,0,0,0.05)] transition-all duration-300">
+              <svg class="w-4 h-4 text-gray-400 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9">
+                </path>
+              </svg>
+              <select
+                class="bg-transparent text-[11px] font-sans font-medium tracking-wide text-brand-obsidian focus:outline-none pr-7 appearance-none cursor-pointer w-full select-arrow">
+                <option>English (Global)</option>
+                <option>العربية (Arabic)</option>
+                <option>Deutsch (German)</option>
+                <option>Español (Spanish)</option>
+                <option>Français (French)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ecosystem Links -->
+        <div class="col-span-1 md:col-span-2 md:col-start-7">
+          <h4 class="font-sans text-[9px] uppercase tracking-[0.25em] font-bold text-gray-400 mb-8">
+            Ecosystem
+          </h4>
+          <ul class="space-y-5 font-sans text-[13px] font-light text-gray-500">
+            <li>
+              <a href="#partners"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">For
+                Partners</a>
+            </li>
+            <li>
+              <a href="#buyers"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">For
+                Buyers</a>
+            </li>
+            <li>
+              <a href="#neutral-marketplace"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Neutral
+                Marketplace</a>
+            </li>
+            <li>
+              <a href="#insights"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Data
+                Insights</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Enterprise Links -->
+        <div class="col-span-1 md:col-span-2">
+          <h4 class="font-sans text-[9px] uppercase tracking-[0.25em] font-bold text-gray-400 mb-8">
+            Enterprise
+          </h4>
+          <ul class="space-y-5 font-sans text-[13px] font-light text-gray-500">
+            <li>
+              <a href="#about"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Inside
+                NorthLadder</a>
+            </li>
+            <li>
+              <a href="#careers"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Global
+                Careers</a>
+            </li>
+            <li>
+              <a href="#newsroom"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">News
+                & Media</a>
+            </li>
+            <li>
+              <a href="#contact"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Contact
+                Relations</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Refined Bottom Bar -->
+      <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-100/80">
+        <p class="font-sans text-[11px] font-medium tracking-wide text-gray-400">
+          © 2026 NorthLadder. All rights reserved.
+        </p>
+        <div class="flex gap-8 mt-6 md:mt-0">
+          <a href="#"
+            class="text-gray-400 hover:text-brand-obsidian transition-colors text-[11px] tracking-wide font-sans font-medium">Privacy
+            Policy</a>
+          <a href="#"
+            class="text-gray-400 hover:text-brand-obsidian transition-colors text-[11px] tracking-wide font-sans font-medium">Terms
+            of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      gsap.registerPlugin(ScrollTrigger);
+      navBar();
+      cursorLogic();
+      initStoriesHero();
+      initFeaturedStory();
+      initPartnerStories();
+      initBuyerStories();
+      initVerticalsGraph();
+      initStoriesCTA();
+    });
+
+    function navBar() {
+      window.addEventListener("scroll", () => {
+        const nav = document.getElementById("main-nav");
+        if (window.scrollY > 20) {
+          nav.classList.remove("w-full");
+          nav.classList.add("w-[90%]", "max-w-[1400px]", "top-2", "rounded-full", "shadow-sm", "border", "border-white/40");
+        } else {
+          nav.classList.add("w-full");
+          nav.classList.remove("w-[90%]", "max-w-[1400px]", "top-2", "rounded-full", "shadow-sm", "border", "border-white/40");
+        }
+      });
+
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener('click', () => {
+          mobileBtn.classList.toggle('menu-open');
+          mobileMenu.classList.toggle('active');
+          document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+        });
+      }
+    }
+
+    function cursorLogic() {
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (!prefersReducedMotion && window.matchMedia("(pointer: fine)").matches) {
+        const glow = document.getElementById("cursor-glow");
+        let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+        let gx = mx, gy = my;
+        window.addEventListener("mousemove", (e) => {
+          mx = e.clientX; my = e.clientY;
+        });
+        gsap.ticker.add(() => {
+          gx += (mx - gx) * 0.08;
+          gy += (my - gy) * 0.08;
+          gsap.set(glow, { x: gx, y: gy });
+        });
+      }
+    }
+
+    function initStoriesHero() {
+      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+
+      // 1. Top Typography Entrance
+      tl.to(".stories-tag", {
+        y: 0,
+        duration: 1.2
+      }, 0.2)
+        .to(".stories-title-line", {
+          y: 0,
+          duration: 1.4,
+          stagger: 0.15
+        }, 0.3)
+        .to(".stories-desc", {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+        }, 0.6);
+
+      // 2. Glass Stats Array (Staggered pop-up)
+      tl.to(".stories-stat", {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        stagger: 0.1,
+        ease: "back.out(1.2)"
+      }, 0.7);
+
+      // 3. Immersive Testimonial Container Entrance
+      tl.to(".stories-imagery-container", {
+        opacity: 1,
+        y: 0,
+        duration: 1.5,
+        ease: "power3.out"
+      }, 0.9);
+
+      // Cinematic slow-zoom on the background image
+      tl.to(".stories-bg-img", {
+        scale: 1,
+        duration: 4,
+        ease: "power2.out"
+      }, 0.9);
+
+      // 4. Subtle Parallax on scroll for the Badge
+      gsap.to(".stories-badge", {
+        y: -40, // Moves up slightly as you scroll down
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".stories-imagery-container",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true
+        }
+      });
+
+      // 5. Continuous Drifting Orbs
+      gsap.to(".stories-orb-1", {
+        x: 100,
+        y: -50,
+        scale: 1.1,
+        duration: 12,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      gsap.to(".stories-orb-2", {
+        x: -150,
+        y: 80,
+        scale: 1.15,
+        duration: 15,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+    }
+
+    function initFeaturedStory() {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#featured-story",
+          start: "top 75%",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // 1. Filters & Sort fade in
+      tl.to([".filters-container", ".sort-container"], {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        stagger: 0.2,
+        ease: "power3.out"
+      }, 0);
+
+      // 2. Main Card scales and fades up
+      tl.to(".featured-card", {
+        opacity: 1,
+        y: 0,
+        duration: 1.5,
+        ease: "power4.out"
+      }, 0.2);
+
+      // 3. Measured Metrics pop in stagger
+      tl.to(".measured-metric", {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "back.out(1.5)"
+      }, 0.8);
+
+      // 4. Ambient Background Drift
+      gsap.to(".featured-glow", {
+        x: 100,
+        y: 50,
+        scale: 1.2,
+        duration: 14,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+    }
+
+    function initPartnerStories() {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#partner-stories",
+          start: "top 75%",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // 1. Header & CTA Entrance
+      tl.to(".stories-list-title", {
+        y: 0,
+        duration: 1.2,
+        ease: "power4.out"
+      }, 0)
+        .to(".stories-list-cta", {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out"
+        }, 0.2);
+
+      // 2. Partner Cards Staggered Reveal
+      tl.to(".partner-card", {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        stagger: 0.15,
+        ease: "power3.out"
+      }, 0.3);
+    }
+
+    function initBuyerStories() {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#buyer-stories",
+          start: "top 75%",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // 1. Header & CTA Entrance
+      tl.to(".buyer-list-title", {
+        y: 0,
+        duration: 1.2,
+        ease: "power4.out"
+      }, 0)
+        .to(".buyer-list-cta", {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out"
+        }, 0.2);
+
+      // 2. Wide Cards Staggered Reveal
+      tl.to(".buyer-card", {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        stagger: 0.2,
+        ease: "power3.out"
+      }, 0.3);
+
+      // 3. Image Parallax Effect
+      gsap.utils.toArray(".buyer-img").forEach(img => {
+        gsap.to(img, {
+          yPercent: 15,
+          ease: "none",
+          scrollTrigger: {
+            trigger: img.parentElement,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true
+          }
+        });
+      });
+
+      // 4. Ambient Background Glow Drift
+      gsap.to(".buyer-glow", {
+        y: "-=100",
+        x: "-=50",
+        scale: 1.1,
+        duration: 15,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+    }
+
+    function initVerticalsGraph() {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#industry-verticals",
+          start: "top 75%",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // 1. Text Entrance
+      tl.to(".vertical-tag", { y: 0, duration: 1, ease: "power4.out" }, 0)
+        .to(".vertical-title", { opacity: 1, y: 0, duration: 1.2, ease: "power4.out" }, 0.1)
+        .to(".vertical-desc", { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" }, 0.2);
+
+      // 2. Glass Graph Container Entrance
+      tl.to(".vertical-graph-container", {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        ease: "power4.out"
+      }, 0.3);
+
+      // 3. Dynamic Bar Width Animation
+      // Reads the data-width attribute from the HTML and animates to it
+      tl.to(".graph-bar", {
+        width: function (index, target) {
+          return target.getAttribute("data-width");
+        },
+        duration: 1.5,
+        stagger: 0.15,
+        ease: "power3.out"
+      }, 0.6);
+
+      // 4. Ambient Background Glow Drift
+      gsap.to(".vertical-glow", {
+        y: "-=80",
+        x: "+=60",
+        scale: 1.1,
+        duration: 12,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+    }
+
+    function initStoriesCTA() {
+      const ctaTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#stories-cta",
+          start: "top 80%",
+          end: "bottom bottom",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      // 1. Enclosure Entrance (3D Scale & Fade)
+      ctaTl.fromTo(".cta-enclosure",
+        { opacity: 0, scale: 0.95, rotationX: -5 },
+        { opacity: 1, scale: 1, rotationX: 0, duration: 1.5, ease: "power4.out" }
+      );
+
+      // 2. Typography Entrance (Masked Slide-Up)
+      ctaTl.to(".cta-heading", {
+        y: 0,
+        duration: 1.2,
+        ease: "power4.out"
+      }, "-=1.0")
+        .to(".cta-sub", {
+          y: 0,
+          duration: 1.2,
+          ease: "power4.out"
+        }, "-=1.0");
+
+      // 3. Actions Entrance
+      ctaTl.to(".cta-actions", {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: "power3.out"
+      }, "-=0.8");
+
+      // 4. Cinematic Background Animations (Infinite)
+      gsap.to(".cta-orb-1", {
+        x: "20%",
+        y: "10%",
+        scale: 1.2,
+        duration: 15,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      gsap.to(".cta-orb-2", {
+        x: "-20%",
+        y: "-10%",
+        scale: 1.3,
+        duration: 18,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      // Parallax the internal grid slowly
+      gsap.to(".cta-grid", {
+        y: 50,
+        scrollTrigger: {
+          trigger: "#stories-cta",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1
+        }
+      });
+
+      // 5. Magnetic Button Effect for Desktop Polish
+      const magneticBtns = document.querySelectorAll(".magnetic-btn");
+
+      magneticBtns.forEach(btn => {
+        btn.addEventListener("mousemove", (e) => {
+          const rect = btn.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+
+          gsap.to(btn, {
+            x: x * 0.15,
+            y: y * 0.15,
+            duration: 0.6,
+            ease: "power3.out"
+          });
+        });
+
+        btn.addEventListener("mouseleave", () => {
+          gsap.to(btn, {
+            x: 0,
+            y: 0,
+            duration: 0.6,
+            ease: "elastic.out(1, 0.3)"
+          });
+        });
+      });
+    }
+
+  </script>
+</body>
+
+</html>

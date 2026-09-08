@@ -1,0 +1,2040 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorthLadder - The world's most advanced Trade-in solution</title>
+  <!-- Brand Approved Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- GSAP Core & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: "#EDEEF5",
+              obsidian: "#0A0A0B",
+              charcoal: "#2D2D32",
+              primary: "#3B0764",
+              light: "#9333EA",
+              bright: "#C084FC",
+              mint: "#A855F7",
+            },
+            primary: {
+              950: "#3B0764",
+              900: "#581C87",
+              800: "#6B21A8",
+              700: "#7E22CE",
+              600: "#9333EA",
+              DEFAULT: "#9333EA",
+              500: "#A855F7",
+              400: "#C084FC",
+              300: "#D8B4FE",
+              200: "#E9D5FF",
+              100: "#F3E8FF",
+            },
+            ink: "#0A0F1C",       // Deepest navy/black for high-contrast text
+            surface: "#FFFFFF",   // Pure white for foregrounds
+          },
+          fontFamily: {
+            sans: ["Poppins", "sans-serif"],
+            display: ["Montserrat", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Hide scrollbars */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    body {
+      background-color: #edeef5;
+      color: #0a0a0b;
+      overflow-x: hidden;
+    }
+
+    .apple-blur-light {
+      background: rgba(237, 238, 245, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    /* Fixed CSS Animations for Hero Load */
+    .hero-element {
+      opacity: 0;
+      animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .delay-1 {
+      animation-delay: 0.1s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.3s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.5s;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Ambient Breathing Glow */
+    @keyframes breathe {
+
+      0%,
+      100% {
+        transform: scale(1) translate(0, 0);
+        opacity: 0.4;
+      }
+
+      50% {
+        transform: scale(1.1) translate(20px, -20px);
+        opacity: 0.6;
+      }
+    }
+
+    .ambient-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle,
+          rgba(181, 153, 250, 0.4) 0%,
+          rgba(78, 0, 142, 0.1) 40%,
+          transparent 70%);
+      filter: blur(60px);
+      border-radius: 50%;
+      z-index: 0;
+      animation: breathe 10s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* Horizontal Line Styles */
+    .journey-line-container {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 300vw;
+      height: 400px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .journey-line-active {
+      stroke-dasharray: 4000;
+      stroke-dashoffset: 4000;
+    }
+
+    /* Premium Glass Cards */
+    .info-card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow:
+        0 20px 40px -10px rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    #cursor-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 480px;
+      height: 480px;
+      margin-left: -240px;
+      margin-top: -240px;
+      background: radial-gradient(circle,
+          rgba(181, 153, 250, 0.16) 0%,
+          rgba(78, 0, 142, 0.05) 45%,
+          transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      will-change: transform;
+    }
+
+    @media (max-width: 768px) {
+      #cursor-glow {
+        display: none;
+      }
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.035;
+      mix-blend-mode: multiply;
+    }
+
+    .panel-index {
+      -webkit-text-stroke: 1.5px rgba(10, 10, 11, 0.08);
+      color: transparent;
+    }
+
+    /* Infinite Marquee Animation */
+    .marquee-track {
+      width: max-content;
+      animation: marqueeScroll 25s linear infinite;
+      will-change: transform;
+    }
+
+    @keyframes marqueeScroll {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* Pause marquee on hover for better UX */
+    .marquee-track:hover {
+      animation-play-state: paused;
+    }
+
+    /* Circular Split Mechanics */
+    .orb-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      /* Removed CSS transform so GSAP can handle it without jumping */
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.15),
+        inset 0 2px 10px rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      will-change: transform;
+    }
+
+    @media (min-width: 1024px) {
+      .orb-container {
+        width: 550px;
+        height: 550px;
+      }
+    }
+
+    /* Connection Line that draws between the orbs */
+    #orb-connector {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 2px;
+      background: linear-gradient(90deg, #4e008e, #48b48d);
+      width: 0px;
+      /* Expands via GSAP */
+      z-index: 0;
+      opacity: 0;
+    }
+
+    /* Residual Value Chart Animations */
+    #rv-chart-line {
+      stroke-dasharray: 1500;
+      stroke-dashoffset: 1500;
+    }
+
+    #rv-chart-fill {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .select-arrow {
+      background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%23A1A1AA' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0 center;
+      background-size: 12px;
+    }
+
+    /* Premium Apple-Style Navbar Dropdown Animations */
+    .nav-group {
+      position: static;
+    }
+
+    /* Critical: allows menu to span full width of header */
+    .mega-menu {
+      position: absolute;
+      left: 0;
+      top: 100%;
+      width: 100%;
+      background: rgba(237, 238, 245, 0.95);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.05);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+      cursor: default;
+    }
+
+    .nav-group:hover .mega-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    /* Staggered items inside the menu */
+    .mega-item {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .nav-group:hover .mega-item {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .nav-group:hover .col-1 .mega-item:nth-child(1) {
+      transition-delay: 0.04s;
+    }
+
+    .nav-group:hover .col-1 .mega-item:nth-child(2) {
+      transition-delay: 0.08s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(1) {
+      transition-delay: 0.12s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(2) {
+      transition-delay: 0.16s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(3) {
+      transition-delay: 0.20s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(4) {
+      transition-delay: 0.24s;
+    }
+
+    .nav-group:hover .col-2 .mega-item:nth-child(5) {
+      transition-delay: 0.28s;
+    }
+
+    /* Mobile Apple-style Navigation */
+    #mobile-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #EDEEF5;
+      z-index: 40;
+      padding-top: 85px;
+      padding-inline: 24px;
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0.4s, opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+
+    #mobile-menu.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .mobile-nav-item {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #mobile-menu.active .mobile-nav-item {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Mobile Menu Cascading Delays */
+    #mobile-menu.active .mobile-nav-item:nth-child(1) {
+      transition-delay: 0.10s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(2) {
+      transition-delay: 0.14s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(3) {
+      transition-delay: 0.18s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(4) {
+      transition-delay: 0.22s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(5) {
+      transition-delay: 0.26s;
+    }
+
+    #mobile-menu.active .mobile-nav-item:nth-child(6) {
+      transition-delay: 0.30s;
+    }
+
+    /* Hamburger Icon Animation */
+    .menu-line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform-origin: center;
+      transition:
+        transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.2s ease;
+    }
+
+    .line-1 {
+      transform: translate(-50%, -6px);
+    }
+
+    .line-2 {
+      transform: translate(-50%, 0);
+    }
+
+    .line-3 {
+      transform: translate(-50%, 6px);
+    }
+
+    .menu-open .line-1 {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .menu-open .line-2 {
+      opacity: 0;
+    }
+
+    .menu-open .line-3 {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    /* Mobile Drilldown Enhancements */
+    #mobile-menu {
+      overflow-x: hidden;
+    }
+
+    .submenu-active #mobile-menu-slider {
+      transform: translateX(-100%);
+    }
+
+    .submenu-active #mobile-back-header {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .mobile-submenu a,
+    .mobile-submenu p {
+      opacity: 0;
+      transform: translateX(20px);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .submenu-active .mobile-submenu.active a,
+    .submenu-active .mobile-submenu.active p {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Stagger sub-items for premium cascade */
+    .submenu-active .mobile-submenu.active *:nth-child(1) {
+      transition-delay: 0.10s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(2) {
+      transition-delay: 0.14s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(3) {
+      transition-delay: 0.18s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(4) {
+      transition-delay: 0.22s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(5) {
+      transition-delay: 0.26s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(6) {
+      transition-delay: 0.30s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(7) {
+      transition-delay: 0.34s;
+    }
+
+    .submenu-active .mobile-submenu.active *:nth-child(8) {
+      transition-delay: 0.38s;
+    }
+
+    /* Clean up any rogue arrows in the mobile submenu */
+    .mobile-submenu a {
+      position: relative;
+      background-image: none !important;
+      padding-left: 0 !important;
+    }
+
+    .mobile-submenu a svg {
+      display: none !important;
+      /* Forces any stray SVGs inside these specific links to hide */
+    }
+
+    /* Cinematic Tab Transitions (Motion Blur & Scale Wipe) */
+    .modal-form {
+      transition: opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1),
+        transform 0.8s cubic-bezier(0.19, 1, 0.22, 1),
+        filter 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+      will-change: transform, opacity, filter;
+    }
+
+    .form-hidden-left {
+      opacity: 0;
+      transform: translateX(-80px) scale(0.95);
+      filter: blur(12px);
+    }
+
+    .form-hidden-right {
+      opacity: 0;
+      transform: translateX(80px) scale(0.95);
+      filter: blur(12px);
+    }
+
+    .form-active {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      filter: blur(0px);
+    }
+
+    .cinematic-grid {
+      background-image:
+        linear-gradient(to right, rgba(147, 51, 234, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(147, 51, 234, 0.06) 1px, transparent 1px);
+      background-size: 60px 60px;
+      -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 80%);
+      mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 80%);
+      animation: gridDrift 20s linear infinite;
+    }
+
+    @keyframes gridDrift {
+      0% {
+        transform: translateY(0);
+      }
+
+      100% {
+        transform: translateY(60px);
+      }
+    }
+
+    /* Hover enhancement for the CTA button arrow */
+    .cta-btn:hover .cta-arrow {
+      transform: translateX(4px);
+    }
+
+    /* Enable 3D space for the background elements */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+
+    .transform-style-3d {
+      transform-style: preserve-3d;
+    }
+  </style>
+
+  <link rel="icon" type="image/x-icon" href="favicon.png" />
+</head>
+
+<body>
+  <!-- Grain texture -->
+  <svg class="grain" xmlns="http://www.w3.org/2000/svg">
+    <filter id="noiseFilter">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"></feTurbulence>
+      <feColorMatrix type="saturate" values="0"></feColorMatrix>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#noiseFilter)"></rect>
+  </svg>
+
+  <div id="cursor-glow"></div>
+
+  <!-- NAVBAR -->
+  <header id="main-nav"
+    class="fixed top-0 left-1/2 -translate-x-1/2 w-full z-50 apple-blur-light transition-all duration-500 bg-transparent">
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+      <div class="flex items-center justify-between h-[72px]">
+        <a href="home.html" class="flex items-center gap-3 cursor-pointer">
+          <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+            class="h-6 w-auto brightness-0" />
+        </a>
+
+        <nav class="hidden md:flex space-x-8 lg:space-x-10 h-full">
+          <!-- 1. For Partners -->
+          <div class="nav-group h-full flex items-center">
+            <a href="partner-hub.html"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              For Partners
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <!-- Apple-style Primary Column -->
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Explore</p>
+                  <a href="partner-hub.html"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-3">Partner
+                    Hub</a>
+                </div>
+                <!-- Apple-style Secondary Column -->
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Solutions</p>
+                  <a href="#retailers"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Retailers</a>
+                  <a href="partners/telcos-and-operators.html"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Telcos & Operators</a>
+                  <a href="#oems"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    OEMs & Brands</a>
+                  <a href="#ecommerce"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">For
+                    Ecommerce</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. For Buyers -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#buyers"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              For Buyers
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Explore</p>
+                  <a href="buyer-hub.html"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-mint transition-colors mb-3">Buyer
+                    Hub</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Resources</p>
+                  <a href="buyers/how-auction-work.html"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">How
+                    Auctions Work</a>
+                  <a href="#register"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Register
+                    as Buyer</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Neutral Marketplace -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#neutral-marketplace"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Neutral Marketplace
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Infrastructure</p>
+                  <a href="the-platform.html"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">The
+                    Platform</a>
+                  <a href="#ai-grading"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">AI
+                    Grading</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Intelligence -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#insights"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Insights
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Data</p>
+                  <a href="#rv-index"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">RV
+                    Index</a>
+                  <a href="#market-reports"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">Market
+                    Reports</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Editorial</p>
+                  <a href="#leaders"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">60
+                    Seconds With Circularity Leaders</a>
+                  <a href="#blogs"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Blogs</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Company -->
+          <div class="nav-group h-full flex items-center">
+            <a href="#company"
+              class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+              Company
+              <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </a>
+            <div class="mega-menu pt-10 pb-16 z-50">
+              <div class="max-w-[1000px] mx-auto px-6 lg:px-12 flex gap-24">
+                <div class="col-1">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    About</p>
+                  <a href="#inside"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">Inside
+                    NorthLadder</a>
+                  <a href="#builders"
+                    class="mega-item block font-display text-[26px] font-bold text-brand-obsidian hover:text-brand-primary transition-colors mb-4">The
+                    Builders</a>
+                </div>
+                <div class="col-2">
+                  <p class="mega-item font-sans text-[10px] uppercase tracking-widest font-semibold text-gray-400 mb-5">
+                    Discover</p>
+                  <a href="#stories"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Customer
+                    Stories</a>
+                  <a href="#newsroom"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Newsroom</a>
+                  <a href="#join"
+                    class="mega-item block font-sans text-sm font-medium text-gray-600 hover:text-brand-obsidian transition-colors mb-3.5">Join
+                    The Team</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Language Toggle (Navbar) -->
+        <div class="relative group hidden md:block">
+          <button
+            class="flex items-center gap-1.5 text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418">
+              </path>
+            </svg>
+            EN
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+
+          <!-- Dropdown -->
+          <div
+            class="absolute right-0 mt-4 w-32 bg-white/90 backdrop-blur-xl border border-gray-100 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 overflow-hidden translate-y-2 group-hover:translate-y-0">
+            <div class="p-1.5 space-y-0.5">
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-brand-obsidian bg-gray-50 rounded-lg">English</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">العربية
+                (AR)</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Deutsch</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Español</a>
+              <a href="#"
+                class="block px-3 py-2 text-xs font-sans font-medium text-gray-500 hover:text-brand-obsidian hover:bg-gray-50 rounded-lg transition-colors">Français</a>
+            </div>
+          </div>
+        </div>
+        <div class="items-center space-x-8">
+          <button id="mobile-menu-btn" class="md:hidden flex justify-center items-center w-8 h-8 z-50 relative"
+            aria-label="Toggle menu">
+            <span class="menu-line line-1 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+            <span class="menu-line line-2 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+            <span class="menu-line line-3 absolute w-5 h-[1.5px] bg-brand-obsidian rounded-full"></span>
+          </button>
+          <div class="flex justify-center items-center space-x-8">
+            <a href="#login"
+              class="hidden md:flex text-[13px] font-sans font-medium text-brand-charcoal hover:text-brand-obsidian transition-colors">Log
+              in</a>
+            <a href="#contact"
+              class="hidden md:flex text-[13px] font-sans font-medium text-white bg-brand-obsidian hover:bg-brand-primary px-6 py-2.5 rounded-full transition-all duration-300 shadow-lg shadow-black/10">
+              Get Started
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE APPLE-STYLE FULLSCREEN MENU -->
+  <nav id="mobile-menu" class="md:hidden">
+    <!-- Menu Slider Container -->
+    <div id="mobile-menu-slider"
+      class="relative w-full h-[calc(100%-80px)] flex transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] px-6">
+
+      <!-- LEVEL 1: MAIN MENU -->
+      <div id="mobile-level-1" class="w-full flex-shrink-0 flex flex-col space-y-7 pt-4">
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-partners">
+          For Partners
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-buyers">
+          For Buyers
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-marketplace">
+          Neutral Marketplace
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-intelligence">
+          Insights
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <button
+          class="mobile-nav-item flex justify-between items-center text-xl font-display font-semibold text-brand-obsidian w-full text-left"
+          data-target="submenu-company">
+          Company
+          <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+
+        <div class="mobile-nav-item pt-8 border-t border-gray-300/50 mt-4 flex flex-col space-y-4">
+          <a href="#login" class="text-lg font-sans font-medium text-brand-charcoal">Log in</a>
+          <a href="#contact" class="text-lg font-sans font-medium text-brand-primary">Get Started</a>
+        </div>
+      </div>
+
+      <!-- LEVEL 2: SUBMENUS -->
+      <div id="mobile-level-2" class="absolute top-0 left-full w-full h-full pb-24 overflow-y-auto px-6 pt-4">
+
+        <!-- Submenu: Partners -->
+        <div id="submenu-partners" class="mobile-submenu hidden flex-col space-y-6">
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mb-2">Explore</p>
+          <a href="partner-hub.html" class="text-xl font-display font-semibold text-brand-obsidian block mb-4">Partner
+            Hub</a>
+          <p class="font-sans text-[11px] uppercase tracking-widest font-semibold text-gray-400 mt-6 mb-2">Solutions</p>
+          <a href="#retailers"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For Retailers</a>
+          <a href="partners/telcos-and-operators.html"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For
+            Telcos & Operators</a>
+          <a href="#oems" class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For
+            OEMs & Brands</a>
+          <a href="#ecommerce"
+            class="text-lg font-display font-medium text-gray-500 hover:text-brand-obsidian block">For Ecommerce</a>
+        </div>
+
+        <!-- Remaining Submenus (Buyers, Marketplace, Intelligence, Company) go here, exact same pristine format... -->
+
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <!-- AI GRADING HERO SECTION -->
+    <section id="hero-section"
+      class="relative w-full min-h-[100svh] lg:min-h-screen bg-white overflow-hidden flex flex-col md:flex-row items-start md:items-center pt-24 lg:pt-0">
+
+      <!-- 1. TEXT CONTAINER MOVED FIRST (So it stacks on top on mobile) -->
+      <!-- CHANGED: Added flex-1 to push the image down naturally on mobile -->
+      <div class="relative w-full flex flex-col justify-center z-10 flex-1 md:flex-none md:h-full">
+
+        <div class="hero-fade-up w-full lg:max-w-[65%] px-4 md:px-24 flex flex-col justify-center pb-8 lg:pb-0">
+
+          <h1 class="font-display font-medium text-3xl lg:text-5xl !leading-[1.2] tracking-tight text-black mb-6">
+            20 seconds. AR video.
+            <br />
+            <span class="text-primary-800 font-semibold">
+              40% fewer disputes.
+            </span>
+          </h1>
+
+          <p class="font-sans text-sm md:text-xl text-gray-600 font-light leading-relaxed mb-10 max-w-lg">
+            NorthLadder's AR video grading standard replaces subjective photo
+            assessment with an objective, timestamped video record — per device,
+            per IMEI, stored and accessible to every buyer before they bid.
+          </p>
+
+          <div class="flex flex-col md:flex-row gap-4 pointer-events-auto">
+            <a href="#demo"
+              class="inline-flex text-sm items-center justify-center font-sans font-light md:font-bold text-white bg-primary-800 px-2 md:px-8 py-4 rounded-lg hover:bg-primary-900 transition-all shadow-md hover:shadow-xl backdrop-blur-sm">
+              See grading demo
+            </a>
+            <a href="#api"
+              class="inline-flex text-sm items-center justify-center font-sans font-light md:font-semibold text-primary-800 bg-white/80 backdrop-blur-md border border-gray-200 px-2 md:px-8 py-4 rounded-lg hover:bg-white transition-all shadow-sm hover:shadow-md">
+              View grading rubric &rarr;
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 2. IMAGE CONTAINER MOVED SECOND (So it stacks underneath text on mobile) -->
+      <!-- CHANGED: absolute -> relative md:absolute, h-full -> md:h-full, added mt-auto -->
+      <div
+        class="relative md:absolute bottom-0 right-0 w-full md:h-full flex items-end justify-center lg:justify-end z-0 pointer-events-none mt-auto md:mt-0">
+
+        <!-- Optional: Soft blue gradient glow to mimic the Razorpay background -->
+        <div
+          class="absolute inset-0 bg-gradient-to-tr from-blue-50/40 to-transparent mix-blend-multiply right-0 w-full lg:w-1/2">
+        </div>
+
+        <img src="./assets/northladder-transparent-hero.png" alt="NorthLadder Platform"
+          class="hidden md:block hero-fade-up w-auto h-auto max-h-[50vh] lg:max-h-[85vh] object-cover object-bottom lg:object-right-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)]" />
+
+        <img src="./assets/northladder-transparent-hero-mobile-preview.png" alt="NorthLadder Platform"
+          class="block md:hidden hero-fade-up w-full h-auto object-contain object-bottom-right drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)]" />
+      </div>
+
+    </section>
+
+    <!-- Proof Strip -->
+    <section id="proof-strip"
+      class="relative w-full pb-24 pt-32 lg:pb-32 lg:pt-48 bg-brand-bg overflow-hidden border-t border-gray-200/50">
+      <!-- Subtle Background Mesh -->
+      <div class="absolute inset-0 w-full h-full pointer-events-none opacity-20" style="
+      background-image: radial-gradient(
+       rgba(10, 10, 11, 0.1) 1px,
+       transparent 1px
+      );
+      background-size: 40px 40px;
+     "></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-transparent to-[#EDEEF5] pointer-events-none"></div>
+
+      <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+        <!-- Animated Number Counters -->
+        <div
+          class="grid grid-cols-1 md:grid-cols-5 gap-16 lg:gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-300/50 mb-24">
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
+                <span class="counter" data-target="20">0</span><span class="text-brand-primary">s</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              AR scan per device
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
+                <span class="counter" data-target="40">0</span><span class="text-brand-bright">%</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              Fewer disputes <br /> vs photos
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <div class="relative">
+              <h3
+                class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-obsidian tracking-tighter mb-2">
+                <span class="counter" data-target="100">0</span><span class="text-brand-primary">%</span>
+              </h3>
+            </div>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-gray-500 uppercase font-bold mt-2">
+              lots graded before auction
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <h3
+              class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-mint tracking-tighter mb-2 zero-text">
+              A-D
+            </h3>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-brand-mint uppercase font-bold mt-2">
+              standardised <br /> grade scale
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center justify-center text-center pt-8 md:pt-0 stat-block">
+            <h3
+              class="font-display font-light text-4xl lg:text-7xl leading-none text-brand-mint tracking-tighter mb-2 zero-text">
+              G-B
+            </h3>
+            <p class="font-sans text-[11px] tracking-[0.25em] text-brand-mint uppercase font-bold mt-2">
+              SLA on every lot
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS & GRADING SECTION -->
+    <section id="how-it-works" class="relative pb-32 lg:pb-48 overflow-hidden bg-brand-bg">
+
+      <!-- Ambient Background Glows -->
+      <div class="absolute inset-0 z-0 pointer-events-none">
+        <div
+          class="absolute top-[20%] left-[-10%] w-[600px] h-[600px] bg-brand-mint/5 rounded-full blur-[120px] mix-blend-multiply glow-drift-1">
+        </div>
+        <div
+          class="absolute bottom-[20%] right-[-10%] w-[800px] h-[800px] bg-brand-primary/5 rounded-full blur-[150px] mix-blend-multiply glow-drift-2">
+        </div>
+      </div>
+
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 w-full">
+
+        <!-- ========================================== -->
+        <!-- PART 1: THE PROCESS (STICKY SCROLL)        -->
+        <!-- ========================================== -->
+
+        <!-- Header -->
+        <div class="mb-16 md:mb-24 max-w-3xl">
+          <div class="overflow-hidden mb-8">
+            <p
+              class="hiw-tag font-sans text-[11px] uppercase tracking-[0.4em] font-bold text-brand-primary translate-y-full flex items-center gap-4">
+              <span class="w-8 h-[1px] bg-brand-primary block"></span>
+              How it works
+            </p>
+          </div>
+          <h2
+            class="hiw-title font-display text-4xl md:text-5xl font-medium text-brand-obsidian leading-[1.1] tracking-tight mb-8 opacity-0 translate-y-8">
+            The 20-second AR
+            <br />
+            <span class="text-brand-primary font-semibold">grading process</span>
+          </h2>
+        </div>
+
+        <!-- We add a specific class 'process-steps-container' here for GSAP to target -->
+        <div class="process-steps-container grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 relative">
+
+          <!-- Left Column: The 4 Steps -->
+          <div class="lg:col-span-6 space-y-16 lg:space-y-32 relative pb-16">
+
+            <!-- Continuous Track Line (Background) -->
+            <div class="absolute top-4 bottom-4 left-[15px] w-[2px] bg-brand-obsidian/5 hidden md:block"></div>
+            <!-- Animated Progress Line (Foreground) -->
+            <div
+              class="process-progress-line absolute top-4 left-[15px] w-[2px] h-0 bg-brand-primary hidden md:block z-0">
+            </div>
+
+            <!-- Step 1 -->
+            <div class="process-step relative md:pl-16 opacity-30 transition-opacity duration-500">
+              <div
+                class="absolute top-1 left-0 w-8 h-8 rounded-full bg-white border-2 border-brand-obsidian/10 hidden md:flex items-center justify-center z-10 transition-colors duration-500 step-indicator">
+                <div class="w-2 h-2 rounded-full bg-transparent step-dot transition-colors duration-500"></div>
+              </div>
+              <h3 class="font-display text-2xl md:text-3xl font-bold text-brand-obsidian tracking-tight mb-4">
+                <span class="text-brand-primary mr-2">1.</span>Device scanned by AR camera
+              </h3>
+              <p class="font-sans text-[16px] md:text-[17px] text-brand-charcoal font-light leading-[1.8]">
+                Partner uses the NorthLadder grading app. Camera scans device in a continuous 20-second motion,
+                capturing front, back, edges, ports, screen, and physical condition from all angles.
+              </p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="process-step relative md:pl-16 opacity-30 transition-opacity duration-500">
+              <div
+                class="absolute top-1 left-0 w-8 h-8 rounded-full bg-white border-2 border-brand-obsidian/10 hidden md:flex items-center justify-center z-10 transition-colors duration-500 step-indicator">
+                <div class="w-2 h-2 rounded-full bg-transparent step-dot transition-colors duration-500"></div>
+              </div>
+              <h3 class="font-display text-2xl md:text-3xl font-bold text-brand-obsidian tracking-tight mb-4">
+                <span class="text-brand-primary mr-2">2.</span>AI assigns grade automatically
+              </h3>
+              <p class="font-sans text-[16px] md:text-[17px] text-brand-charcoal font-light leading-[1.8]">
+                NorthLadder's computer vision model analyses the scan against the standardised rubric. Grade A–D
+                assigned in real time. IMEI confirmed via hardware read at point of scan.
+              </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="process-step relative md:pl-16 opacity-30 transition-opacity duration-500">
+              <div
+                class="absolute top-1 left-0 w-8 h-8 rounded-full bg-white border-2 border-brand-obsidian/10 hidden md:flex items-center justify-center z-10 transition-colors duration-500 step-indicator">
+                <div class="w-2 h-2 rounded-full bg-transparent step-dot transition-colors duration-500"></div>
+              </div>
+              <h3 class="font-display text-2xl md:text-3xl font-bold text-brand-obsidian tracking-tight mb-4">
+                <span class="text-brand-primary mr-2">3.</span>Certificate + video stored per IMEI
+              </h3>
+              <p class="font-sans text-[16px] md:text-[17px] text-brand-charcoal font-light leading-[1.8]">
+                The grading video and certificate are stored against the device IMEI. Buyers see the link in the auction
+                lot detail. If a dispute arises, the video is the objective record — no buyer-vs-seller argument.
+              </p>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="process-step relative md:pl-16 opacity-30 transition-opacity duration-500">
+              <div
+                class="absolute top-1 left-0 w-8 h-8 rounded-full bg-white border-2 border-brand-obsidian/10 hidden md:flex items-center justify-center z-10 transition-colors duration-500 step-indicator">
+                <div class="w-2 h-2 rounded-full bg-transparent step-dot transition-colors duration-500"></div>
+              </div>
+              <h3 class="font-display text-2xl md:text-3xl font-bold text-brand-obsidian tracking-tight mb-4">
+                <span class="text-brand-primary mr-2">4.</span>Lot enters auction with grade-backed SLA
+              </h3>
+              <p class="font-sans text-[16px] md:text-[17px] text-brand-charcoal font-light leading-[1.8]">
+                Every lot that goes to auction carries the AR grade and a grade-backed SLA commitment. If device arrives
+                at a lower grade than auctioned, NorthLadder's dispute process applies the video evidence.
+              </p>
+            </div>
+
+          </div>
+
+          <!-- Right Column: GSAP Pinned AR Scanner Visual -->
+          <div class="lg:col-span-6 hidden lg:block h-full relative">
+
+            <!-- We remove 'sticky' and add 'id="scanner-pin"' for absolute GSAP control -->
+            <div id="scanner-pin"
+              class="w-full h-[600px] bg-white/40 backdrop-blur-3xl border border-white/60 rounded-[3rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] overflow-hidden flex items-center justify-center">
+
+              <!-- Premium CSS-Rendered Smartphone -->
+              <div
+                class="relative w-[260px] h-[520px] rounded-[3rem] border-[8px] border-brand-obsidian shadow-2xl bg-[#050505] overflow-hidden flex items-center justify-center">
+                <!-- AR Scanning Grid (Inside the phone) -->
+                <div
+                  class="absolute inset-0 bg-[linear-gradient(rgba(147,51,234,0.3)_1px,transparent_1px),linear-gradient(90deg,rgba(147,51,234,0.3)_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_at_center,black_60%,transparent_90%)] opacity-80">
+                </div>
+
+                <!-- Dynamic Scanning Laser Line -->
+                <div
+                  class="scanner-laser absolute top-0 left-0 w-full h-[3px] bg-brand-bright shadow-[0_0_20px_rgba(192,132,252,1)] z-20">
+                </div>
+
+                <!-- UI Target Brackets (Animated) -->
+                <div
+                  class="scanner-bracket absolute top-[20%] left-[15%] w-8 h-8 border-t-2 border-l-2 border-brand-mint">
+                </div>
+                <div
+                  class="scanner-bracket absolute top-[20%] right-[15%] w-8 h-8 border-t-2 border-r-2 border-brand-mint">
+                </div>
+                <div
+                  class="scanner-bracket absolute bottom-[20%] left-[15%] w-8 h-8 border-b-2 border-l-2 border-brand-mint">
+                </div>
+                <div
+                  class="scanner-bracket absolute bottom-[20%] right-[15%] w-8 h-8 border-b-2 border-r-2 border-brand-mint">
+                </div>
+
+                <!-- Subtle Phone Notch -->
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-brand-obsidian rounded-b-2xl"></div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PART 2: THE GRADE SCALE                    -->
+        <!-- ========================================== -->
+
+        <div class="mt-32 md:mt-48 mb-16 md:mb-24">
+          <div class="overflow-hidden mb-6">
+            <p
+              class="scale-tag font-sans text-[11px] uppercase tracking-[0.4em] font-bold text-brand-primary translate-y-full flex items-center gap-4">
+              <span class="w-8 h-[1px] bg-brand-primary block"></span>
+              NorthLadder Grade Scale
+            </p>
+          </div>
+          <h2
+            class="scale-title font-display text-4xl md:text-5xl font-medium text-brand-obsidian leading-[1.1] tracking-tight mb-8 opacity-0 translate-y-8">
+            Objective, standardized <span class="text-brand-primary font-semibold">assessment.</span>
+          </h2>
+        </div>
+
+        <!-- Grade Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+
+          <!-- Grade A -->
+          <div
+            class="grade-card opacity-0 translate-y-12 relative h-full bg-white/40 backdrop-blur-xl border border-white/60 rounded-[2rem] p-8 md:p-10 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.03)] overflow-hidden group hover:-translate-y-2 transition-transform duration-500">
+            <div
+              class="absolute -right-6 -bottom-10 text-[200px] font-display font-bold text-brand-mint opacity-[0.04] leading-none pointer-events-none group-hover:scale-110 group-hover:opacity-[0.08] transition-all duration-700">
+              A</div>
+            <h3 class="relative z-10 font-display text-4xl font-bold text-brand-mint mb-2">A</h3>
+            <h4
+              class="relative z-10 font-sans text-[13px] font-bold tracking-[0.2em] uppercase text-brand-obsidian mb-6">
+              Pristine</h4>
+            <p class="relative z-10 font-sans text-[15px] text-brand-charcoal font-light leading-[1.7]">
+              No visible marks. Appears new or like-new condition. Screen and body flawless.
+            </p>
+          </div>
+
+          <!-- Grade B -->
+          <div
+            class="grade-card opacity-0 translate-y-12 relative h-full bg-white/40 backdrop-blur-xl border border-white/60 rounded-[2rem] p-8 md:p-10 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.03)] overflow-hidden group hover:-translate-y-2 transition-transform duration-500 lg:translate-y-8">
+            <div
+              class="absolute -right-6 -bottom-10 text-[200px] font-display font-bold text-brand-primary opacity-[0.04] leading-none pointer-events-none group-hover:scale-110 group-hover:opacity-[0.08] transition-all duration-700">
+              B</div>
+            <h3 class="relative z-10 font-display text-4xl font-bold text-brand-primary mb-2">B</h3>
+            <h4
+              class="relative z-10 font-sans text-[13px] font-bold tracking-[0.2em] uppercase text-brand-obsidian mb-6">
+              Light use</h4>
+            <p class="relative z-10 font-sans text-[15px] text-brand-charcoal font-light leading-[1.7]">
+              Minor cosmetic marks visible under close inspection. Fully functional. No screen damage.
+            </p>
+          </div>
+
+          <!-- Grade C -->
+          <div
+            class="grade-card opacity-0 translate-y-12 relative h-full bg-white/40 backdrop-blur-xl border border-white/60 rounded-[2rem] p-8 md:p-10 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.03)] overflow-hidden group hover:-translate-y-2 transition-transform duration-500">
+            <div
+              class="absolute -right-6 -bottom-10 text-[200px] font-display font-bold text-brand-obsidian opacity-[0.04] leading-none pointer-events-none group-hover:scale-110 group-hover:opacity-[0.08] transition-all duration-700">
+              C</div>
+            <h3 class="relative z-10 font-display text-4xl font-bold text-brand-obsidian mb-2">C</h3>
+            <h4
+              class="relative z-10 font-sans text-[13px] font-bold tracking-[0.2em] uppercase text-brand-obsidian mb-6">
+              Heavy use</h4>
+            <p class="relative z-10 font-sans text-[15px] text-brand-charcoal font-light leading-[1.7]">
+              Clearly visible wear. May have scuffs, dents, or screen marks. Fully functional.
+            </p>
+          </div>
+
+          <!-- Grade D -->
+          <div
+            class="grade-card opacity-0 translate-y-12 relative h-full bg-white/40 backdrop-blur-xl border border-white/60 rounded-[2rem] p-8 md:p-10 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.03)] overflow-hidden group hover:-translate-y-2 transition-transform duration-500 lg:translate-y-8">
+            <div
+              class="absolute -right-6 -bottom-10 text-[200px] font-display font-bold text-red-500 opacity-[0.04] leading-none pointer-events-none group-hover:scale-110 group-hover:opacity-[0.08] transition-all duration-700">
+              D</div>
+            <h3 class="relative z-10 font-display text-4xl font-bold text-red-500 mb-2">D</h3>
+            <h4
+              class="relative z-10 font-sans text-[13px] font-bold tracking-[0.2em] uppercase text-brand-obsidian mb-6">
+              Defective</h4>
+            <p class="relative z-10 font-sans text-[15px] text-brand-charcoal font-light leading-[1.7]">
+              Functional issues: broken screen, non-working buttons, water damage, hardware faults.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- DISPUTE PROTECTION SECTION -->
+    <section id="dispute-protection" class="relative pb-32 lg:pb-48 overflow-hidden bg-brand-bg">
+
+      <!-- Ambient Background Glows -->
+      <div class="absolute inset-0 z-0 pointer-events-none">
+        <!-- Problem side (subtle, muted shadow) -->
+        <div
+          class="absolute top-[20%] left-[5%] w-[500px] h-[500px] bg-gray-400/10 rounded-full blur-[120px] mix-blend-multiply dispute-glow-1">
+        </div>
+        <!-- Solution side (vibrant brand glow) -->
+        <div
+          class="absolute bottom-[10%] right-[5%] w-[700px] h-[700px] bg-brand-primary/15 rounded-full blur-[140px] mix-blend-multiply dispute-glow-2">
+        </div>
+      </div>
+
+      <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 w-full">
+
+        <!-- Section Header -->
+        <div class="mb-16 md:mb-24 flex flex-col items-center text-center">
+          <div class="overflow-hidden mb-8">
+            <p
+              class="dispute-tag font-sans text-[11px] uppercase tracking-[0.4em] font-bold text-brand-primary translate-y-full flex items-center justify-center gap-4">
+              <span class="w-8 h-[1px] bg-brand-primary block"></span>
+              Dispute Protection
+              <span class="w-8 h-[1px] bg-brand-primary block"></span>
+            </p>
+          </div>
+          <div class="overflow-hidden">
+            <h2
+              class="dispute-title font-display text-4xl md:text-5xl font-medium text-brand-obsidian leading-[1.1] translate-y-[110%]">
+              What "grade-backed SLA" <span class="text-brand-primary font-semibold">means in practice</span>
+            </h2>
+          </div>
+        </div>
+
+        <!-- Comparison Cards Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 relative">
+
+          <!-- VS Connector Line (Desktop Only) -->
+          <div class="hidden lg:flex absolute inset-0 items-center justify-center pointer-events-none z-20">
+            <div
+              class="w-12 h-12 rounded-full bg-brand-bg border border-brand-obsidian/10 shadow-lg flex items-center justify-center dispute-vs opacity-0 scale-50">
+              <span class="font-display font-bold text-xs tracking-widest text-brand-charcoal">VS</span>
+            </div>
+          </div>
+
+          <!-- Card 1: Without AR Grading (Muted / Problem) -->
+          <div
+            class="dispute-card opacity-0 translate-y-12 bg-white/30 backdrop-blur-md border border-brand-obsidian/5 rounded-[2rem] p-8 md:p-12 transition-all duration-500 hover:bg-white/50">
+            <h3 class="font-display text-2xl md:text-3xl font-bold text-brand-charcoal mb-8 opacity-60">
+              Without AR grading
+            </h3>
+
+            <ul class="space-y-6">
+              <li class="dispute-item flex items-start gap-4 opacity-0 -translate-x-4">
+                <div
+                  class="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center border border-red-200">
+                  <svg class="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                  </svg>
+                </div>
+                <p class="font-sans text-[16px] text-brand-charcoal font-light leading-[1.7]">
+                  Buyer disputes based on their assessment vs seller's 7 photos
+                </p>
+              </li>
+              <li class="dispute-item flex items-start gap-4 opacity-0 -translate-x-4">
+                <div
+                  class="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center border border-red-200">
+                  <svg class="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                  </svg>
+                </div>
+                <p class="font-sans text-[16px] text-brand-charcoal font-light leading-[1.7]">
+                  No objective record — becomes a credibility argument
+                </p>
+              </li>
+              <li class="dispute-item flex items-start gap-4 opacity-0 -translate-x-4">
+                <div
+                  class="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center border border-red-200">
+                  <svg class="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                  </svg>
+                </div>
+                <p class="font-sans text-[16px] text-brand-charcoal font-light leading-[1.7]">
+                  Industry average: 1 in 3 lots disputed at delivery
+                </p>
+              </li>
+              <li class="dispute-item flex items-start gap-4 opacity-0 -translate-x-4">
+                <div
+                  class="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center border border-red-200">
+                  <svg class="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                  </svg>
+                </div>
+                <p class="font-sans text-[16px] text-brand-charcoal font-light leading-[1.7]">
+                  Returned lots, cost absorption, relationship damage
+                </p>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Card 2: With NorthLadder (Elevated / Solution) -->
+          <div
+            class="dispute-card opacity-0 translate-y-12 relative z-10 bg-white/70 backdrop-blur-2xl border border-brand-primary/20 rounded-[2rem] p-8 md:p-12 shadow-[0_20px_60px_-15px_rgba(147,51,234,0.15)] transition-all duration-500 hover:shadow-[0_30px_70px_-15px_rgba(147,51,234,0.25)] hover:-translate-y-1">
+
+            <!-- Subtle Inner Glow -->
+            <div
+              class="absolute top-0 right-0 w-48 h-48 bg-brand-primary/5 rounded-full blur-[60px] pointer-events-none">
+            </div>
+
+            <h3 class="font-display text-2xl md:text-3xl font-bold text-brand-primary mb-8">
+              With NorthLadder AR grading
+            </h3>
+
+            <ul class="space-y-6">
+              <li class="dispute-item-pro flex items-start gap-4 opacity-0 translate-x-4">
+                <div
+                  class="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-brand-primary/10 flex items-center justify-center border border-brand-primary/30">
+                  <svg class="w-3 h-3 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <p class="font-sans text-[16px] text-brand-obsidian font-medium leading-[1.7]">
+                  Timestamped AR video per IMEI — reviewed at arrival against auction record
+                </p>
+              </li>
+              <li class="dispute-item-pro flex items-start gap-4 opacity-0 translate-x-4">
+                <div
+                  class="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-brand-primary/10 flex items-center justify-center border border-brand-primary/30">
+                  <svg class="w-3 h-3 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <p class="font-sans text-[16px] text-brand-obsidian font-medium leading-[1.7]">
+                  Objective evidence makes disputes resolvable in hours, not weeks
+                </p>
+              </li>
+              <li class="dispute-item-pro flex items-start gap-4 opacity-0 translate-x-4">
+                <div
+                  class="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-brand-primary/10 flex items-center justify-center border border-brand-primary/30">
+                  <svg class="w-3 h-3 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <p class="font-sans text-[16px] text-brand-obsidian font-medium leading-[1.7]">
+                  40% fewer disputes on platform average
+                </p>
+              </li>
+              <li class="dispute-item-pro flex items-start gap-4 opacity-0 translate-x-4">
+                <div
+                  class="mt-1 flex-shrink-0 w-6 h-6 rounded-full bg-brand-primary/10 flex items-center justify-center border border-brand-primary/30">
+                  <svg class="w-3 h-3 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <p class="font-sans text-[16px] text-brand-obsidian font-medium leading-[1.7]">
+                  5-business-day grade dispute window. SLA-backed resolution.
+                </p>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- AI GRADING CTA SECTION -->
+    <section id="demo-cta"
+      class="relative pb-24 lg:pb-40 px-6 lg:px-12 bg-brand-bg flex justify-center perspective-1000">
+
+      <!-- Massive Dark Glass Enclosure -->
+      <div
+        class="demo-enclosure relative w-full max-w-[1200px] rounded-[3rem] md:rounded-[4rem] bg-brand-obsidian overflow-hidden opacity-0 shadow-[0_40px_80px_-20px_rgba(147,51,234,0.25)] border border-white/10 flex flex-col items-center text-center py-24 md:py-32 px-6 md:px-12 z-10">
+
+        <!-- Immersive AI Scanning Background -->
+        <div class="absolute inset-0 z-0 pointer-events-none flex items-center justify-center">
+
+          <!-- Deep gradient base -->
+          <div class="absolute inset-0 bg-gradient-to-b from-[#0A0A0B] via-[#1A0B2E] to-[#0A0A0B]"></div>
+
+          <!-- Concentric Radar/Scanning Rings -->
+          <div class="demo-ring absolute w-[300px] h-[300px] rounded-full border border-brand-primary/30"></div>
+          <div class="demo-ring absolute w-[500px] h-[500px] rounded-full border border-brand-primary/20"></div>
+          <div class="demo-ring absolute w-[700px] h-[700px] rounded-full border border-brand-primary/10"></div>
+          <div class="demo-ring absolute w-[900px] h-[900px] rounded-full border border-brand-primary/5"></div>
+
+          <!-- Ambient Orbs -->
+          <div
+            class="absolute top-[-20%] left-[10%] w-[400px] h-[400px] bg-brand-mint/20 rounded-full blur-[100px] mix-blend-screen demo-orb-1">
+          </div>
+          <div
+            class="absolute bottom-[-20%] right-[10%] w-[500px] h-[500px] bg-brand-primary/30 rounded-full blur-[120px] mix-blend-screen demo-orb-2">
+          </div>
+
+          <!-- Overlay Grid to give it that "lens/scanner" texture -->
+          <div
+            class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_80%)]">
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="relative z-10 flex flex-col items-center w-full">
+
+          <!-- Glowing Live Indicator -->
+          <div
+            class="demo-live-tag opacity-0 translate-y-8 flex items-center gap-3 bg-white/5 border border-white/10 px-5 py-2 rounded-full backdrop-blur-md mb-8">
+            <div class="w-2 h-2 rounded-full bg-brand-mint animate-pulse shadow-[0_0_10px_rgba(168,85,247,0.8)]"></div>
+            <span class="font-sans text-[11px] font-bold tracking-[0.2em] uppercase text-white">Live Demo</span>
+          </div>
+
+          <!-- Masked Heading -->
+          <div class="overflow-hidden mb-6">
+            <h2
+              class="demo-heading font-display text-4xl md:text-5xl lg:text-7xl font-bold text-white leading-[1.05] tracking-tight max-w-4xl translate-y-[110%]">
+              See AI grading <span class="text-brand-mint">in action</span>
+            </h2>
+          </div>
+
+          <!-- Subtext -->
+          <p
+            class="demo-sub font-sans text-lg md:text-xl text-gray-300 font-light max-w-2xl opacity-0 translate-y-8 mb-12">
+            20 minutes. See a real device scanned, analyzed, and graded end-to-end on the platform.
+          </p>
+
+          <!-- Primary Interactive Button -->
+          <div class="demo-btn-container opacity-0 translate-y-8">
+            <a href="#book-demo"
+              class="relative inline-flex items-center justify-center px-10 py-5 rounded-full bg-white overflow-hidden group transition-all duration-500 hover:scale-105 shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-[0_0_60px_rgba(168,85,247,0.4)]">
+              <!-- Hover gradient sweep -->
+              <div
+                class="absolute inset-0 bg-gradient-to-r from-brand-mint via-brand-primary to-brand-mint opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              </div>
+
+              <span
+                class="relative z-10 font-sans text-[16px] font-bold text-brand-obsidian group-hover:text-white tracking-wide transition-colors duration-500 flex items-center gap-3">
+                Book a grading demo
+                <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none"
+                  stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                  </path>
+                </svg>
+              </span>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer id="main-footer" class="relative z-30 bg-white overflow-hidden pt-32 pb-16">
+    <!-- Subtle top ambient separator & glow for depth -->
+    <div
+      class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-brand-primary/15 to-transparent">
+    </div>
+    <div
+      class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand-primary/[0.02] blur-[120px] pointer-events-none">
+    </div>
+
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-8 mb-24">
+        <!-- Brand & Mission Column -->
+        <div class="col-span-1 md:col-span-5 pr-0 lg:pr-12">
+          <img src="https://www.northladder.com/wp-content/uploads/2025/06/W1-1.svg" alt="NorthLadder Logo"
+            class="h-6 w-auto brightness-0 mb-8 opacity-90" />
+          <p class="font-sans text-[13px] text-gray-500 font-light leading-[1.9] mb-10 max-w-sm">
+            Democratization Of Trade-ins. Powering the world's most advanced
+            circularity infrastructure for Grade-A inventory with absolute
+            neutrality.
+          </p>
+
+          <!-- Premium Language Pill with Hover State -->
+          <div class="inline-flex items-center relative group">
+            <div
+              class="absolute inset-0 bg-gray-50 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            </div>
+            <div
+              class="relative flex items-center bg-white border border-gray-100/80 rounded-full px-5 py-2.5 hover:border-gray-200 hover:shadow-[0_10px_20px_-10px_rgba(0,0,0,0.05)] transition-all duration-300">
+              <svg class="w-4 h-4 text-gray-400 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                  d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9">
+                </path>
+              </svg>
+              <select
+                class="bg-transparent text-[11px] font-sans font-medium tracking-wide text-brand-obsidian focus:outline-none pr-7 appearance-none cursor-pointer w-full select-arrow">
+                <option>English (Global)</option>
+                <option>العربية (Arabic)</option>
+                <option>Deutsch (German)</option>
+                <option>Español (Spanish)</option>
+                <option>Français (French)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ecosystem Links -->
+        <div class="col-span-1 md:col-span-2 md:col-start-7">
+          <h4 class="font-sans text-[9px] uppercase tracking-[0.25em] font-bold text-gray-400 mb-8">
+            Ecosystem
+          </h4>
+          <ul class="space-y-5 font-sans text-[13px] font-light text-gray-500">
+            <li>
+              <a href="#partners"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">For
+                Partners</a>
+            </li>
+            <li>
+              <a href="#buyers"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">For
+                Buyers</a>
+            </li>
+            <li>
+              <a href="#neutral-marketplace"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Neutral
+                Marketplace</a>
+            </li>
+            <li>
+              <a href="#insights"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Data
+                Insights</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Enterprise Links -->
+        <div class="col-span-1 md:col-span-2">
+          <h4 class="font-sans text-[9px] uppercase tracking-[0.25em] font-bold text-gray-400 mb-8">
+            Enterprise
+          </h4>
+          <ul class="space-y-5 font-sans text-[13px] font-light text-gray-500">
+            <li>
+              <a href="#about"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Inside
+                NorthLadder</a>
+            </li>
+            <li>
+              <a href="#careers"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Global
+                Careers</a>
+            </li>
+            <li>
+              <a href="#newsroom"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">News
+                & Media</a>
+            </li>
+            <li>
+              <a href="#contact"
+                class="hover:text-brand-primary hover:translate-x-1 inline-block transition-transform duration-300">Contact
+                Relations</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Refined Bottom Bar -->
+      <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-gray-100/80">
+        <p class="font-sans text-[11px] font-medium tracking-wide text-gray-400">
+          © 2026 NorthLadder. All rights reserved.
+        </p>
+        <div class="flex gap-8 mt-6 md:mt-0">
+          <a href="#"
+            class="text-gray-400 hover:text-brand-obsidian transition-colors text-[11px] tracking-wide font-sans font-medium">Privacy
+            Policy</a>
+          <a href="#"
+            class="text-gray-400 hover:text-brand-obsidian transition-colors text-[11px] tracking-wide font-sans font-medium">Terms
+            of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      gsap.registerPlugin(ScrollTrigger);
+      navBar();
+      cursorLogic();
+      initHero();
+      initProofStripCounters();
+      initHowItWorks();
+      initDisputeProtection();
+      initDemoCTA();
+    });
+
+    function navBar() {
+      window.addEventListener("scroll", () => {
+        const nav = document.getElementById("main-nav");
+        if (window.scrollY > 20) {
+          nav.classList.remove("w-full");
+          nav.classList.add("w-[90%]", "max-w-[1400px]", "top-2", "rounded-full", "shadow-sm", "border", "border-white/40");
+        } else {
+          nav.classList.add("w-full");
+          nav.classList.remove("w-[90%]", "max-w-[1400px]", "top-2", "rounded-full", "shadow-sm", "border", "border-white/40");
+        }
+      });
+
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener('click', () => {
+          mobileBtn.classList.toggle('menu-open');
+          mobileMenu.classList.toggle('active');
+          document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+        });
+      }
+    }
+
+    function cursorLogic() {
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (!prefersReducedMotion && window.matchMedia("(pointer: fine)").matches) {
+        const glow = document.getElementById("cursor-glow");
+        let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+        let gx = mx, gy = my;
+        window.addEventListener("mousemove", (e) => {
+          mx = e.clientX; my = e.clientY;
+        });
+        gsap.ticker.add(() => {
+          gx += (mx - gx) * 0.08;
+          gy += (my - gy) * 0.08;
+          gsap.set(glow, { x: gx, y: gy });
+        });
+      }
+    }
+
+    function initHero() {
+      const elements = document.querySelectorAll('.hero-fade-up');
+
+      if (elements.length === 0) return;
+
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (prefersReducedMotion) {
+        // If user prefers no motion, just show elements instantly
+        elements.forEach(el => {
+          el.classList.remove('opacity-0', 'translate-y-8');
+          el.classList.add('opacity-100', 'translate-y-0');
+        });
+        return;
+      }
+
+      // Simple entrance animation using GSAP (No ScrollTrigger)
+      gsap.to('.hero-fade-up', {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        ease: "power3.out",
+        stagger: 0.2, // Text loads first, then image slightly after
+        delay: 0.1
+      });
+    }
+
+    function initProofStripCounters() {
+      const statBlocks = gsap.utils.toArray(".stat-block");
+      if (statBlocks.length > 0) {
+        gsap.fromTo(
+          statBlocks,
+          { y: 50, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.2,
+            stagger: 0.2,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: "#proof-strip",
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
+          },
+        );
+
+        const counters = document.querySelectorAll(".counter");
+        counters.forEach((counter) => {
+          const target = parseInt(counter.getAttribute("data-target"));
+          ScrollTrigger.create({
+            trigger: counter,
+            start: "top 85%",
+            onEnter: () => {
+              gsap.to(counter, {
+                innerHTML: target,
+                duration: 2.5,
+                ease: "power2.out",
+                snap: { innerHTML: 1 },
+                onUpdate: function () {
+                  counter.innerHTML = Math.round(this.targets()[0].innerHTML);
+                },
+              });
+            },
+            once: true,
+          });
+        });
+
+        gsap.fromTo(
+          ".zero-text",
+          { opacity: 0, scale: 0.9, filter: "blur(10px)" },
+          {
+            opacity: 1,
+            scale: 1,
+            filter: "blur(0px)",
+            duration: 1.5,
+            delay: 0.4,
+            ease: "power2.out",
+            scrollTrigger: { trigger: "#proof-strip", start: "top 80%" },
+          },
+        );
+      }
+    }
+
+    function initHowItWorks() {
+      // 1. Process Header Entrance
+      const hiwTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#how-it-works",
+          start: "top 75%",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      hiwTl.to(".hiw-tag", { y: 0, duration: 1, ease: "power4.out" })
+        .to(".hiw-title", { opacity: 1, y: 0, duration: 1.2, ease: "power4.out" }, 0.1);
+
+      // 2. Interactive Scrolling Steps & Vertical Progress Line
+      const steps = gsap.utils.toArray(".process-step");
+
+      // Animate the main vertical line down the side
+      gsap.to(".process-progress-line", {
+        height: "100%",
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".process-steps-container",
+          start: "top 40%",
+          end: "bottom 60%",
+          scrub: true
+        }
+      });
+
+      // Highlight each step as it hits the center of the screen
+      steps.forEach((step, i) => {
+        const indicator = step.querySelector(".step-indicator");
+        const dot = step.querySelector(".step-dot");
+
+        ScrollTrigger.create({
+          trigger: step,
+          start: "top 60%",
+          end: "bottom 40%",
+          toggleClass: { targets: step, className: "opacity-100" },
+          onEnter: () => {
+            if (indicator) indicator.classList.add("border-brand-primary");
+            if (dot) dot.classList.add("bg-brand-primary");
+          },
+          onLeaveBack: () => {
+            if (indicator) indicator.classList.remove("border-brand-primary");
+            if (dot) dot.classList.remove("bg-brand-primary");
+          }
+        });
+      });
+
+      // 3. Absolute Pinning for the AR Scanner
+      ScrollTrigger.create({
+        trigger: ".process-steps-container", // The grid container tying both columns together
+        start: "top 15%", // Adjust this percentage if you have a taller fixed navbar
+        end: "bottom 80%", // Unpins when the last step clears the bottom
+        pin: "#scanner-pin",
+        pinSpacing: false // Prevents the grid from blowing up layout margins
+      });
+
+      // 4. Sticky AR Scanner Animation (Inside the CSS phone)
+      gsap.to(".scanner-laser", {
+        y: "520px", // Height of the phone screen
+        duration: 2,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut"
+      });
+
+      // Subtle pulse on the targeting brackets
+      gsap.to(".scanner-bracket", {
+        scale: 1.1,
+        opacity: 0.5,
+        duration: 1.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "power1.inOut"
+      });
+
+      // 5. Grade Scale Entrance
+      const scaleTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".scale-tag",
+          start: "top 80%",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      scaleTl.to(".scale-tag", { y: 0, duration: 1, ease: "power4.out" })
+        .to(".scale-title", { opacity: 1, y: 0, duration: 1.2, ease: "power4.out" }, 0.1)
+        .to(".grade-card", {
+          opacity: 1,
+          y: 0,
+          duration: 1.2,
+          stagger: 0.15,
+          ease: "power3.out"
+        }, 0.3);
+
+      // 6. Cinematic Background Orbs Drifting
+      gsap.to(".glow-drift-1", {
+        x: 100, y: -50, scale: 1.1, duration: 10, repeat: -1, yoyo: true, ease: "sine.inOut"
+      });
+      gsap.to(".glow-drift-2", {
+        x: -120, y: 80, scale: 1.2, duration: 14, repeat: -1, yoyo: true, ease: "sine.inOut"
+      });
+    }
+
+    function initDisputeProtection() {
+      // 1. Section Header Entrance
+      const disputeTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#dispute-protection",
+          start: "top 75%",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      disputeTl.to(".dispute-tag", { y: 0, duration: 1, ease: "power4.out" })
+        .to(".dispute-title", { y: 0, duration: 1.2, ease: "power4.out" }, 0.1);
+
+      // 2. Cards Entrance
+      disputeTl.to(".dispute-card", {
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        stagger: 0.15,
+        ease: "power3.out"
+      }, 0.3);
+
+      // 3. VS Badge Pop-in
+      disputeTl.to(".dispute-vs", {
+        opacity: 1,
+        scale: 1,
+        duration: 0.8,
+        ease: "back.out(1.7)"
+      }, 0.8);
+
+      // 4. Staggered List Items Entrance (Left Card - Negative)
+      disputeTl.to(".dispute-item", {
+        opacity: 1,
+        x: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "power2.out"
+      }, 0.6);
+
+      // 5. Staggered List Items Entrance (Right Card - Positive)
+      disputeTl.to(".dispute-item-pro", {
+        opacity: 1,
+        x: 0,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: "power2.out"
+      }, 0.8);
+
+      // 6. Cinematic Background Drifting
+      gsap.to(".dispute-glow-1", {
+        x: 80, y: -40, scale: 1.1, duration: 12, repeat: -1, yoyo: true, ease: "sine.inOut"
+      });
+      gsap.to(".dispute-glow-2", {
+        x: -100, y: 60, scale: 1.15, duration: 15, repeat: -1, yoyo: true, ease: "sine.inOut"
+      });
+    }
+
+    function initDemoCTA() {
+      // 1. Enclosure Entrance (3D Scale & Fade)
+      const ctaTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#demo-cta",
+          start: "top 80%",
+          toggleActions: "play none none reverse"
+        }
+      });
+
+      ctaTl.fromTo(".demo-enclosure",
+        { opacity: 0, scale: 0.95, rotationX: -10 },
+        { opacity: 1, scale: 1, rotationX: 0, duration: 1.5, ease: "power4.out" }
+      )
+        .to(".demo-live-tag", {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out"
+        }, "-=0.8")
+        .to(".demo-heading", {
+          y: 0,
+          duration: 1.2,
+          ease: "power4.out"
+        }, "-=0.8")
+        .to(".demo-sub", {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out"
+        }, "-=0.8")
+        .to(".demo-btn-container", {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out"
+        }, "-=0.8");
+
+      // 2. AI Radar/Scanning Rings Animation (Continuous)
+      // This creates a pulsing sonar effect coming from the center
+      gsap.fromTo(".demo-ring",
+        { scale: 0.5, opacity: 1 },
+        {
+          scale: 1.5,
+          opacity: 0,
+          duration: 4,
+          stagger: 1,
+          repeat: -1,
+          ease: "power1.out"
+        }
+      );
+
+      // 3. Cinematic Background Orbs Drifting
+      gsap.to(".demo-orb-1", {
+        x: 150, y: -50, scale: 1.2, duration: 12, repeat: -1, yoyo: true, ease: "sine.inOut"
+      });
+      gsap.to(".demo-orb-2", {
+        x: -150, y: 100, scale: 1.3, duration: 15, repeat: -1, yoyo: true, ease: "sine.inOut"
+      });
+    }
+  </script>
+</body>
+
+</html>
