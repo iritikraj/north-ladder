@@ -940,10 +940,10 @@
       <div class="absolute inset-0 z-0 pointer-events-none flex items-center justify-center">
         <!-- Breathing Orbs -->
         <div
-          class="absolute top-[10%] left-[15%] w-[50vw] max-w-[600px] h-[50vw] max-h-[600px] bg-brand-mint/15 rounded-full blur-[120px] mix-blend-multiply stories-orb-1">
+          class="absolute top-[10%] left-[10%] w-[50vw] max-w-[600px] h-[50vw] max-h-[600px] bg-brand-mint/15 rounded-full blur-[120px] mix-blend-multiply stories-orb-1">
         </div>
         <div
-          class="absolute bottom-[20%] right-[10%] w-[60vw] max-w-[800px] h-[60vw] max-h-[800px] bg-brand-primary/10 rounded-full blur-[150px] mix-blend-multiply stories-orb-2">
+          class="absolute bottom-[20%] right-[5%] w-[60vw] max-w-[800px] h-[60vw] max-h-[800px] bg-brand-primary/10 rounded-full blur-[150px] mix-blend-multiply stories-orb-2">
         </div>
 
         <!-- Architectural Grid Overlay -->
@@ -954,41 +954,51 @@
 
       <div class="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 w-full flex flex-col items-center">
 
-        <!-- 1. Header & Typography -->
-        <div class="flex flex-col items-center text-center max-w-4xl mb-20 lg:mb-28">
+        <!-- 1. Split Hero (Text Left, Image Right) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center w-full mb-16 lg:mb-24">
 
-          <!-- Masked Tag -->
-          <div class="overflow-hidden mb-8">
+          <!-- Left Column: Typography -->
+          <div class="flex flex-col items-start text-left max-w-xl z-10">
+            <!-- Masked Tag -->
+            <div class="overflow-hidden mb-8">
+              <p
+                class="stories-tag font-sans text-xs md:text-sm font-semibold tracking-[0.4em] text-brand-primary uppercase translate-y-full flex items-center gap-4">
+                <span class="w-8 h-[1px] bg-brand-primary block"></span>
+                Customer Stories
+              </p>
+            </div>
+
+            <!-- Masked Title -->
+            <h1
+              class="font-display text-4xl lg:text-5xl font-medium text-brand-obsidian leading-[1.15] tracking-tight mb-8">
+              <div class="overflow-hidden py-1">
+                <span class="stories-title-line block translate-y-[110%]">What the market</span>
+              </div>
+              <div class="overflow-hidden py-1">
+                <span class="stories-title-line block translate-y-[110%] text-brand-primary font-semibold">actually
+                  delivers.</span>
+              </div>
+            </h1>
+
+            <!-- Description -->
             <p
-              class="insight-elem block font-sans text-xs md:text-sm font-semibold tracking-[0.4em] text-primary-600 uppercase mb-6">
-              <!-- <span class="w-8 h-[1px] bg-brand-primary block"></span> -->
-              Customer Stories
-              <!-- <span class="w-8 h-[1px] bg-brand-primary block"></span> -->
+              class="stories-desc font-sans text-[16px] md:text-lg text-brand-charcoal font-light leading-[1.8] opacity-0 translate-y-8">
+              Every story on this page is a measured outcome — attach rates, sell-through, settlement times — from
+              partners and buyers operating on NorthLadder today.
             </p>
           </div>
 
-          <!-- Masked Title (Using requested text-3xl lg:text-5xl) -->
-          <h1
-            class="font-display text-3xl lg:text-5xl font-medium text-brand-obsidian leading-[1.15] tracking-tight mb-8">
-            <div class="overflow-hidden py-1">
-              <span class="stories-title-line block translate-y-[110%]">What the market</span>
-            </div>
-            <div class="overflow-hidden py-1">
-              <span class="stories-title-line block translate-y-[110%] text-brand-primary font-semibold">actually
-                delivers.</span>
-            </div>
-          </h1>
-
-          <!-- Description -->
-          <p
-            class="stories-desc font-sans text-[16px] md:text-lg text-brand-charcoal font-light leading-[1.8] max-w-2xl opacity-0 translate-y-8">
-            Every story on this page is a measured outcome — attach rates, sell-through, settlement times — from
-            partners and buyers operating on NorthLadder today.
-          </p>
+          <!-- Right Column: Provided Image -->
+          <div
+            class="relative w-full flex items-center justify-center lg:justify-end z-10 opacity-0 translate-x-12 hero-img-container">
+            <img src="./assets/customer-stories.png"
+              alt="NorthLadder Market Delivery"
+              class="w-full max-w-[450px] lg:max-w-[550px] h-auto object-contain drop-shadow-[0_30px_60px_rgba(59,7,100,0.15)] hero-right-img" />
+          </div>
         </div>
 
         <!-- 2. The Glass Stats Array -->
-        <div class="w-full grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6 mb-8 lg:mb-12 relative z-20">
+        <div class="w-full grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6 mb-16 lg:mb-20 relative z-20">
 
           <!-- Stat 1 -->
           <div
@@ -1029,14 +1039,10 @@
         <div
           class="stories-imagery-container opacity-0 w-full relative rounded-[2rem] lg:rounded-[3rem] overflow-hidden shadow-2xl bg-brand-obsidian transform-style-3d">
 
-          <!-- Cinematic Image Background (Replace src with actual partner photo) -->
+          <!-- Cinematic Image Background -->
           <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32d7?q=80&w=2564&auto=format&fit=crop"
-              alt="Partner Office" class="w-full h-full object-cover grayscale-[40%] opacity-40 stories-bg-img"
-              style="transform: scale(1.15);" />
-            <!-- Luxury Gradient Overlays for text readability -->
-            <div class="absolute inset-0 bg-gradient-to-t from-[#0A0A0B] via-[#0A0A0B]/60 to-transparent"></div>
-            <div class="absolute inset-0 bg-brand-primary/10 mix-blend-color"></div>
+            <img src="./assets/best-price-guarantee.png" alt="Partner Office"
+              class="w-full h-full object-cover stories-bg-img" />
           </div>
 
           <!-- Testimonial Content -->
@@ -1052,7 +1058,7 @@
                 </svg>
               </div>
               <h2
-                class="font-display text-2xl md:text-3xl lg:text-4xl font-medium text-white leading-[1.3] tracking-tight mb-8">
+                class="font-display text-2xl md:text-3xl font-medium text-brand-obsedian leading-[1.3] tracking-tight mb-8">
                 "We moved our programme to NorthLadder and could finally prove to our CFO we were getting fair market
                 value."
               </h2>
@@ -1060,7 +1066,6 @@
 
             <!-- Right: Highlight Badge -->
             <div class="lg:w-4/12 flex lg:justify-end w-full">
-              <!-- Premium Floating Glass Badge -->
               <div
                 class="stories-badge bg-white/10 backdrop-blur-2xl border border-white/20 p-6 lg:p-8 rounded-[1.5rem] flex flex-col items-start shadow-[0_20px_40px_rgba(0,0,0,0.3)] w-full sm:w-auto relative overflow-hidden group">
                 <!-- Inner flare effect -->
@@ -2116,7 +2121,7 @@
     function initStoriesHero() {
       const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
 
-      // 1. Top Typography Entrance
+      // 1. Left Column: Typography Entrance
       tl.to(".stories-tag", {
         y: 0,
         duration: 1.2
@@ -2132,7 +2137,25 @@
           duration: 1.2,
         }, 0.6);
 
-      // 2. Glass Stats Array (Staggered pop-up)
+      // 2. Right Column: Image Entrance
+      tl.to(".hero-img-container", {
+        opacity: 1,
+        x: 0,
+        duration: 1.5,
+        ease: "power3.out"
+      }, 0.5);
+
+      // Add a continuous, premium float to the right image
+      gsap.to(".hero-right-img", {
+        y: -15,
+        duration: 4,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        delay: 1.5
+      });
+
+      // 3. Glass Stats Array (Staggered pop-up)
       tl.to(".stories-stat", {
         opacity: 1,
         y: 0,
@@ -2141,7 +2164,7 @@
         ease: "back.out(1.2)"
       }, 0.7);
 
-      // 3. Immersive Testimonial Container Entrance
+      // 4. Immersive Testimonial Container Entrance
       tl.to(".stories-imagery-container", {
         opacity: 1,
         y: 0,
@@ -2156,9 +2179,9 @@
         ease: "power2.out"
       }, 0.9);
 
-      // 4. Subtle Parallax on scroll for the Badge
+      // 5. Subtle Parallax on scroll for the Badge
       gsap.to(".stories-badge", {
-        y: -40, // Moves up slightly as you scroll down
+        y: -40,
         ease: "none",
         scrollTrigger: {
           trigger: ".stories-imagery-container",
@@ -2168,7 +2191,7 @@
         }
       });
 
-      // 5. Continuous Drifting Orbs
+      // 6. Continuous Drifting Orbs
       gsap.to(".stories-orb-1", {
         x: 100,
         y: -50,
